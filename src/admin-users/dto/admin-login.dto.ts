@@ -1,12 +1,13 @@
+// src/admin-users/dto/admin-login.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class AuthResetPasswordDto {
+export class AdminLoginDto {
   @ApiProperty()
   @IsNotEmpty()
-  password: string;
+  email: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  hash: string;
+  password: string;
 }

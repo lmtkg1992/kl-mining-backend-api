@@ -2,9 +2,9 @@ import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
-} from '@nestjs/common';
-import { FileRepository } from '../../persistence/file.repository';
-import { FileType } from '../../../domain/file';
+} from "@nestjs/common";
+import { FileRepository } from "../../persistence/file.repository";
+import { FileType } from "../../../domain/file";
 
 @Injectable()
 export class FilesS3Service {
@@ -15,7 +15,7 @@ export class FilesS3Service {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          file: 'selectFile',
+          file: "selectFile",
         },
       });
     }

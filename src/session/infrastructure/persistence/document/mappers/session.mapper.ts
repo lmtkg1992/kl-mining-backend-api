@@ -1,7 +1,7 @@
-import { UserSchemaClass } from '../../../../../users/infrastructure/persistence/document/entities/user.schema';
-import { UserMapper } from '../../../../../users/infrastructure/persistence/document/mappers/user.mapper';
-import { Session } from '../../../../domain/session';
-import { SessionSchemaClass } from '../entities/session.schema';
+import { UserSchemaClass } from "../../../../../users/infrastructure/persistence/document/entities/user.schema";
+import { UserMapper } from "../../../../../users/infrastructure/persistence/document/mappers/user.mapper";
+import { Session } from "../../../../domain/session";
+import { SessionSchemaClass } from "../entities/session.schema";
 
 export class SessionMapper {
   static toDomain(raw: SessionSchemaClass): Session {
@@ -22,7 +22,7 @@ export class SessionMapper {
     const persistenceSchema = new UserSchemaClass();
     persistenceSchema._id = domainEntity.user.id.toString();
     const sessionEntity = new SessionSchemaClass();
-    if (domainEntity.id && typeof domainEntity.id === 'string') {
+    if (domainEntity.id && typeof domainEntity.id === "string") {
       sessionEntity._id = domainEntity.id;
     }
     sessionEntity.user = persistenceSchema;

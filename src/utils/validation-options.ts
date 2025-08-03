@@ -3,7 +3,7 @@ import {
   UnprocessableEntityException,
   ValidationError,
   ValidationPipeOptions,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
 function generateErrors(errors: ValidationError[]) {
   return errors.reduce(
@@ -12,7 +12,7 @@ function generateErrors(errors: ValidationError[]) {
       [currentValue.property]:
         (currentValue.children?.length ?? 0) > 0
           ? generateErrors(currentValue.children ?? [])
-          : Object.values(currentValue.constraints ?? {}).join(', '),
+          : Object.values(currentValue.constraints ?? {}).join(", "),
     }),
     {},
   );

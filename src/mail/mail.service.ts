@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { I18nContext } from 'nestjs-i18n';
-import { MailData } from './interfaces/mail-data.interface';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { I18nContext } from "nestjs-i18n";
+import { MailData } from "./interfaces/mail-data.interface";
 
-import { MaybeType } from '../utils/types/maybe.type';
-import { MailerService } from '../mailer/mailer.service';
-import path from 'path';
-import { AllConfigType } from '../config/config.type';
+import { MaybeType } from "../utils/types/maybe.type";
+import { MailerService } from "../mailer/mailer.service";
+import path from "path";
+import { AllConfigType } from "../config/config.type";
 
 @Injectable()
 export class MailService {
@@ -24,38 +24,38 @@ export class MailService {
 
     if (i18n) {
       [emailConfirmTitle, text1, text2, text3] = await Promise.all([
-        i18n.t('common.confirmEmail'),
-        i18n.t('confirm-email.text1'),
-        i18n.t('confirm-email.text2'),
-        i18n.t('confirm-email.text3'),
+        i18n.t("common.confirmEmail"),
+        i18n.t("confirm-email.text1"),
+        i18n.t("confirm-email.text2"),
+        i18n.t("confirm-email.text3"),
       ]);
     }
 
     const url = new URL(
-      this.configService.getOrThrow('app.frontendDomain', {
+      this.configService.getOrThrow("app.frontendDomain", {
         infer: true,
-      }) + '/confirm-email',
+      }) + "/confirm-email",
     );
-    url.searchParams.set('hash', mailData.data.hash);
+    url.searchParams.set("hash", mailData.data.hash);
 
     await this.mailerService.sendMail({
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
+        this.configService.getOrThrow("app.workingDirectory", {
           infer: true,
         }),
-        'src',
-        'mail',
-        'mail-templates',
-        'activation.hbs',
+        "src",
+        "mail",
+        "mail-templates",
+        "activation.hbs",
       ),
       context: {
         title: emailConfirmTitle,
         url: url.toString(),
         actionTitle: emailConfirmTitle,
-        app_name: this.configService.get('app.name', { infer: true }),
+        app_name: this.configService.get("app.name", { infer: true }),
         text1,
         text2,
         text3,
@@ -75,40 +75,40 @@ export class MailService {
 
     if (i18n) {
       [resetPasswordTitle, text1, text2, text3, text4] = await Promise.all([
-        i18n.t('common.resetPassword'),
-        i18n.t('reset-password.text1'),
-        i18n.t('reset-password.text2'),
-        i18n.t('reset-password.text3'),
-        i18n.t('reset-password.text4'),
+        i18n.t("common.resetPassword"),
+        i18n.t("reset-password.text1"),
+        i18n.t("reset-password.text2"),
+        i18n.t("reset-password.text3"),
+        i18n.t("reset-password.text4"),
       ]);
     }
 
     const url = new URL(
-      this.configService.getOrThrow('app.frontendDomain', {
+      this.configService.getOrThrow("app.frontendDomain", {
         infer: true,
-      }) + '/password-change',
+      }) + "/password-change",
     );
-    url.searchParams.set('hash', mailData.data.hash);
-    url.searchParams.set('expires', mailData.data.tokenExpires.toString());
+    url.searchParams.set("hash", mailData.data.hash);
+    url.searchParams.set("expires", mailData.data.tokenExpires.toString());
 
     await this.mailerService.sendMail({
       to: mailData.to,
       subject: resetPasswordTitle,
       text: `${url.toString()} ${resetPasswordTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
+        this.configService.getOrThrow("app.workingDirectory", {
           infer: true,
         }),
-        'src',
-        'mail',
-        'mail-templates',
-        'reset-password.hbs',
+        "src",
+        "mail",
+        "mail-templates",
+        "reset-password.hbs",
       ),
       context: {
         title: resetPasswordTitle,
         url: url.toString(),
         actionTitle: resetPasswordTitle,
-        app_name: this.configService.get('app.name', {
+        app_name: this.configService.get("app.name", {
           infer: true,
         }),
         text1,
@@ -128,38 +128,38 @@ export class MailService {
 
     if (i18n) {
       [emailConfirmTitle, text1, text2, text3] = await Promise.all([
-        i18n.t('common.confirmEmail'),
-        i18n.t('confirm-new-email.text1'),
-        i18n.t('confirm-new-email.text2'),
-        i18n.t('confirm-new-email.text3'),
+        i18n.t("common.confirmEmail"),
+        i18n.t("confirm-new-email.text1"),
+        i18n.t("confirm-new-email.text2"),
+        i18n.t("confirm-new-email.text3"),
       ]);
     }
 
     const url = new URL(
-      this.configService.getOrThrow('app.frontendDomain', {
+      this.configService.getOrThrow("app.frontendDomain", {
         infer: true,
-      }) + '/confirm-new-email',
+      }) + "/confirm-new-email",
     );
-    url.searchParams.set('hash', mailData.data.hash);
+    url.searchParams.set("hash", mailData.data.hash);
 
     await this.mailerService.sendMail({
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
+        this.configService.getOrThrow("app.workingDirectory", {
           infer: true,
         }),
-        'src',
-        'mail',
-        'mail-templates',
-        'confirm-new-email.hbs',
+        "src",
+        "mail",
+        "mail-templates",
+        "confirm-new-email.hbs",
       ),
       context: {
         title: emailConfirmTitle,
         url: url.toString(),
         actionTitle: emailConfirmTitle,
-        app_name: this.configService.get('app.name', { infer: true }),
+        app_name: this.configService.get("app.name", { infer: true }),
         text1,
         text2,
         text3,

@@ -1,8 +1,8 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
-import { IsEnum, IsString, ValidateIf } from 'class-validator';
-import validateConfig from '../../utils/validate-config';
-import { FileDriver, FileConfig } from './file-config.type';
+import { IsEnum, IsString, ValidateIf } from "class-validator";
+import validateConfig from "../../utils/validate-config";
+import { FileDriver, FileConfig } from "./file-config.type";
 
 class EnvironmentVariablesValidator {
   @IsEnum(FileDriver)
@@ -33,7 +33,7 @@ class EnvironmentVariablesValidator {
   AWS_S3_REGION: string;
 }
 
-export default registerAs<FileConfig>('file', () => {
+export default registerAs<FileConfig>("file", () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {

@@ -1,11 +1,10 @@
-import { AdminUsers } from '../../../../domain/admin-users';
-import { AdminUsersSchemaClass } from '../entities/admin-users.schema';
+import { AdminUsers } from "../../../../domain/admin-users";
+import { AdminUsersSchemaClass } from "../entities/admin-users.schema";
 
 export class AdminUsersMapper {
   public static toDomain(raw: AdminUsersSchemaClass): AdminUsers {
     const domainEntity = new AdminUsers();
     domainEntity.id = raw._id.toString();
-    domainEntity.userName = raw.userName;
     domainEntity.email = raw.email;
     domainEntity.name = raw.name;
     domainEntity.status = raw.status;
@@ -21,8 +20,7 @@ export class AdminUsersMapper {
     if (domainEntity.id) {
       persistenceSchema._id = domainEntity.id;
     }
-    persistenceSchema.userName = domainEntity.userName;
-    persistenceSchema.email = domainEntity.email ?? null;
+    persistenceSchema.email = domainEntity.email;
     persistenceSchema.name = domainEntity.name;
     persistenceSchema.status = domainEntity.status;
     persistenceSchema.password = domainEntity.password;

@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
 import {
   IsString,
@@ -8,9 +8,9 @@ import {
   IsOptional,
   IsBoolean,
   IsEmail,
-} from 'class-validator';
-import validateConfig from '../../utils/validate-config';
-import { MailConfig } from './mail-config.type';
+} from "class-validator";
+import validateConfig from "../../utils/validate-config";
+import { MailConfig } from "./mail-config.type";
 
 class EnvironmentVariablesValidator {
   @IsInt()
@@ -46,7 +46,7 @@ class EnvironmentVariablesValidator {
   MAIL_REQUIRE_TLS: boolean;
 }
 
-export default registerAs<MailConfig>('mail', () => {
+export default registerAs<MailConfig>("mail", () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
@@ -56,8 +56,8 @@ export default registerAs<MailConfig>('mail', () => {
     password: process.env.MAIL_PASSWORD,
     defaultEmail: process.env.MAIL_DEFAULT_EMAIL,
     defaultName: process.env.MAIL_DEFAULT_NAME,
-    ignoreTLS: process.env.MAIL_IGNORE_TLS === 'true',
-    secure: process.env.MAIL_SECURE === 'true',
-    requireTLS: process.env.MAIL_REQUIRE_TLS === 'true',
+    ignoreTLS: process.env.MAIL_IGNORE_TLS === "true",
+    secure: process.env.MAIL_SECURE === "true",
+    requireTLS: process.env.MAIL_REQUIRE_TLS === "true",
   };
 });

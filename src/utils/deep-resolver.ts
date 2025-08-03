@@ -12,7 +12,7 @@ async function deepResolvePromises(input) {
     return input;
   }
 
-  if (typeof input === 'object' && input !== null) {
+  if (typeof input === "object" && input !== null) {
     const keys = Object.keys(input);
     const resolvedObject = {};
 

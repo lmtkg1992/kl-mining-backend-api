@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserSeedService } from './user-seed.service';
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { UserSeedService } from "./user-seed.service";
 import {
   UserSchemaClass,
   UserSchema,
-} from '../../../../users/infrastructure/persistence/document/entities/user.schema';
+} from "../../../../users/infrastructure/persistence/document/entities/user.schema";
 
 @Module({
   imports: [

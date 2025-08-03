@@ -2,17 +2,17 @@ import {
   HttpStatus,
   Module,
   UnprocessableEntityException,
-} from '@nestjs/common';
-import { FilesLocalController } from './files.controller';
-import { MulterModule } from '@nestjs/platform-express';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { diskStorage } from 'multer';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+} from "@nestjs/common";
+import { FilesLocalController } from "./files.controller";
+import { MulterModule } from "@nestjs/platform-express";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { diskStorage } from "multer";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
 
-import { FilesLocalService } from './files.service';
+import { FilesLocalService } from "./files.service";
 
-import { DocumentFilePersistenceModule } from '../../persistence/document/document-persistence.module';
-import { AllConfigType } from '../../../../config/config.type';
+import { DocumentFilePersistenceModule } from "../../persistence/document/document-persistence.module";
+import { AllConfigType } from "../../../../config/config.type";
 
 const infrastructurePersistenceModule = DocumentFilePersistenceModule;
 
@@ -40,19 +40,19 @@ const infrastructurePersistenceModule = DocumentFilePersistenceModule;
             callback(null, true);
           },
           storage: diskStorage({
-            destination: './files',
+            destination: "./files",
             filename: (request, file, callback) => {
               callback(
                 null,
                 `${randomStringGenerator()}.${file.originalname
-                  .split('.')
+                  .split(".")
                   .pop()
                   ?.toLowerCase()}`,
               );
             },
           }),
           limits: {
-            fileSize: configService.get('file.maxFileSize', { infer: true }),
+            fileSize: configService.get("file.maxFileSize", { infer: true }),
           },
         };
       },

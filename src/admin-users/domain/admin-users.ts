@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
-import { UserStatusEnum } from '../admin-users.enum';
+import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
+import { UserStatusEnum } from "../admin-users.enum";
 
 export class AdminUsers {
   @ApiProperty({
@@ -11,12 +11,7 @@ export class AdminUsers {
   @ApiProperty({
     type: String,
   })
-  userName: string;
-
-  @ApiProperty({
-    type: String,
-  })
-  email?: string | null;
+  email: string;
 
   @ApiProperty({
     type: String,

@@ -1,7 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument } from 'mongoose';
-import { EntityDocumentHelper } from '../../../../../utils/document-entity-helper';
-import { UserStatusEnum } from 'src/admin-users/admin-users.enum';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { now, HydratedDocument } from "mongoose";
+import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
+import { UserStatusEnum } from "../../../../admin-users.enum";
+import { IsEmail } from "class-validator";
 
 export type AdminUsersSchemaDocument = HydratedDocument<AdminUsersSchemaClass>;
 
@@ -13,13 +14,11 @@ export type AdminUsersSchemaDocument = HydratedDocument<AdminUsersSchemaClass>;
   },
 })
 export class AdminUsersSchemaClass extends EntityDocumentHelper {
-  @Prop({ required: true })
-  userName: string;
+  @Prop({ required: true, type: String })
+  @IsEmail()
+  email: string;
 
-  @Prop({ required: false, type: String, default: null })
-  email: string | null;
-
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })
   name: string;
 
   @Prop({

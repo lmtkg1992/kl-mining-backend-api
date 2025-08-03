@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
 import {
   IsOptional,
@@ -8,9 +8,9 @@ import {
   IsString,
   ValidateIf,
   IsBoolean,
-} from 'class-validator';
-import validateConfig from '../../utils/validate-config';
-import { DatabaseConfig } from './database-config.type';
+} from "class-validator";
+import validateConfig from "../../utils/validate-config";
+import { DatabaseConfig } from "./database-config.type";
 
 class EnvironmentVariablesValidator {
   @ValidateIf((envValues) => envValues.DATABASE_URL)
@@ -72,11 +72,11 @@ class EnvironmentVariablesValidator {
   DATABASE_CERT: string;
 }
 
-export default registerAs<DatabaseConfig>('database', () => {
+export default registerAs<DatabaseConfig>("database", () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    isDocumentDatabase: ['mongodb'].includes(process.env.DATABASE_TYPE ?? ''),
+    isDocumentDatabase: ["mongodb"].includes(process.env.DATABASE_TYPE ?? ""),
     url: process.env.DATABASE_URL,
     type: process.env.DATABASE_TYPE,
     host: process.env.DATABASE_HOST,
@@ -86,12 +86,12 @@ export default registerAs<DatabaseConfig>('database', () => {
     password: process.env.DATABASE_PASSWORD,
     name: process.env.DATABASE_NAME,
     username: process.env.DATABASE_USERNAME,
-    synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
+    synchronize: process.env.DATABASE_SYNCHRONIZE === "true",
     maxConnections: process.env.DATABASE_MAX_CONNECTIONS
       ? parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10)
       : 100,
-    sslEnabled: process.env.DATABASE_SSL_ENABLED === 'true',
-    rejectUnauthorized: process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
+    sslEnabled: process.env.DATABASE_SSL_ENABLED === "true",
+    rejectUnauthorized: process.env.DATABASE_REJECT_UNAUTHORIZED === "true",
     ca: process.env.DATABASE_CA,
     key: process.env.DATABASE_KEY,
     cert: process.env.DATABASE_CERT,

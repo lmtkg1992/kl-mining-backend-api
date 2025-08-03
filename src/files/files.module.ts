@@ -1,15 +1,15 @@
 import {
   // common
   Module,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { DocumentFilePersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
-import { FilesService } from './files.service';
-import fileConfig from './config/file.config';
-import { FileConfig, FileDriver } from './config/file-config.type';
-import { FilesLocalModule } from './infrastructure/uploader/local/files.module';
-import { FilesS3Module } from './infrastructure/uploader/s3/files.module';
-import { FilesS3PresignedModule } from './infrastructure/uploader/s3-presigned/files.module';
+import { DocumentFilePersistenceModule } from "./infrastructure/persistence/document/document-persistence.module";
+import { FilesService } from "./files.service";
+import fileConfig from "./config/file.config";
+import { FileConfig, FileDriver } from "./config/file-config.type";
+import { FilesLocalModule } from "./infrastructure/uploader/local/files.module";
+import { FilesS3Module } from "./infrastructure/uploader/s3/files.module";
+import { FilesS3PresignedModule } from "./infrastructure/uploader/s3-presigned/files.module";
 
 const infrastructurePersistenceModule = DocumentFilePersistenceModule;
 

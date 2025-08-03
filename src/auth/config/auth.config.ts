@@ -1,9 +1,9 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
-import { IsString } from 'class-validator';
-import validateConfig from '../../utils/validate-config';
-import { AuthConfig } from './auth-config.type';
-import ms from 'ms';
+import { IsString } from "class-validator";
+import validateConfig from "../../utils/validate-config";
+import { AuthConfig } from "./auth-config.type";
+import ms from "ms";
 
 class EnvironmentVariablesValidator {
   @IsString()
@@ -31,7 +31,7 @@ class EnvironmentVariablesValidator {
   AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN: string;
 }
 
-export default registerAs<AuthConfig>('auth', () => {
+export default registerAs<AuthConfig>("auth", () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {

@@ -1,8 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsString } from "class-validator";
 
 export class FileUploadDto {
-  @ApiProperty({ example: 'image.jpg' })
+  @ApiProperty({ example: "image.jpg" })
   @IsString()
   fileName: string;
 

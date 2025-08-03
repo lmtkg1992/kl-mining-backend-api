@@ -1,8 +1,8 @@
-import { Exclude, Expose } from 'class-transformer';
-import { FileType } from '../../files/domain/file';
-import { Role } from '../../roles/domain/role';
-import { Status } from '../../statuses/domain/status';
-import { ApiProperty } from '@nestjs/swagger';
+import { Exclude, Expose } from "class-transformer";
+import { FileType } from "../../files/domain/file";
+import { Role } from "../../roles/domain/role";
+import { Status } from "../../statuses/domain/status";
+import { ApiProperty } from "@nestjs/swagger";
 
 const idType = String;
 
@@ -14,9 +14,9 @@ export class User {
 
   @ApiProperty({
     type: String,
-    example: 'john.doe@example.com',
+    example: "john.doe@example.com",
   })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   email: string | null;
 
   @Exclude({ toPlainOnly: true })
@@ -24,27 +24,27 @@ export class User {
 
   @ApiProperty({
     type: String,
-    example: 'email',
+    example: "email",
   })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   provider: string;
 
   @ApiProperty({
     type: String,
-    example: '1234567890',
+    example: "1234567890",
   })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   socialId?: string | null;
 
   @ApiProperty({
     type: String,
-    example: 'John',
+    example: "John",
   })
   firstName: string | null;
 
   @ApiProperty({
     type: String,
-    example: 'Doe',
+    example: "Doe",
   })
   lastName: string | null;
 

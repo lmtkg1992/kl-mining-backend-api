@@ -7,8 +7,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBearerAuth,
   ApiBody,
@@ -16,15 +16,15 @@ import {
   ApiCreatedResponse,
   ApiExcludeEndpoint,
   ApiTags,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { FilesLocalService } from './files.service';
-import { FileResponseDto } from './dto/file-response.dto';
+} from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { FilesLocalService } from "./files.service";
+import { FileResponseDto } from "./dto/file-response.dto";
 
-@ApiTags('Files')
+@ApiTags("Files")
 @Controller({
-  path: 'files',
-  version: '1',
+  path: "files",
+  version: "1",
 })
 export class FilesLocalController {
   constructor(private readonly filesService: FilesLocalService) {}
@@ -33,30 +33,30 @@ export class FilesLocalController {
     type: FileResponseDto,
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('upload')
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard("jwt"))
+  @Post("upload")
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         file: {
-          type: 'string',
-          format: 'binary',
+          type: "string",
+          format: "binary",
         },
       },
     },
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor("file"))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<FileResponseDto> {
     return this.filesService.create(file);
   }
 
-  @Get(':path')
+  @Get(":path")
   @ApiExcludeEndpoint()
-  download(@Param('path') path, @Response() response) {
-    return response.sendFile(path, { root: './files' });
+  download(@Param("path") path, @Response() response) {
+    return response.sendFile(path, { root: "./files" });
   }
 }

@@ -1,5 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -7,7 +7,7 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.getAllAndOverride<(number | string)[]>(
-      'roles',
+      "roles",
       [context.getClass(), context.getHandler()],
     );
     if (!roles.length) {

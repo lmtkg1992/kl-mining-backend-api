@@ -1,10 +1,10 @@
 import {
   // common
   Module,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { DocumentSessionPersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
-import { SessionService } from './session.service';
+import { DocumentSessionPersistenceModule } from "./infrastructure/persistence/document/document-persistence.module";
+import { SessionService } from "./session.service";
 
 const infrastructurePersistenceModule = DocumentSessionPersistenceModule;
 

@@ -2,18 +2,18 @@ import {
   HttpStatus,
   Module,
   UnprocessableEntityException,
-} from '@nestjs/common';
-import { FilesS3PresignedController } from './files.controller';
-import { MulterModule } from '@nestjs/platform-express';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { S3Client } from '@aws-sdk/client-s3';
-import multerS3 from 'multer-s3';
+} from "@nestjs/common";
+import { FilesS3PresignedController } from "./files.controller";
+import { MulterModule } from "@nestjs/platform-express";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
+import { S3Client } from "@aws-sdk/client-s3";
+import multerS3 from "multer-s3";
 
-import { FilesS3PresignedService } from './files.service';
+import { FilesS3PresignedService } from "./files.service";
 
-import { DocumentFilePersistenceModule } from '../../persistence/document/document-persistence.module';
-import { AllConfigType } from '../../../../config/config.type';
+import { DocumentFilePersistenceModule } from "../../persistence/document/document-persistence.module";
+import { AllConfigType } from "../../../../config/config.type";
 
 const infrastructurePersistenceModule = DocumentFilePersistenceModule;
 
@@ -25,12 +25,12 @@ const infrastructurePersistenceModule = DocumentFilePersistenceModule;
       inject: [ConfigService],
       useFactory: (configService: ConfigService<AllConfigType>) => {
         const s3 = new S3Client({
-          region: configService.get('file.awsS3Region', { infer: true }),
+          region: configService.get("file.awsS3Region", { infer: true }),
           credentials: {
-            accessKeyId: configService.getOrThrow('file.accessKeyId', {
+            accessKeyId: configService.getOrThrow("file.accessKeyId", {
               infer: true,
             }),
-            secretAccessKey: configService.getOrThrow('file.secretAccessKey', {
+            secretAccessKey: configService.getOrThrow("file.secretAccessKey", {
               infer: true,
             }),
           },
@@ -54,21 +54,21 @@ const infrastructurePersistenceModule = DocumentFilePersistenceModule;
           },
           storage: multerS3({
             s3: s3,
-            bucket: '',
-            acl: 'public-read',
+            bucket: "",
+            acl: "public-read",
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key: (request, file, callback) => {
               callback(
                 null,
                 `${randomStringGenerator()}.${file.originalname
-                  .split('.')
+                  .split(".")
                   .pop()
                   ?.toLowerCase()}`,
               );
             },
           }),
           limits: {
-            fileSize: configService.get('file.maxFileSize', { infer: true }),
+            fileSize: configService.get("file.maxFileSize", { infer: true }),
           },
         };
       },

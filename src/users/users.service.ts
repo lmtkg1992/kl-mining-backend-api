@@ -2,22 +2,22 @@ import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { NullableType } from '../utils/types/nullable.type';
-import { FilterUserDto, SortUserDto } from './dto/query-user.dto';
-import { UserRepository } from './infrastructure/persistence/user.repository';
-import { User } from './domain/user';
-import bcrypt from 'bcryptjs';
-import { AuthProvidersEnum } from '../auth/auth-providers.enum';
-import { FilesService } from '../files/files.service';
-import { RoleEnum } from '../roles/roles.enum';
-import { StatusEnum } from '../statuses/statuses.enum';
-import { IPaginationOptions } from '../utils/types/pagination-options';
-import { FileType } from '../files/domain/file';
-import { Role } from '../roles/domain/role';
-import { Status } from '../statuses/domain/status';
-import { UpdateUserDto } from './dto/update-user.dto';
+} from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { NullableType } from "../utils/types/nullable.type";
+import { FilterUserDto, SortUserDto } from "./dto/query-user.dto";
+import { UserRepository } from "./infrastructure/persistence/user.repository";
+import { User } from "./domain/user";
+import bcrypt from "bcryptjs";
+import { AuthProvidersEnum } from "../auth/auth-providers.enum";
+import { FilesService } from "../files/files.service";
+import { RoleEnum } from "../roles/roles.enum";
+import { StatusEnum } from "../statuses/statuses.enum";
+import { IPaginationOptions } from "../utils/types/pagination-options";
+import { FileType } from "../files/domain/file";
+import { Role } from "../roles/domain/role";
+import { Status } from "../statuses/domain/status";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -47,7 +47,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailAlreadyExists',
+            email: "emailAlreadyExists",
           },
         });
       }
@@ -64,7 +64,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            photo: 'imageNotExists',
+            photo: "imageNotExists",
           },
         });
       }
@@ -83,7 +83,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            role: 'roleNotExists',
+            role: "roleNotExists",
           },
         });
       }
@@ -103,7 +103,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            status: 'statusNotExists',
+            status: "statusNotExists",
           },
         });
       }
@@ -144,15 +144,15 @@ export class UsersService {
     });
   }
 
-  findById(id: User['id']): Promise<NullableType<User>> {
+  findById(id: User["id"]): Promise<NullableType<User>> {
     return this.usersRepository.findById(id);
   }
 
-  findByIds(ids: User['id'][]): Promise<User[]> {
+  findByIds(ids: User["id"][]): Promise<User[]> {
     return this.usersRepository.findByIds(ids);
   }
 
-  findByEmail(email: User['email']): Promise<NullableType<User>> {
+  findByEmail(email: User["email"]): Promise<NullableType<User>> {
     return this.usersRepository.findByEmail(email);
   }
 
@@ -160,8 +160,8 @@ export class UsersService {
     socialId,
     provider,
   }: {
-    socialId: User['socialId'];
-    provider: User['provider'];
+    socialId: User["socialId"];
+    provider: User["provider"];
   }): Promise<NullableType<User>> {
     return this.usersRepository.findBySocialIdAndProvider({
       socialId,
@@ -170,7 +170,7 @@ export class UsersService {
   }
 
   async update(
-    id: User['id'],
+    id: User["id"],
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
     // Do not remove comment below.
@@ -198,7 +198,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailAlreadyExists',
+            email: "emailAlreadyExists",
           },
         });
       }
@@ -218,7 +218,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            photo: 'imageNotExists',
+            photo: "imageNotExists",
           },
         });
       }
@@ -237,7 +237,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            role: 'roleNotExists',
+            role: "roleNotExists",
           },
         });
       }
@@ -257,7 +257,7 @@ export class UsersService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            status: 'statusNotExists',
+            status: "statusNotExists",
           },
         });
       }
@@ -282,7 +282,7 @@ export class UsersService {
     });
   }
 
-  async remove(id: User['id']): Promise<void> {
+  async remove(id: User["id"]): Promise<void> {
     await this.usersRepository.remove(id);
   }
 }

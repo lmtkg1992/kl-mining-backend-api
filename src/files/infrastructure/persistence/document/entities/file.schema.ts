@@ -1,6 +1,6 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { EntityDocumentHelper } from '../../../../../utils/document-entity-helper';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
+import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
 
 export type FileSchemaDocument = HydratedDocument<FileSchemaClass>;
 

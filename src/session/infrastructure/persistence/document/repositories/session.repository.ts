@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { NullableType } from '../../../../../utils/types/nullable.type';
-import { SessionRepository } from '../../session.repository';
-import { Session } from '../../../../domain/session';
-import { SessionSchemaClass } from '../entities/session.schema';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { SessionMapper } from '../mappers/session.mapper';
-import { User } from '../../../../../users/domain/user';
+import { Injectable } from "@nestjs/common";
+import { NullableType } from "../../../../../utils/types/nullable.type";
+import { SessionRepository } from "../../session.repository";
+import { Session } from "../../../../domain/session";
+import { SessionSchemaClass } from "../entities/session.schema";
+import { Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { SessionMapper } from "../mappers/session.mapper";
+import { User } from "../../../../../users/domain/user";
 
 @Injectable()
 export class SessionDocumentRepository implements SessionRepository {
@@ -15,7 +15,7 @@ export class SessionDocumentRepository implements SessionRepository {
     private sessionModel: Model<SessionSchemaClass>,
   ) {}
 
-  async findById(id: Session['id']): Promise<NullableType<Session>> {
+  async findById(id: Session["id"]): Promise<NullableType<Session>> {
     const sessionObject = await this.sessionModel.findById(id);
     return sessionObject ? SessionMapper.toDomain(sessionObject) : null;
   }
@@ -28,7 +28,7 @@ export class SessionDocumentRepository implements SessionRepository {
   }
 
   async update(
-    id: Session['id'],
+    id: Session["id"],
     payload: Partial<Session>,
   ): Promise<Session | null> {
     const clonedPayload = { ...payload };
@@ -56,11 +56,11 @@ export class SessionDocumentRepository implements SessionRepository {
     return sessionObject ? SessionMapper.toDomain(sessionObject) : null;
   }
 
-  async deleteById(id: Session['id']): Promise<void> {
+  async deleteById(id: Session["id"]): Promise<void> {
     await this.sessionModel.deleteOne({ _id: id.toString() });
   }
 
-  async deleteByUserId({ userId }: { userId: User['id'] }): Promise<void> {
+  async deleteByUserId({ userId }: { userId: User["id"] }): Promise<void> {
     await this.sessionModel.deleteMany({ user: userId.toString() });
   }
 
@@ -68,8 +68,8 @@ export class SessionDocumentRepository implements SessionRepository {
     userId,
     excludeSessionId,
   }: {
-    userId: User['id'];
-    excludeSessionId: Session['id'];
+    userId: User["id"];
+    excludeSessionId: Session["id"];
   }): Promise<void> {
     const transformedCriteria = {
       user: userId.toString(),

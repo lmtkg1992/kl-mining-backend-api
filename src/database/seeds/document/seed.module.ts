@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule } from "@nestjs/mongoose";
 
-import { UserSeedModule } from './user/user-seed.module';
-import appConfig from '../../../config/app.config';
-import databaseConfig from '../../config/database.config';
-import { MongooseConfigService } from '../../mongoose-config.service';
+import { UserSeedModule } from "./user/user-seed.module";
+import appConfig from "../../../config/app.config";
+import databaseConfig from "../../config/database.config";
+import { MongooseConfigService } from "../../mongoose-config.service";
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { MongooseConfigService } from '../../mongoose-config.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],
-      envFilePath: ['.env'],
+      envFilePath: [".env"],
     }),
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,

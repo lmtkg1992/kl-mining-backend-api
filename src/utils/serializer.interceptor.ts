@@ -3,10 +3,10 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import deepResolvePromises from './deep-resolver';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import deepResolvePromises from "./deep-resolver";
 
 @Injectable()
 export class ResolvePromisesInterceptor implements NestInterceptor {

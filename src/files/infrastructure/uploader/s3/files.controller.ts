@@ -4,23 +4,23 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
   ApiTags,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { FilesS3Service } from './files.service';
-import { FileResponseDto } from './dto/file-response.dto';
+} from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { FilesS3Service } from "./files.service";
+import { FileResponseDto } from "./dto/file-response.dto";
 
-@ApiTags('Files')
+@ApiTags("Files")
 @Controller({
-  path: 'files',
-  version: '1',
+  path: "files",
+  version: "1",
 })
 export class FilesS3Controller {
   constructor(private readonly filesService: FilesS3Service) {}
@@ -29,21 +29,21 @@ export class FilesS3Controller {
     type: FileResponseDto,
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('upload')
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard("jwt"))
+  @Post("upload")
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         file: {
-          type: 'string',
-          format: 'binary',
+          type: "string",
+          format: "binary",
         },
       },
     },
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor("file"))
   async uploadFile(
     @UploadedFile() file: Express.MulterS3.File,
   ): Promise<FileResponseDto> {

@@ -10,33 +10,33 @@ import {
   Patch,
   Delete,
   SerializeOptions,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { AuthForgotPasswordDto } from './dto/auth-forgot-password.dto';
-import { AuthConfirmEmailDto } from './dto/auth-confirm-email.dto';
-import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
-import { AuthUpdateDto } from './dto/auth-update.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
-import { NullableType } from '../utils/types/nullable.type';
-import { User } from '../users/domain/user';
-import { RefreshResponseDto } from './dto/refresh-response.dto';
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { AuthEmailLoginDto } from "./dto/auth-email-login.dto";
+import { AuthForgotPasswordDto } from "./dto/auth-forgot-password.dto";
+import { AuthConfirmEmailDto } from "./dto/auth-confirm-email.dto";
+import { AuthResetPasswordDto } from "./dto/auth-reset-password.dto";
+import { AuthUpdateDto } from "./dto/auth-update.dto";
+import { AuthGuard } from "@nestjs/passport";
+import { AuthRegisterLoginDto } from "./dto/auth-register-login.dto";
+import { LoginResponseDto } from "./dto/login-response.dto";
+import { NullableType } from "../utils/types/nullable.type";
+import { User } from "../users/domain/user";
+import { RefreshResponseDto } from "./dto/refresh-response.dto";
 
-@ApiTags('Auth')
+@ApiTags("Auth")
 @Controller({
-  path: 'auth',
-  version: '1',
+  path: "auth",
+  version: "1",
 })
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
   @SerializeOptions({
-    groups: ['me'],
+    groups: ["me"],
   })
-  @Post('email/login')
+  @Post("email/login")
   @ApiOkResponse({
     type: LoginResponseDto,
   })
@@ -45,13 +45,13 @@ export class AuthController {
     return this.service.validateLogin(loginDto);
   }
 
-  @Post('email/register')
+  @Post("email/register")
   @HttpCode(HttpStatus.NO_CONTENT)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
   }
 
-  @Post('email/confirm')
+  @Post("email/confirm")
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
@@ -59,7 +59,7 @@ export class AuthController {
     return this.service.confirmEmail(confirmEmailDto.hash);
   }
 
-  @Post('email/confirm/new')
+  @Post("email/confirm/new")
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmNewEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
@@ -67,7 +67,7 @@ export class AuthController {
     return this.service.confirmNewEmail(confirmEmailDto.hash);
   }
 
-  @Post('forgot/password')
+  @Post("forgot/password")
   @HttpCode(HttpStatus.NO_CONTENT)
   async forgotPassword(
     @Body() forgotPasswordDto: AuthForgotPasswordDto,
@@ -75,7 +75,7 @@ export class AuthController {
     return this.service.forgotPassword(forgotPasswordDto.email);
   }
 
-  @Post('reset/password')
+  @Post("reset/password")
   @HttpCode(HttpStatus.NO_CONTENT)
   resetPassword(@Body() resetPasswordDto: AuthResetPasswordDto): Promise<void> {
     return this.service.resetPassword(
@@ -86,10 +86,10 @@ export class AuthController {
 
   @ApiBearerAuth()
   @SerializeOptions({
-    groups: ['me'],
+    groups: ["me"],
   })
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
+  @Get("me")
+  @UseGuards(AuthGuard("jwt"))
   @ApiOkResponse({
     type: User,
   })
@@ -103,10 +103,10 @@ export class AuthController {
     type: RefreshResponseDto,
   })
   @SerializeOptions({
-    groups: ['me'],
+    groups: ["me"],
   })
-  @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @Post("refresh")
+  @UseGuards(AuthGuard("jwt-refresh"))
   @HttpCode(HttpStatus.OK)
   public refresh(@Request() request): Promise<RefreshResponseDto> {
     return this.service.refreshToken({
@@ -116,8 +116,8 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @Post('logout')
-  @UseGuards(AuthGuard('jwt'))
+  @Post("logout")
+  @UseGuards(AuthGuard("jwt"))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(@Request() request): Promise<void> {
     await this.service.logout({
@@ -127,10 +127,10 @@ export class AuthController {
 
   @ApiBearerAuth()
   @SerializeOptions({
-    groups: ['me'],
+    groups: ["me"],
   })
-  @Patch('me')
-  @UseGuards(AuthGuard('jwt'))
+  @Patch("me")
+  @UseGuards(AuthGuard("jwt"))
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     type: User,
@@ -143,8 +143,8 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @Delete('me')
-  @UseGuards(AuthGuard('jwt'))
+  @Delete("me")
+  @UseGuards(AuthGuard("jwt"))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Request() request): Promise<void> {
     return this.service.softDelete(request.user);
