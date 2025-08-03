@@ -1,0 +1,1123 @@
+
+File: src/users/domain/user.ts
+Contents:
+import { Exclude, Expose } from 'class-transformer';
+import { FileType } from '../../files/domain/file';
+import { Role } from '../../roles/domain/role';
+import { Status } from '../../statuses/domain/status';
+import { ApiProperty } from '@nestjs/swagger';
+
+const idType = String;
+
+export class User {
+  @ApiProperty({
+    type: idType,
+  })
+  id: number | string;
+
+  @ApiProperty({
+    type: String,
+    example: 'john.doe@example.com',
+  })
+  @Expose({ groups: ['me', 'admin'] })
+  email: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  password?: string;
+
+  @ApiProperty({
+    type: String,
+    example: 'email',
+  })
+  @Expose({ groups: ['me', 'admin'] })
+  provider: string;
+
+  @ApiProperty({
+    type: String,
+    example: '1234567890',
+  })
+  @Expose({ groups: ['me', 'admin'] })
+  socialId?: string | null;
+
+  @ApiProperty({
+    type: String,
+    example: 'John',
+  })
+  firstName: string | null;
+
+  @ApiProperty({
+    type: String,
+    example: 'Doe',
+  })
+  lastName: string | null;
+
+  @ApiProperty({
+    type: () => FileType,
+  })
+  photo?: FileType | null;
+
+  @ApiProperty({
+    type: () => Role,
+  })
+  role?: Role | null;
+
+  @ApiProperty({
+    type: () => Status,
+  })
+  status?: Status;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty()
+  deletedAt: Date;
+}
+
+----------END------------
+
+
+File: src/users/dto/create-user.dto.ts
+Contents:
+import {
+  // decorators here
+  Transform,
+  Type,
+} from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  // decorators here
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  MinLength,
+} from 'class-validator';
+import { FileDto } from '../../files/dto/file.dto';
+import { RoleDto } from '../../roles/dto/role.dto';
+import { StatusDto } from '../../statuses/dto/status.dto';
+import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+
+export class CreateUserDto {
+  @ApiProperty({ example: 'test1@example.com', type: String })
+  @Transform(lowerCaseTransformer)
+  @IsNotEmpty()
+  @IsEmail()
+  email: string | null;
+
+  @ApiProperty()
+  @MinLength(6)
+  password?: string;
+
+  provider?: string;
+
+  socialId?: string | null;
+
+  @ApiProperty({ example: 'John', type: String })
+  @IsNotEmpty()
+  firstName: string | null;
+
+  @ApiProperty({ example: 'Doe', type: String })
+  @IsNotEmpty()
+  lastName: string | null;
+
+  @ApiPropertyOptional({ type: () => FileDto })
+  @IsOptional()
+  photo?: FileDto | null;
+
+  @ApiPropertyOptional({ type: RoleDto })
+  @IsOptional()
+  @Type(() => RoleDto)
+  role?: RoleDto | null;
+
+  @ApiPropertyOptional({ type: StatusDto })
+  @IsOptional()
+  @Type(() => StatusDto)
+  status?: StatusDto;
+}
+
+----------END------------
+
+
+File: src/users/dto/query-user.dto.ts
+Contents:
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { Transform, Type, plainToInstance } from 'class-transformer';
+import { User } from '../domain/user';
+import { RoleDto } from '../../roles/dto/role.dto';
+
+export class FilterUserDto {
+  @ApiPropertyOptional({ type: RoleDto })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RoleDto)
+  roles?: RoleDto[] | null;
+}
+
+export class SortUserDto {
+  @ApiProperty()
+  @Type(() => String)
+  @IsString()
+  orderBy: keyof User;
+
+  @ApiProperty()
+  @IsString()
+  order: string;
+}
+
+export class QueryUserDto {
+  @ApiPropertyOptional()
+  @Transform(({ value }) => (value ? Number(value) : 1))
+  @IsNumber()
+  @IsOptional()
+  page?: number;
+
+  @ApiPropertyOptional()
+  @Transform(({ value }) => (value ? Number(value) : 10))
+  @IsNumber()
+  @IsOptional()
+  limit?: number;
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @Transform(({ value }) =>
+    value ? plainToInstance(FilterUserDto, JSON.parse(value)) : undefined,
+  )
+  @ValidateNested()
+  @Type(() => FilterUserDto)
+  filters?: FilterUserDto | null;
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @Transform(({ value }) => {
+    return value ? plainToInstance(SortUserDto, JSON.parse(value)) : undefined;
+  })
+  @ValidateNested({ each: true })
+  @Type(() => SortUserDto)
+  sort?: SortUserDto[] | null;
+}
+
+----------END------------
+
+
+File: src/users/dto/update-user.dto.ts
+Contents:
+import { PartialType, ApiPropertyOptional } from '@nestjs/swagger';
+import { CreateUserDto } from './create-user.dto';
+
+import { Transform, Type } from 'class-transformer';
+import { IsEmail, IsOptional, MinLength } from 'class-validator';
+import { FileDto } from '../../files/dto/file.dto';
+import { RoleDto } from '../../roles/dto/role.dto';
+import { StatusDto } from '../../statuses/dto/status.dto';
+import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @ApiPropertyOptional({ example: 'test1@example.com', type: String })
+  @Transform(lowerCaseTransformer)
+  @IsOptional()
+  @IsEmail()
+  email?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @MinLength(6)
+  password?: string;
+
+  provider?: string;
+
+  socialId?: string | null;
+
+  @ApiPropertyOptional({ example: 'John', type: String })
+  @IsOptional()
+  firstName?: string | null;
+
+  @ApiPropertyOptional({ example: 'Doe', type: String })
+  @IsOptional()
+  lastName?: string | null;
+
+  @ApiPropertyOptional({ type: () => FileDto })
+  @IsOptional()
+  photo?: FileDto | null;
+
+  @ApiPropertyOptional({ type: () => RoleDto })
+  @IsOptional()
+  @Type(() => RoleDto)
+  role?: RoleDto | null;
+
+  @ApiPropertyOptional({ type: () => StatusDto })
+  @IsOptional()
+  @Type(() => StatusDto)
+  status?: StatusDto;
+}
+
+----------END------------
+
+
+File: src/users/dto/user.dto.ts
+Contents:
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
+
+export class UserDto {
+  @ApiProperty({
+    type: String,
+    example: 'userId',
+  })
+  @IsNotEmpty()
+  id: string | number;
+}
+
+----------END------------
+
+
+File: src/users/infrastructure/persistence/document/document-persistence.module.ts
+Contents:
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserSchema, UserSchemaClass } from './entities/user.schema';
+import { UserRepository } from '../user.repository';
+import { UsersDocumentRepository } from './repositories/user.repository';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: UserSchemaClass.name, schema: UserSchema },
+    ]),
+  ],
+  providers: [
+    {
+      provide: UserRepository,
+      useClass: UsersDocumentRepository,
+    },
+  ],
+  exports: [UserRepository],
+})
+export class DocumentUserPersistenceModule {}
+
+----------END------------
+
+
+File: src/users/infrastructure/persistence/document/entities/user.schema.ts
+Contents:
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { now, HydratedDocument } from 'mongoose';
+
+import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
+import { FileSchemaClass } from '../../../../../files/infrastructure/persistence/document/entities/file.schema';
+import { EntityDocumentHelper } from '../../../../../utils/document-entity-helper';
+import { StatusSchema } from '../../../../../statuses/infrastructure/persistence/document/entities/status.schema';
+import { RoleSchema } from '../../../../../roles/infrastructure/persistence/document/entities/role.schema';
+
+export type UserSchemaDocument = HydratedDocument<UserSchemaClass>;
+
+@Schema({
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    getters: true,
+  },
+})
+export class UserSchemaClass extends EntityDocumentHelper {
+  @Prop({
+    type: String,
+    unique: true,
+  })
+  email: string | null;
+
+  @Prop()
+  password?: string;
+
+  @Prop({
+    default: AuthProvidersEnum.email,
+  })
+  provider: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  socialId?: string | null;
+
+  @Prop({
+    type: String,
+  })
+  firstName: string | null;
+
+  @Prop({
+    type: String,
+  })
+  lastName: string | null;
+
+  @Prop({
+    type: FileSchemaClass,
+  })
+  photo?: FileSchemaClass | null;
+
+  @Prop({
+    type: RoleSchema,
+  })
+  role?: RoleSchema | null;
+
+  @Prop({
+    type: StatusSchema,
+  })
+  status?: StatusSchema;
+
+  @Prop({ default: now })
+  createdAt: Date;
+
+  @Prop({ default: now })
+  updatedAt: Date;
+
+  @Prop()
+  deletedAt: Date;
+}
+
+export const UserSchema = SchemaFactory.createForClass(UserSchemaClass);
+
+UserSchema.index({ 'role._id': 1 });
+
+----------END------------
+
+
+File: src/users/infrastructure/persistence/document/mappers/user.mapper.ts
+Contents:
+import { User } from '../../../../domain/user';
+import { UserSchemaClass } from '../entities/user.schema';
+import { FileSchemaClass } from '../../../../../files/infrastructure/persistence/document/entities/file.schema';
+import { FileMapper } from '../../../../../files/infrastructure/persistence/document/mappers/file.mapper';
+import { Role } from '../../../../../roles/domain/role';
+import { Status } from '../../../../../statuses/domain/status';
+import { RoleSchema } from '../../../../../roles/infrastructure/persistence/document/entities/role.schema';
+import { StatusSchema } from '../../../../../statuses/infrastructure/persistence/document/entities/status.schema';
+
+export class UserMapper {
+  static toDomain(raw: UserSchemaClass): User {
+    const domainEntity = new User();
+    domainEntity.id = raw._id.toString();
+    domainEntity.email = raw.email;
+    domainEntity.password = raw.password;
+    domainEntity.provider = raw.provider;
+    domainEntity.socialId = raw.socialId;
+    domainEntity.firstName = raw.firstName;
+    domainEntity.lastName = raw.lastName;
+    if (raw.photo) {
+      domainEntity.photo = FileMapper.toDomain(raw.photo);
+    } else if (raw.photo === null) {
+      domainEntity.photo = null;
+    }
+
+    if (raw.role) {
+      domainEntity.role = new Role();
+      domainEntity.role.id = raw.role._id;
+    }
+
+    if (raw.status) {
+      domainEntity.status = new Status();
+      domainEntity.status.id = raw.status._id;
+    }
+
+    domainEntity.createdAt = raw.createdAt;
+    domainEntity.updatedAt = raw.updatedAt;
+    domainEntity.deletedAt = raw.deletedAt;
+
+    return domainEntity;
+  }
+
+  static toPersistence(domainEntity: User): UserSchemaClass {
+    let role: RoleSchema | undefined = undefined;
+
+    if (domainEntity.role) {
+      role = new RoleSchema();
+      role._id = domainEntity.role.id.toString();
+    }
+
+    let photo: FileSchemaClass | undefined = undefined;
+
+    if (domainEntity.photo) {
+      photo = new FileSchemaClass();
+      photo._id = domainEntity.photo.id;
+      photo.path = domainEntity.photo.path;
+    }
+
+    let status: StatusSchema | undefined = undefined;
+
+    if (domainEntity.status) {
+      status = new StatusSchema();
+      status._id = domainEntity.status.id.toString();
+    }
+
+    const persistenceSchema = new UserSchemaClass();
+    if (domainEntity.id && typeof domainEntity.id === 'string') {
+      persistenceSchema._id = domainEntity.id;
+    }
+    persistenceSchema.email = domainEntity.email;
+    persistenceSchema.password = domainEntity.password;
+    persistenceSchema.provider = domainEntity.provider;
+    persistenceSchema.socialId = domainEntity.socialId;
+    persistenceSchema.firstName = domainEntity.firstName;
+    persistenceSchema.lastName = domainEntity.lastName;
+    persistenceSchema.photo = photo;
+    persistenceSchema.role = role;
+    persistenceSchema.status = status;
+    persistenceSchema.createdAt = domainEntity.createdAt;
+    persistenceSchema.updatedAt = domainEntity.updatedAt;
+    persistenceSchema.deletedAt = domainEntity.deletedAt;
+    return persistenceSchema;
+  }
+}
+
+----------END------------
+
+
+File: src/users/infrastructure/persistence/document/repositories/user.repository.ts
+Contents:
+import { Injectable } from '@nestjs/common';
+
+import { NullableType } from '../../../../../utils/types/nullable.type';
+import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
+import { User } from '../../../../domain/user';
+import { UserRepository } from '../../user.repository';
+import { UserSchemaClass } from '../entities/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+import { UserMapper } from '../mappers/user.mapper';
+import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+
+@Injectable()
+export class UsersDocumentRepository implements UserRepository {
+  constructor(
+    @InjectModel(UserSchemaClass.name)
+    private readonly usersModel: Model<UserSchemaClass>,
+  ) {}
+
+  async create(data: User): Promise<User> {
+    const persistenceModel = UserMapper.toPersistence(data);
+    const createdUser = new this.usersModel(persistenceModel);
+    const userObject = await createdUser.save();
+    return UserMapper.toDomain(userObject);
+  }
+
+  async findManyWithPagination({
+    filterOptions,
+    sortOptions,
+    paginationOptions,
+  }: {
+    filterOptions?: FilterUserDto | null;
+    sortOptions?: SortUserDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<User[]> {
+    const where: FilterQuery<UserSchemaClass> = {};
+    if (filterOptions?.roles?.length) {
+      where['role._id'] = {
+        $in: filterOptions.roles.map((role) => role.id.toString()),
+      };
+    }
+
+    const userObjects = await this.usersModel
+      .find(where)
+      .sort(
+        sortOptions?.reduce(
+          (accumulator, sort) => ({
+            ...accumulator,
+            [sort.orderBy === 'id' ? '_id' : sort.orderBy]:
+              sort.order.toUpperCase() === 'ASC' ? 1 : -1,
+          }),
+          {},
+        ),
+      )
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+
+    return userObjects.map((userObject) => UserMapper.toDomain(userObject));
+  }
+
+  async findById(id: User['id']): Promise<NullableType<User>> {
+    const userObject = await this.usersModel.findById(id);
+    return userObject ? UserMapper.toDomain(userObject) : null;
+  }
+
+  async findByIds(ids: User['id'][]): Promise<User[]> {
+    const userObjects = await this.usersModel.find({ _id: { $in: ids } });
+    return userObjects.map((userObject) => UserMapper.toDomain(userObject));
+  }
+
+  async findByEmail(email: User['email']): Promise<NullableType<User>> {
+    if (!email) return null;
+
+    const userObject = await this.usersModel.findOne({ email });
+    return userObject ? UserMapper.toDomain(userObject) : null;
+  }
+
+  async findBySocialIdAndProvider({
+    socialId,
+    provider,
+  }: {
+    socialId: User['socialId'];
+    provider: User['provider'];
+  }): Promise<NullableType<User>> {
+    if (!socialId || !provider) return null;
+
+    const userObject = await this.usersModel.findOne({
+      socialId,
+      provider,
+    });
+
+    return userObject ? UserMapper.toDomain(userObject) : null;
+  }
+
+  async update(id: User['id'], payload: Partial<User>): Promise<User | null> {
+    const clonedPayload = { ...payload };
+    delete clonedPayload.id;
+
+    const filter = { _id: id.toString() };
+    const user = await this.usersModel.findOne(filter);
+
+    if (!user) {
+      return null;
+    }
+
+    const userObject = await this.usersModel.findOneAndUpdate(
+      filter,
+      UserMapper.toPersistence({
+        ...UserMapper.toDomain(user),
+        ...clonedPayload,
+      }),
+      { new: true },
+    );
+
+    return userObject ? UserMapper.toDomain(userObject) : null;
+  }
+
+  async remove(id: User['id']): Promise<void> {
+    await this.usersModel.deleteOne({
+      _id: id.toString(),
+    });
+  }
+}
+
+----------END------------
+
+
+File: src/users/infrastructure/persistence/user.repository.ts
+Contents:
+import { DeepPartial } from '../../../utils/types/deep-partial.type';
+import { NullableType } from '../../../utils/types/nullable.type';
+import { IPaginationOptions } from '../../../utils/types/pagination-options';
+import { User } from '../../domain/user';
+
+import { FilterUserDto, SortUserDto } from '../../dto/query-user.dto';
+
+export abstract class UserRepository {
+  abstract create(
+    data: Omit<User, 'id' | 'createdAt' | 'deletedAt' | 'updatedAt'>,
+  ): Promise<User>;
+
+  abstract findManyWithPagination({
+    filterOptions,
+    sortOptions,
+    paginationOptions,
+  }: {
+    filterOptions?: FilterUserDto | null;
+    sortOptions?: SortUserDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<User[]>;
+
+  abstract findById(id: User['id']): Promise<NullableType<User>>;
+  abstract findByIds(ids: User['id'][]): Promise<User[]>;
+  abstract findByEmail(email: User['email']): Promise<NullableType<User>>;
+  abstract findBySocialIdAndProvider({
+    socialId,
+    provider,
+  }: {
+    socialId: User['socialId'];
+    provider: User['provider'];
+  }): Promise<NullableType<User>>;
+
+  abstract update(
+    id: User['id'],
+    payload: DeepPartial<User>,
+  ): Promise<User | null>;
+
+  abstract remove(id: User['id']): Promise<void>;
+}
+
+----------END------------
+
+
+File: src/users/users.controller.ts
+Contents:
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  HttpStatus,
+  HttpCode,
+  SerializeOptions,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { AuthGuard } from '@nestjs/passport';
+
+import {
+  InfinityPaginationResponse,
+  InfinityPaginationResponseDto,
+} from '../utils/dto/infinity-pagination-response.dto';
+import { NullableType } from '../utils/types/nullable.type';
+import { QueryUserDto } from './dto/query-user.dto';
+import { User } from './domain/user';
+import { UsersService } from './users.service';
+import { RolesGuard } from '../roles/roles.guard';
+import { infinityPagination } from '../utils/infinity-pagination';
+
+@ApiBearerAuth()
+@Roles(RoleEnum.admin)
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@ApiTags('Users')
+@Controller({
+  path: 'users',
+  version: '1',
+})
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @ApiCreatedResponse({
+    type: User,
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createProfileDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createProfileDto);
+  }
+
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(User),
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findAll(
+    @Query() query: QueryUserDto,
+  ): Promise<InfinityPaginationResponseDto<User>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.usersService.findManyWithPagination({
+        filterOptions: query?.filters,
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
+      }),
+      { page, limit },
+    );
+  }
+
+  @ApiOkResponse({
+    type: User,
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
+    return this.usersService.findById(id);
+  }
+
+  @ApiOkResponse({
+    type: User,
+  })
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Patch(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  update(
+    @Param('id') id: User['id'],
+    @Body() updateProfileDto: UpdateUserDto,
+  ): Promise<User | null> {
+    return this.usersService.update(id, updateProfileDto);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: User['id']): Promise<void> {
+    return this.usersService.remove(id);
+  }
+}
+
+----------END------------
+
+
+File: src/users/users.module.ts
+Contents:
+import {
+  // common
+  Module,
+} from '@nestjs/common';
+
+import { UsersController } from './users.controller';
+
+import { UsersService } from './users.service';
+import { DocumentUserPersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
+import { FilesModule } from '../files/files.module';
+
+const infrastructurePersistenceModule = DocumentUserPersistenceModule;
+
+@Module({
+  imports: [
+    // import modules, etc.
+    infrastructurePersistenceModule,
+    FilesModule,
+  ],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService, infrastructurePersistenceModule],
+})
+export class UsersModule {}
+
+----------END------------
+
+
+File: src/users/users.service.ts
+Contents:
+import {
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { NullableType } from '../utils/types/nullable.type';
+import { FilterUserDto, SortUserDto } from './dto/query-user.dto';
+import { UserRepository } from './infrastructure/persistence/user.repository';
+import { User } from './domain/user';
+import bcrypt from 'bcryptjs';
+import { AuthProvidersEnum } from '../auth/auth-providers.enum';
+import { FilesService } from '../files/files.service';
+import { RoleEnum } from '../roles/roles.enum';
+import { StatusEnum } from '../statuses/statuses.enum';
+import { IPaginationOptions } from '../utils/types/pagination-options';
+import { FileType } from '../files/domain/file';
+import { Role } from '../roles/domain/role';
+import { Status } from '../statuses/domain/status';
+import { UpdateUserDto } from './dto/update-user.dto';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    private readonly usersRepository: UserRepository,
+    private readonly filesService: FilesService,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // Do not remove comment below.
+    // <creating-property />
+
+    let password: string | undefined = undefined;
+
+    if (createUserDto.password) {
+      const salt = await bcrypt.genSalt();
+      password = await bcrypt.hash(createUserDto.password, salt);
+    }
+
+    let email: string | null = null;
+
+    if (createUserDto.email) {
+      const userObject = await this.usersRepository.findByEmail(
+        createUserDto.email,
+      );
+      if (userObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailAlreadyExists',
+          },
+        });
+      }
+      email = createUserDto.email;
+    }
+
+    let photo: FileType | null | undefined = undefined;
+
+    if (createUserDto.photo?.id) {
+      const fileObject = await this.filesService.findById(
+        createUserDto.photo.id,
+      );
+      if (!fileObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            photo: 'imageNotExists',
+          },
+        });
+      }
+      photo = fileObject;
+    } else if (createUserDto.photo === null) {
+      photo = null;
+    }
+
+    let role: Role | undefined = undefined;
+
+    if (createUserDto.role?.id) {
+      const roleObject = Object.values(RoleEnum)
+        .map(String)
+        .includes(String(createUserDto.role.id));
+      if (!roleObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            role: 'roleNotExists',
+          },
+        });
+      }
+
+      role = {
+        id: createUserDto.role.id,
+      };
+    }
+
+    let status: Status | undefined = undefined;
+
+    if (createUserDto.status?.id) {
+      const statusObject = Object.values(StatusEnum)
+        .map(String)
+        .includes(String(createUserDto.status.id));
+      if (!statusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            status: 'statusNotExists',
+          },
+        });
+      }
+
+      status = {
+        id: createUserDto.status.id,
+      };
+    }
+
+    return this.usersRepository.create({
+      // Do not remove comment below.
+      // <creating-property-payload />
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      email: email,
+      password: password,
+      photo: photo,
+      role: role,
+      status: status,
+      provider: createUserDto.provider ?? AuthProvidersEnum.email,
+      socialId: createUserDto.socialId,
+    });
+  }
+
+  findManyWithPagination({
+    filterOptions,
+    sortOptions,
+    paginationOptions,
+  }: {
+    filterOptions?: FilterUserDto | null;
+    sortOptions?: SortUserDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<User[]> {
+    return this.usersRepository.findManyWithPagination({
+      filterOptions,
+      sortOptions,
+      paginationOptions,
+    });
+  }
+
+  findById(id: User['id']): Promise<NullableType<User>> {
+    return this.usersRepository.findById(id);
+  }
+
+  findByIds(ids: User['id'][]): Promise<User[]> {
+    return this.usersRepository.findByIds(ids);
+  }
+
+  findByEmail(email: User['email']): Promise<NullableType<User>> {
+    return this.usersRepository.findByEmail(email);
+  }
+
+  findBySocialIdAndProvider({
+    socialId,
+    provider,
+  }: {
+    socialId: User['socialId'];
+    provider: User['provider'];
+  }): Promise<NullableType<User>> {
+    return this.usersRepository.findBySocialIdAndProvider({
+      socialId,
+      provider,
+    });
+  }
+
+  async update(
+    id: User['id'],
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    // Do not remove comment below.
+    // <updating-property />
+
+    let password: string | undefined = undefined;
+
+    if (updateUserDto.password) {
+      const userObject = await this.usersRepository.findById(id);
+
+      if (userObject && userObject?.password !== updateUserDto.password) {
+        const salt = await bcrypt.genSalt();
+        password = await bcrypt.hash(updateUserDto.password, salt);
+      }
+    }
+
+    let email: string | null | undefined = undefined;
+
+    if (updateUserDto.email) {
+      const userObject = await this.usersRepository.findByEmail(
+        updateUserDto.email,
+      );
+
+      if (userObject && userObject.id !== id) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailAlreadyExists',
+          },
+        });
+      }
+
+      email = updateUserDto.email;
+    } else if (updateUserDto.email === null) {
+      email = null;
+    }
+
+    let photo: FileType | null | undefined = undefined;
+
+    if (updateUserDto.photo?.id) {
+      const fileObject = await this.filesService.findById(
+        updateUserDto.photo.id,
+      );
+      if (!fileObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            photo: 'imageNotExists',
+          },
+        });
+      }
+      photo = fileObject;
+    } else if (updateUserDto.photo === null) {
+      photo = null;
+    }
+
+    let role: Role | undefined = undefined;
+
+    if (updateUserDto.role?.id) {
+      const roleObject = Object.values(RoleEnum)
+        .map(String)
+        .includes(String(updateUserDto.role.id));
+      if (!roleObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            role: 'roleNotExists',
+          },
+        });
+      }
+
+      role = {
+        id: updateUserDto.role.id,
+      };
+    }
+
+    let status: Status | undefined = undefined;
+
+    if (updateUserDto.status?.id) {
+      const statusObject = Object.values(StatusEnum)
+        .map(String)
+        .includes(String(updateUserDto.status.id));
+      if (!statusObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            status: 'statusNotExists',
+          },
+        });
+      }
+
+      status = {
+        id: updateUserDto.status.id,
+      };
+    }
+
+    return this.usersRepository.update(id, {
+      // Do not remove comment below.
+      // <updating-property-payload />
+      firstName: updateUserDto.firstName,
+      lastName: updateUserDto.lastName,
+      email,
+      password,
+      photo,
+      role,
+      status,
+      provider: updateUserDto.provider,
+      socialId: updateUserDto.socialId,
+    });
+  }
+
+  async remove(id: User['id']): Promise<void> {
+    await this.usersRepository.remove(id);
+  }
+}
+
+----------END------------
+
