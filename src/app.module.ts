@@ -24,8 +24,11 @@ const infrastructureDatabaseModule = MongooseModule.forRootAsync({
 
 import { AdminUsersModule } from "./admin-users/admin-users.module";
 
+import { ProvincesModule } from "./provinces/provinces.module";
+
 @Module({
   imports: [
+    ProvincesModule,
     AdminUsersModule,
     ConfigModule.forRoot({
       isGlobal: true,

@@ -48,6 +48,7 @@ export class AdminUsersController {
     private readonly authService: AuthService,
   ) {}
 
+  // Admin Users Auth
   @Post("login")
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: AdminLoginResponseDto })
@@ -57,7 +58,6 @@ export class AdminUsersController {
     return this.adminUsersService.validateLogin(adminLoginDto);
   }
 
-  // Admin Users Auth
   @ApiBearerAuth()
   @Get("me")
   @UseGuards(AuthGuard("jwt"))
