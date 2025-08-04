@@ -26,8 +26,11 @@ import { AdminUsersModule } from "./admin-users/admin-users.module";
 
 import { ProvincesModule } from "./provinces/provinces.module";
 
+import { MiningSitesModule } from "./mining-sites/mining-sites.module";
+
 @Module({
   imports: [
+    MiningSitesModule,
     ProvincesModule,
     AdminUsersModule,
     ConfigModule.forRoot({

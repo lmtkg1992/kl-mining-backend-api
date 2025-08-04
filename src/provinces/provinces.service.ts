@@ -15,10 +15,7 @@ export class ProvincesService {
     private readonly provincesRepository: ProvincesRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createProvincesDto: CreateProvincesDto,
-  ) {
+  async create(createProvincesDto: CreateProvincesDto) {
     return this.provincesRepository.create({
       provinceName: createProvincesDto.provinceName,
       provinceCode: createProvincesDto.provinceCode,
