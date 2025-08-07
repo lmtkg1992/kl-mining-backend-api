@@ -38,6 +38,11 @@ async function bootstrap() {
     new WrapResponseDataInterceptor(),
   );
 
+  // Enable CORS for any origin
+  app.enableCors({
+    origin: "*",
+  });
+
   const options = new DocumentBuilder()
     .setTitle("API")
     .setDescription("API docs")
