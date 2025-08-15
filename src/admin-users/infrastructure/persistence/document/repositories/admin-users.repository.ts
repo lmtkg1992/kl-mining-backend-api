@@ -30,8 +30,12 @@ export class AdminUsersDocumentRepository implements AdminUsersRepository {
   }): Promise<AdminUsers[]> {
     const entityObjects = await this.adminUsersModel
       .find()
+      .populate({
+        path: "admin_user_group",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       AdminUsersMapper.toDomain(entityObject),
@@ -39,30 +43,51 @@ export class AdminUsersDocumentRepository implements AdminUsersRepository {
   }
 
   async findById(id: AdminUsers["id"]): Promise<NullableType<AdminUsers>> {
-    const entityObject = await this.adminUsersModel.findById(id);
+    const entityObject = await this.adminUsersModel
+      .findById(id)
+      .populate({
+        path: "admin_user_group",
+      })
+      .lean();
     return entityObject ? AdminUsersMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(ids: AdminUsers["id"][]): Promise<AdminUsers[]> {
-    const entityObjects = await this.adminUsersModel.find({
-      _id: { $in: ids },
-    });
+    const entityObjects = await this.adminUsersModel
+      .find({
+        _id: { $in: ids },
+      })
+      .populate({
+        path: "admin_user_group",
+      })
+      .lean();
     return entityObjects.map((entityObject) =>
       AdminUsersMapper.toDomain(entityObject),
     );
   }
 
   async findByUsername(username: string): Promise<NullableType<AdminUsers>> {
-    const entityObject = await this.adminUsersModel.findOne({
-      userName: username,
-    });
+    const entityObject = await this.adminUsersModel
+      .findOne({
+        userName: username,
+      })
+      .populate({
+        path: "admin_user_group",
+      })
+      .lean();
     return entityObject ? AdminUsersMapper.toDomain(entityObject) : null;
   }
 
   async findByEmail(email: string): Promise<NullableType<AdminUsers>> {
-    const entityObject = await this.adminUsersModel.findOne({
-      email: email,
-    });
+    const entityObject = await this.adminUsersModel
+      .findOne({
+        email: email,
+      })
+      .populate({
+        path: "admin_user_group",
+        select: "name status role",
+      })
+      .lean();
     return entityObject ? AdminUsersMapper.toDomain(entityObject) : null;
   }
 

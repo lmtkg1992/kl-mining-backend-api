@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { now, HydratedDocument } from "mongoose";
+import mongoose, { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
 import { UserStatusEnum } from "../../../../admin-users.enum";
 import { IsEmail } from "class-validator";
@@ -30,6 +30,13 @@ export class AdminUsersSchemaClass extends EntityDocumentHelper {
 
   @Prop({ required: false, type: String, default: null })
   password?: string | null;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AdminUserGroupsSchemaClass",
+    required: true,
+  })
+  admin_user_group: string;
 
   @Prop({ default: now })
   createdAt: Date;

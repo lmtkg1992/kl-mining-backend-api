@@ -28,6 +28,7 @@ import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.r
 import { AdminUsers } from "./domain/admin-users";
 import { UserStatusEnum } from "./admin-users.enum";
 import { JwtRefreshPayloadType } from "src/auth/strategies/types/jwt-refresh-payload.type";
+import { AdminUserGroups } from "src/admin-user-groups/domain/admin-user-groups";
 
 @Injectable()
 export class AdminUsersService {
@@ -66,6 +67,9 @@ export class AdminUsersService {
       name: createAdminUsersDto.name,
       status: createAdminUsersDto.status || UserStatusEnum.ACTIVE,
       password,
+      admin_user_group: {
+        id: createAdminUsersDto.admin_user_group,
+      } as AdminUserGroups,
     });
   }
 

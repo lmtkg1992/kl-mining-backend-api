@@ -28,8 +28,11 @@ import { ProvincesModule } from "./provinces/provinces.module";
 
 import { MiningSitesModule } from "./mining-sites/mining-sites.module";
 
+import { AdminUserGroupsModule } from "./admin-user-groups/admin-user-groups.module";
+
 @Module({
   imports: [
+    AdminUserGroupsModule,
     MiningSitesModule,
     ProvincesModule,
     AdminUsersModule,
