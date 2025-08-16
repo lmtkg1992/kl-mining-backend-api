@@ -42,6 +42,31 @@ export class AdminUsersDocumentRepository implements AdminUsersRepository {
     );
   }
 
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AdminUsers[]> {
+    const entityObjects = await this.adminUsersModel
+      .find(filter)
+      .populate({
+        path: "admin_user_group",
+      })
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit)
+      .lean();
+
+    return entityObjects.map((entityObject) =>
+      AdminUsersMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.adminUsersModel.countDocuments(filter);
+  }
+
   async findById(id: AdminUsers["id"]): Promise<NullableType<AdminUsers>> {
     const entityObject = await this.adminUsersModel
       .findById(id)

@@ -28,7 +28,6 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { AdminLoginDto } from "./dto/admin-login.dto";
@@ -36,6 +35,7 @@ import { AuthService } from "src/auth/auth.service";
 import { NullableType } from "src/utils/types/nullable.type";
 import { AdminLoginResponseDto } from "./dto/admin-login-response.dto";
 import { AdminRefreshResponseDto } from "./dto/admin-refresh-response.dto";
+import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
 
 @ApiTags("Adminusers")
 @Controller({
@@ -115,21 +115,27 @@ export class AdminUsersController {
   async findAll(
     @Query() query: FindAllAdminUsersDto,
   ): Promise<InfinityPaginationResponseDto<AdminUsers>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.adminUsersService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.adminUsersService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
   @ApiBearerAuth()

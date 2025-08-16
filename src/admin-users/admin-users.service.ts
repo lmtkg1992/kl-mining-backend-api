@@ -29,6 +29,7 @@ import { AdminUsers } from "./domain/admin-users";
 import { UserStatusEnum } from "./admin-users.enum";
 import { JwtRefreshPayloadType } from "src/auth/strategies/types/jwt-refresh-payload.type";
 import { AdminUserGroups } from "src/admin-user-groups/domain/admin-user-groups";
+import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -84,6 +85,26 @@ export class AdminUsersService {
         limit: paginationOptions.limit,
       },
     });
+  }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllAdminUsersDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter = {};
+
+    const [entites, total] = await Promise.all([
+      this.adminUsersRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.adminUsersRepository.countWithFilter(filter),
+    ]);
+
+    console.log(entites);
+    console.log(total);
+
+    return { entites, total };
   }
 
   findById(id: AdminUsers["id"]) {
