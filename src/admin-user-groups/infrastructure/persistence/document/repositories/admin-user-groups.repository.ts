@@ -7,6 +7,7 @@ import { AdminUserGroupsRepository } from "../../admin-user-groups.repository";
 import { AdminUserGroups } from "../../../../domain/admin-user-groups";
 import { AdminUserGroupsMapper } from "../mappers/admin-user-groups.mapper";
 import { IPaginationOptions } from "../../../../../utils/types/pagination-options";
+import { AdminUsersMapper } from "src/admin-users/infrastructure/persistence/document/mappers/admin-users.mapper";
 
 @Injectable()
 export class AdminUserGroupsDocumentRepository
@@ -37,6 +38,28 @@ export class AdminUserGroupsDocumentRepository
     return entityObjects.map((entityObject) =>
       AdminUserGroupsMapper.toDomain(entityObject),
     );
+  }
+
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AdminUserGroups[]> {
+    const entityObjects = await this.adminUserGroupsModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit)
+      .lean();
+
+    return entityObjects.map((entityObject) =>
+      AdminUserGroupsMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.adminUserGroupsModel.countDocuments(filter);
   }
 
   async findById(

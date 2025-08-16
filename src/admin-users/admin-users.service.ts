@@ -101,9 +101,6 @@ export class AdminUsersService {
       this.adminUsersRepository.countWithFilter(filter),
     ]);
 
-    console.log(entites);
-    console.log(total);
-
     return { entites, total };
   }
 

@@ -25,8 +25,8 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllAdminUserGroupsDto } from "./dto/find-all-admin-user-groups.dto";
+import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
 
 @ApiTags("Adminusergroups")
 @ApiBearerAuth()
@@ -55,21 +55,27 @@ export class AdminUserGroupsController {
   async findAll(
     @Query() query: FindAllAdminUserGroupsDto,
   ): Promise<InfinityPaginationResponseDto<AdminUserGroups>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.adminUserGroupsService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.adminUserGroupsService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
   @Get(":id")

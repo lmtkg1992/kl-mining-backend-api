@@ -14,6 +14,16 @@ export abstract class AdminUserGroupsRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<AdminUserGroups[]>;
 
+  abstract findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AdminUserGroups[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(
     id: AdminUserGroups["id"],
   ): Promise<NullableType<AdminUserGroups>>;

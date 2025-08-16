@@ -7,6 +7,7 @@ import { UpdateAdminUserGroupsDto } from "./dto/update-admin-user-groups.dto";
 import { AdminUserGroupsRepository } from "./infrastructure/persistence/admin-user-groups.repository";
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { AdminUserGroups } from "./domain/admin-user-groups";
+import { FindAllAdminUserGroupsDto } from "./dto/find-all-admin-user-groups.dto";
 
 @Injectable()
 export class AdminUserGroupsService {
@@ -38,6 +39,24 @@ export class AdminUserGroupsService {
       },
     });
   }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllAdminUserGroupsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter = {};
+
+    const [entites, total] = await Promise.all([
+      this.adminUserGroupsRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.adminUserGroupsRepository.countWithFilter(filter),
+    ]);
+
+    return { entites, total };
+  }
+
 
   findById(id: AdminUserGroups["id"]) {
     return this.adminUserGroupsRepository.findById(id);
