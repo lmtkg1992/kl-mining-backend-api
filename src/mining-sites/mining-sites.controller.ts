@@ -25,8 +25,8 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -53,21 +53,27 @@ export class MiningSitesController {
   async findAll(
     @Query() query: FindAllMiningSitesDto,
   ): Promise<InfinityPaginationResponseDto<MiningSites>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.miningSitesService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.miningSitesService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
   @Get(":id")

@@ -7,6 +7,7 @@ import { UpdateMiningSitesDto } from "./dto/update-mining-sites.dto";
 import { MiningSitesRepository } from "./infrastructure/persistence/mining-sites.repository";
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { MiningSites } from "./domain/mining-sites";
+import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -35,6 +36,23 @@ export class MiningSitesService {
         limit: paginationOptions.limit,
       },
     });
+  }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllMiningSitesDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter = {};
+
+    const [entites, total] = await Promise.all([
+      this.miningSitesRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.miningSitesRepository.countWithFilter(filter),
+    ]);
+
+    return { entites, total };
   }
 
   findById(id: MiningSites["id"]) {

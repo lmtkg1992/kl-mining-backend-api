@@ -37,6 +37,27 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
     );
   }
 
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<MiningSites[]> {
+    const entityObjects = await this.miningSitesModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+
+    return entityObjects.map((entityObject) =>
+      MiningSitesMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.miningSitesModel.countDocuments(filter);
+  }
+
   async findById(id: MiningSites["id"]): Promise<NullableType<MiningSites>> {
     const entityObject = await this.miningSitesModel.findById(id);
     return entityObject ? MiningSitesMapper.toDomain(entityObject) : null;

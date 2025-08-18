@@ -14,6 +14,16 @@ export abstract class MiningSitesRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<MiningSites[]>;
 
+  abstract findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<MiningSites[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(id: MiningSites["id"]): Promise<NullableType<MiningSites>>;
 
   abstract findByIds(ids: MiningSites["id"][]): Promise<MiningSites[]>;
