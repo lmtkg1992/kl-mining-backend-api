@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { now, HydratedDocument } from "mongoose";
+import mongoose, { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
 
 export type MiningSitesSchemaDocument =
@@ -17,10 +17,17 @@ export class MiningSitesSchemaClass extends EntityDocumentHelper {
   siteName: string;
 
   @Prop({ required: true, type: String })
-  ownerUserId: string;
+  status: string;
 
   @Prop({ required: true, type: String })
-  provinceId: string;
+  ownerUserId: string;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ProvincesSchemaClass",
+    required: true,
+  })
+  province: string;
 
   @Prop({ required: false, type: String })
   boundaryPolygon: string;

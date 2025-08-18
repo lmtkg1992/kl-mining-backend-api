@@ -8,6 +8,7 @@ import { MiningSitesRepository } from "./infrastructure/persistence/mining-sites
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { MiningSites } from "./domain/mining-sites";
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
+import { Provinces } from "../provinces/domain/provinces";
 
 @Injectable()
 export class MiningSitesService {
@@ -19,8 +20,11 @@ export class MiningSitesService {
   async create(createMiningSitesDto: CreateMiningSitesDto) {
     return this.miningSitesRepository.create({
       siteName: createMiningSitesDto.siteName,
+      status: createMiningSitesDto.status,
       ownerUserId: createMiningSitesDto.ownerUserId,
-      provinceId: createMiningSitesDto.provinceId,
+      province: {
+        id: createMiningSitesDto.province,
+      } as Provinces,
       boundaryPolygon: createMiningSitesDto.boundaryPolygon,
     });
   }

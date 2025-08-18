@@ -29,8 +29,12 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
   }): Promise<MiningSites[]> {
     const entityObjects = await this.miningSitesModel
       .find()
+      .populate({
+        path: "province",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       MiningSitesMapper.toDomain(entityObject),
@@ -46,8 +50,12 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
   }): Promise<MiningSites[]> {
     const entityObjects = await this.miningSitesModel
       .find(filter)
+      .populate({
+        path: "province",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       MiningSitesMapper.toDomain(entityObject),
@@ -59,14 +67,24 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
   }
 
   async findById(id: MiningSites["id"]): Promise<NullableType<MiningSites>> {
-    const entityObject = await this.miningSitesModel.findById(id);
+    const entityObject = await this.miningSitesModel
+      .findById(id)
+      .populate({
+        path: "province",
+      })
+      .lean();
     return entityObject ? MiningSitesMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(ids: MiningSites["id"][]): Promise<MiningSites[]> {
-    const entityObjects = await this.miningSitesModel.find({
-      _id: { $in: ids },
-    });
+    const entityObjects = await this.miningSitesModel
+      .find({
+        _id: { $in: ids },
+      })
+      .populate({
+        path: "province",
+      })
+      .lean();
     return entityObjects.map((entityObject) =>
       MiningSitesMapper.toDomain(entityObject),
     );

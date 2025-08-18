@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsMongoId } from "class-validator";
 
 export class CreateMiningSitesDto {
   @ApiProperty()
@@ -9,13 +9,18 @@ export class CreateMiningSitesDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  ownerUserId: string;
+  @IsOptional()
+  status: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  provinceId: string;
+  ownerUserId: string;
+
+  @ApiProperty({ example: "66c9e5f23e86c97d3ab7c9b1" })
+  @IsMongoId()
+  @IsNotEmpty()
+  province: string;
 
   @ApiProperty()
   @IsString()
