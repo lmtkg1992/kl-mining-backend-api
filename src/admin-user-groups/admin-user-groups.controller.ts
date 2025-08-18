@@ -64,13 +64,11 @@ export class AdminUserGroupsController {
       limit = 50;
     }
 
-    const data = await this.adminUserGroupsService.findAllWithFilterAndPagination(
-      query,
-      {
+    const data =
+      await this.adminUserGroupsService.findAllWithFilterAndPagination(query, {
         page,
         limit,
-      },
-    );
+      });
 
     return infinityPaginationWithMetadata(data.entites, data.total, {
       page,

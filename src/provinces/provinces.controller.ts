@@ -25,7 +25,7 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
 
 @ApiTags("Provinces")
@@ -53,21 +53,27 @@ export class ProvincesController {
   async findAll(
     @Query() query: FindAllProvincesDto,
   ): Promise<InfinityPaginationResponseDto<Provinces>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.provincesService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.provincesService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
   @Get(":id")

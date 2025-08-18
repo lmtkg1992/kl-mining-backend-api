@@ -57,7 +57,6 @@ export class AdminUserGroupsService {
     return { entites, total };
   }
 
-
   findById(id: AdminUserGroups["id"]) {
     return this.adminUserGroupsRepository.findById(id);
   }

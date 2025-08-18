@@ -37,6 +37,27 @@ export class ProvincesDocumentRepository implements ProvincesRepository {
     );
   }
 
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<Provinces[]> {
+    const entityObjects = await this.provincesModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+
+    return entityObjects.map((entityObject) =>
+      ProvincesMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.provincesModel.countDocuments(filter);
+  }
+
   async findById(id: Provinces["id"]): Promise<NullableType<Provinces>> {
     const entityObject = await this.provincesModel.findById(id);
     return entityObject ? ProvincesMapper.toDomain(entityObject) : null;

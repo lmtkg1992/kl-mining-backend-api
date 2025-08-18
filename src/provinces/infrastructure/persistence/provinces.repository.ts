@@ -14,6 +14,15 @@ export abstract class ProvincesRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Provinces[]>;
 
+  abstract findAllWithFilterAndPagination({
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<Provinces[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(id: Provinces["id"]): Promise<NullableType<Provinces>>;
 
   abstract findByIds(ids: Provinces["id"][]): Promise<Provinces[]>;

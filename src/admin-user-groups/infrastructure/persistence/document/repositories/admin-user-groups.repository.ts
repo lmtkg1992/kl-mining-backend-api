@@ -7,7 +7,6 @@ import { AdminUserGroupsRepository } from "../../admin-user-groups.repository";
 import { AdminUserGroups } from "../../../../domain/admin-user-groups";
 import { AdminUserGroupsMapper } from "../mappers/admin-user-groups.mapper";
 import { IPaginationOptions } from "../../../../../utils/types/pagination-options";
-import { AdminUsersMapper } from "src/admin-users/infrastructure/persistence/document/mappers/admin-users.mapper";
 
 @Injectable()
 export class AdminUserGroupsDocumentRepository

@@ -7,6 +7,7 @@ import { UpdateProvincesDto } from "./dto/update-provinces.dto";
 import { ProvincesRepository } from "./infrastructure/persistence/provinces.repository";
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { Provinces } from "./domain/provinces";
+import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
 
 @Injectable()
 export class ProvincesService {
@@ -34,6 +35,23 @@ export class ProvincesService {
         limit: paginationOptions.limit,
       },
     });
+  }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllProvincesDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter = {};
+
+    const [entites, total] = await Promise.all([
+      this.provincesRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.provincesRepository.countWithFilter(filter),
+    ]);
+
+    return { entites, total };
   }
 
   findById(id: Provinces["id"]) {
