@@ -27,10 +27,12 @@ import {
 } from "../utils/dto/infinity-pagination-response.dto";
 import { FindAllAdminUserGroupsDto } from "./dto/find-all-admin-user-groups.dto";
 import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 
 @ApiTags("Adminusergroups")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(AuthGuard("jwt"), PermissionsGuard)
 @Controller({
   path: "admin-user-groups",
   version: "1",
@@ -40,6 +42,7 @@ export class AdminUserGroupsController {
     private readonly adminUserGroupsService: AdminUserGroupsService,
   ) {}
 
+  @RequirePermissions("admin_user_groups::create")
   @Post()
   @ApiCreatedResponse({
     type: AdminUserGroups,
@@ -48,7 +51,8 @@ export class AdminUserGroupsController {
     return this.adminUserGroupsService.create(createAdminUserGroupsDto);
   }
 
-  @Get()
+  @RequirePermissions("admin_user_groups::list")
+  @Get("list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(AdminUserGroups),
   })
@@ -76,7 +80,8 @@ export class AdminUserGroupsController {
     });
   }
 
-  @Get(":id")
+  @RequirePermissions("admin_user_groups::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -89,7 +94,8 @@ export class AdminUserGroupsController {
     return this.adminUserGroupsService.findById(id);
   }
 
-  @Patch(":id")
+  @RequirePermissions("admin_user_groups::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -105,7 +111,8 @@ export class AdminUserGroupsController {
     return this.adminUserGroupsService.update(id, updateAdminUserGroupsDto);
   }
 
-  @Delete(":id")
+  @RequirePermissions("admin_user_groups::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,

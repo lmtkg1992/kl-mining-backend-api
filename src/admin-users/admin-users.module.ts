@@ -9,6 +9,7 @@ import { DocumentAdminUsersPersistenceModule } from "./infrastructure/persistenc
 import { AuthModule } from "src/auth/auth.module";
 import { SessionModule } from "src/session/session.module";
 import { JwtModule } from "@nestjs/jwt";
+import { PermissionsModule } from "src/permissions/permissions.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JwtModule } from "@nestjs/jwt";
     SessionModule,
     JwtModule.register({}),
     forwardRef(() => AuthModule),
+    PermissionsModule,
   ],
   controllers: [AdminUsersController],
   providers: [AdminUsersService],

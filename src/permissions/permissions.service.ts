@@ -8,13 +8,30 @@ import { PermissionsRepository } from "./infrastructure/persistence/permissions.
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { Permissions } from "./domain/permissions";
 import { FindAllPermissionsDto } from "./dto/find-all-permissions.dto";
+import { AdminUserGroupsRepository } from "src/admin-user-groups/infrastructure/persistence/admin-user-groups.repository";
 
 @Injectable()
 export class PermissionsService {
   constructor(
     // Dependencies here
     private readonly permissionsRepository: PermissionsRepository,
+    private readonly adminUserGroupsRepository: AdminUserGroupsRepository,
   ) {}
+
+  async groupHasAnyKeys(groupId: string, keys: string[]) {
+    if (!groupId) return false;
+    const group = await this.adminUserGroupsRepository.findById(groupId);
+    if (!group) return false;
+    // Get all permissions and map to resource keys
+    const permissions = await this.permissionsRepository.findByIds(
+      Array.isArray(group.permission_ids)
+        ? group.permission_ids.map(String)
+        : [],
+    );
+    const permissionKeys = permissions.map((p) => p.resourceKey);
+    const set = new Set(permissionKeys);
+    return keys.some((k) => set.has(k));
+  }
 
   async create(createPermissionsDto: CreatePermissionsDto) {
     // Do not remove comment below.
@@ -24,6 +41,7 @@ export class PermissionsService {
       name: createPermissionsDto.name,
       method: createPermissionsDto.method,
       path: createPermissionsDto.path,
+      resourceKey: createPermissionsDto.resource_key,
     });
   }
 

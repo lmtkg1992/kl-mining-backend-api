@@ -21,6 +21,11 @@ export class Permissions {
   })
   path: string;
 
+  @ApiProperty({
+    type: String,
+  })
+  resourceKey: string;
+
   @ApiProperty()
   createdAt: Date;
 

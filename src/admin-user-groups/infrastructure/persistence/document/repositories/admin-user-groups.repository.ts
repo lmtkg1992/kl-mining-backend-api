@@ -31,8 +31,12 @@ export class AdminUserGroupsDocumentRepository
   }): Promise<AdminUserGroups[]> {
     const entityObjects = await this.adminUserGroupsModel
       .find()
+      .populate({
+        path: "permission_ids",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       AdminUserGroupsMapper.toDomain(entityObject),
@@ -48,6 +52,9 @@ export class AdminUserGroupsDocumentRepository
   }): Promise<AdminUserGroups[]> {
     const entityObjects = await this.adminUserGroupsModel
       .find(filter)
+      .populate({
+        path: "permission_ids",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();
@@ -64,14 +71,20 @@ export class AdminUserGroupsDocumentRepository
   async findById(
     id: AdminUserGroups["id"],
   ): Promise<NullableType<AdminUserGroups>> {
-    const entityObject = await this.adminUserGroupsModel.findById(id);
+    const entityObject = await this.adminUserGroupsModel.findById(id).populate({
+      path: "permission_ids",
+    });
     return entityObject ? AdminUserGroupsMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(ids: AdminUserGroups["id"][]): Promise<AdminUserGroups[]> {
-    const entityObjects = await this.adminUserGroupsModel.find({
-      _id: { $in: ids },
-    });
+    const entityObjects = await this.adminUserGroupsModel
+      .find({
+        _id: { $in: ids },
+      })
+      .populate({
+        path: "permission_ids",
+      });
     return entityObjects.map((entityObject) =>
       AdminUserGroupsMapper.toDomain(entityObject),
     );

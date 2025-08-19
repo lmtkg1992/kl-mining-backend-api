@@ -8,6 +8,7 @@ export class PermissionsMapper {
     domainEntity.name = raw.name;
     domainEntity.method = raw.method;
     domainEntity.path = raw.path;
+    domainEntity.resourceKey = raw.resourceKey;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
 
@@ -24,6 +25,7 @@ export class PermissionsMapper {
     persistenceSchema.name = domainEntity.name;
     persistenceSchema.method = domainEntity.method;
     persistenceSchema.path = domainEntity.path;
+    persistenceSchema.resourceKey = domainEntity.resourceKey;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 

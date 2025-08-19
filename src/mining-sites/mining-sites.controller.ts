@@ -27,10 +27,12 @@ import {
 } from "../utils/dto/infinity-pagination-response.dto";
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
+import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(AuthGuard("jwt"), PermissionsGuard)
 @Controller({
   path: "mining-sites",
   version: "1",
@@ -38,6 +40,7 @@ import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-wit
 export class MiningSitesController {
   constructor(private readonly miningSitesService: MiningSitesService) {}
 
+  @RequirePermissions("mining_sites::create")
   @Post()
   @ApiCreatedResponse({
     type: MiningSites,
@@ -46,7 +49,8 @@ export class MiningSitesController {
     return this.miningSitesService.create(createMiningSitesDto);
   }
 
-  @Get()
+  @RequirePermissions("mining_sites::list")
+  @Get("list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(MiningSites),
   })
@@ -76,7 +80,8 @@ export class MiningSitesController {
     });
   }
 
-  @Get(":id")
+  @RequirePermissions("mining_sites::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -89,7 +94,8 @@ export class MiningSitesController {
     return this.miningSitesService.findById(id);
   }
 
-  @Patch(":id")
+  @RequirePermissions("mining_sites::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -105,7 +111,8 @@ export class MiningSitesController {
     return this.miningSitesService.update(id, updateMiningSitesDto);
   }
 
-  @Delete(":id")
+  @RequirePermissions("mining_sites::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,

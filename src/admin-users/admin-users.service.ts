@@ -30,6 +30,7 @@ import { UserStatusEnum } from "./admin-users.enum";
 import { JwtRefreshPayloadType } from "src/auth/strategies/types/jwt-refresh-payload.type";
 import { AdminUserGroups } from "src/admin-user-groups/domain/admin-user-groups";
 import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
+import { PermissionsService } from "src/permissions/permissions.service";
 
 @Injectable()
 export class AdminUsersService {
@@ -39,6 +40,7 @@ export class AdminUsersService {
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService<AllConfigType>,
     private readonly jwtService: JwtService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {
@@ -135,8 +137,25 @@ export class AdminUsersService {
   }
 
   // Admin Users Auth
-  me(user: JwtPayloadType) {
-    return this.adminUsersRepository.findById(user.id.toString());
+  async me(user: JwtPayloadType) {
+    const userData = await this.adminUsersRepository.findById(
+      user.id.toString(),
+    );
+    let permissionIds: string[] = [];
+    if (userData?.admin_user_group?.permission_ids) {
+      if (Array.isArray(userData.admin_user_group.permission_ids)) {
+        permissionIds = userData.admin_user_group.permission_ids.map(String);
+      } else if (typeof userData.admin_user_group.permission_ids === "string") {
+        permissionIds = JSON.parse(userData.admin_user_group.permission_ids);
+      }
+    }
+
+    const permissions = await this.permissionsService.findByIds(permissionIds);
+
+    userData!.admin_user_group!.permission_ids = permissions.map(
+      (permission) => permission.resourceKey,
+    );
+    return userData;
   }
 
   async refreshToken(

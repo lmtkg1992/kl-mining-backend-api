@@ -27,10 +27,12 @@ import {
 } from "../utils/dto/infinity-pagination-response.dto";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(AuthGuard("jwt"), PermissionsGuard)
 @Controller({
   path: "provinces",
   version: "1",
@@ -38,6 +40,7 @@ import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
 export class ProvincesController {
   constructor(private readonly provincesService: ProvincesService) {}
 
+  @RequirePermissions("provinces::create")
   @Post()
   @ApiCreatedResponse({
     type: Provinces,
@@ -46,7 +49,8 @@ export class ProvincesController {
     return this.provincesService.create(createProvincesDto);
   }
 
-  @Get()
+  @RequirePermissions("provinces::list")
+  @Get("list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(Provinces),
   })
@@ -76,7 +80,8 @@ export class ProvincesController {
     });
   }
 
-  @Get(":id")
+  @RequirePermissions("provinces::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -89,7 +94,8 @@ export class ProvincesController {
     return this.provincesService.findById(id);
   }
 
-  @Patch(":id")
+  @RequirePermissions("provinces::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -105,7 +111,8 @@ export class ProvincesController {
     return this.provincesService.update(id, updateProvincesDto);
   }
 
-  @Delete(":id")
+  @RequirePermissions("provinces::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,

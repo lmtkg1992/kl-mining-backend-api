@@ -24,4 +24,11 @@ export class CreatePermissionsDto {
   @IsString()
   @IsNotEmpty()
   path: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  resource_key: string;
 }

@@ -22,6 +22,9 @@ export class PermissionsSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true, type: String })
   path: string;
 
+  @Prop({ required: true, type: String })
+  resourceKey: string;
+
   @Prop({ default: now })
   createdAt: Date;
 

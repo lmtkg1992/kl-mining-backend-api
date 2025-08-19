@@ -36,8 +36,11 @@ import { NullableType } from "src/utils/types/nullable.type";
 import { AdminLoginResponseDto } from "./dto/admin-login-response.dto";
 import { AdminRefreshResponseDto } from "./dto/admin-refresh-response.dto";
 import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
+import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 
 @ApiTags("Adminusers")
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard("jwt"), PermissionsGuard)
 @Controller({
   path: "admin-users",
   version: "1",
@@ -98,6 +101,7 @@ export class AdminUsersController {
   }
 
   // Admin Users CRUD
+  @RequirePermissions("admin_users::create")
   @Post()
   @ApiCreatedResponse({
     type: AdminUsers,
@@ -108,7 +112,8 @@ export class AdminUsersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"))
-  @Get()
+  @RequirePermissions("admin_users::list")
+  @Get("list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(AdminUsers),
   })
@@ -140,7 +145,8 @@ export class AdminUsersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"))
-  @Get(":id")
+  @RequirePermissions("admin_users::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -155,7 +161,8 @@ export class AdminUsersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"))
-  @Patch(":id")
+  @RequirePermissions("admin_users::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -173,7 +180,8 @@ export class AdminUsersController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"))
-  @Delete(":id")
+  @RequirePermissions("admin_users::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,
