@@ -31,6 +31,8 @@ import { JwtRefreshPayloadType } from "src/auth/strategies/types/jwt-refresh-pay
 import { AdminUserGroups } from "src/admin-user-groups/domain/admin-user-groups";
 import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
 import { PermissionsService } from "src/permissions/permissions.service";
+import { ProvincesService } from "src/provinces/provinces.service";
+import { MiningSitesService } from "src/mining-sites/mining-sites.service";
 
 @Injectable()
 export class AdminUsersService {
@@ -41,6 +43,8 @@ export class AdminUsersService {
     private readonly configService: ConfigService<AllConfigType>,
     private readonly jwtService: JwtService,
     private readonly permissionsService: PermissionsService,
+    private readonly provincesService: ProvincesService,
+    private readonly miningSitesService: MiningSitesService,
   ) {}
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {
@@ -141,6 +145,8 @@ export class AdminUsersService {
     const userData = await this.adminUsersRepository.findById(
       user.id.toString(),
     );
+
+    // Get all permissions and map to resource keys
     let permissionIds: string[] = [];
     if (userData?.admin_user_group?.permission_ids) {
       if (Array.isArray(userData.admin_user_group.permission_ids)) {
@@ -149,12 +155,40 @@ export class AdminUsersService {
         permissionIds = JSON.parse(userData.admin_user_group.permission_ids);
       }
     }
-
     const permissions = await this.permissionsService.findByIds(permissionIds);
 
-    userData!.admin_user_group!.permission_ids = permissions.map(
+    (userData!.admin_user_group! as any).permissions = permissions.map(
       (permission) => permission.resourceKey,
     );
+
+    // Get all provinces
+    let provinceIds: string[] = [];
+    if (userData?.admin_user_group?.province_ids) {
+      if (Array.isArray(userData.admin_user_group.province_ids)) {
+        provinceIds = userData.admin_user_group.province_ids.map(String);
+      } else if (typeof userData.admin_user_group.province_ids === "string") {
+        provinceIds = JSON.parse(userData.admin_user_group.province_ids);
+      }
+    }
+
+    const provinces = await this.provincesService.findByIds(provinceIds);
+
+    (userData!.admin_user_group! as any).provinces = provinces;
+
+    // Get all mining sites
+    let miningSiteIds: string[] = [];
+    if (userData?.admin_user_group?.site_ids) {
+      if (Array.isArray(userData.admin_user_group.site_ids)) {
+        miningSiteIds = userData.admin_user_group.site_ids.map(String);
+      } else if (typeof userData.admin_user_group.site_ids === "string") {
+        miningSiteIds = JSON.parse(userData.admin_user_group.site_ids);
+      }
+    }
+
+    const miningSites = await this.miningSitesService.findByIds(miningSiteIds);
+
+    (userData!.admin_user_group! as any).mining_sites = miningSites;
+
     return userData;
   }
 

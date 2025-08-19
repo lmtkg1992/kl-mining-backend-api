@@ -1,6 +1,7 @@
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from "@nestjs/common";
 import { ProvincesService } from "./provinces.service";
 import { ProvincesController } from "./provinces.controller";
@@ -13,7 +14,7 @@ import { AdminUsersModule } from "../admin-users/admin-users.module";
     // do not remove this comment
     DocumentProvincesPersistenceModule,
     PermissionsModule,
-    AdminUsersModule,
+    forwardRef(() => AdminUsersModule),
   ],
   controllers: [ProvincesController],
   providers: [ProvincesService],

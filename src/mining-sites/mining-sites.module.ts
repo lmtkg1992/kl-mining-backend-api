@@ -1,6 +1,7 @@
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from "@nestjs/common";
 import { MiningSitesService } from "./mining-sites.service";
 import { MiningSitesController } from "./mining-sites.controller";
@@ -13,7 +14,7 @@ import { AdminUsersModule } from "../admin-users/admin-users.module";
     // do not remove this comment
     DocumentMiningSitesPersistenceModule,
     PermissionsModule,
-    AdminUsersModule,
+    forwardRef(() => AdminUsersModule),
   ],
   controllers: [MiningSitesController],
   providers: [MiningSitesService],
