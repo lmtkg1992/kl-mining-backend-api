@@ -4,7 +4,6 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsString,
   MaxLength,
 } from "class-validator";
@@ -26,20 +25,23 @@ export class CreateAdminUserGroupsDto {
   description: string;
 
   @ApiProperty({
-    enum: ["super_admin", "provincial_official", "site_owner"],
+    enum: ["admin", "provincial_official", "site_owner"],
   })
-  @IsEnum(["super_admin", "provincial_official", "site_owner"])
-  role: "super_admin" | "provincial_official" | "site_owner";
+  @IsEnum(["admin", "provincial_official", "site_owner"])
+  role: "admin" | "provincial_official" | "site_owner";
 
-  @ApiProperty({ type: [Number], example: [1, 2, 3] })
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
   @IsArray()
-  @Type(() => Number)
-  @IsNumber({}, { each: true })
-  site_ids: number[];
+  @Type(() => String)
+  site_ids: string[];
 
-  @ApiProperty({ type: [Number], example: [1, 2, 3] })
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
   @IsArray()
-  @Type(() => Number)
-  @IsNumber({}, { each: true })
-  province_ids: number[];
+  @Type(() => String)
+  province_ids: string[];
+
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
+  @IsArray()
+  @Type(() => String)
+  permission_ids: string[];
 }

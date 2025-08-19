@@ -24,15 +24,18 @@ export class AdminUserGroupsSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     required: true,
-    enum: ["super_admin", "provincial_official", "site_owner"],
+    enum: ["admin", "provincial_official", "site_owner"],
   })
-  role: "super_admin" | "provincial_official" | "site_owner";
+  role: "admin" | "provincial_official" | "site_owner";
 
   @Prop({ type: String, default: "[]" })
   site_ids: string;
 
   @Prop({ type: String, default: "[]" })
   province_ids: string;
+
+  @Prop({ type: String, default: "[]" })
+  permission_ids: string;
 
   @Prop({ default: now })
   createdAt: Date;

@@ -24,6 +24,7 @@ export class AdminUserGroupsService {
       role: createAdminUserGroupsDto.role,
       site_ids: createAdminUserGroupsDto.site_ids,
       province_ids: createAdminUserGroupsDto.province_ids,
+      permission_ids: createAdminUserGroupsDto.permission_ids,
     });
   }
 

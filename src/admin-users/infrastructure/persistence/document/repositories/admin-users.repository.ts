@@ -16,7 +16,6 @@ export class AdminUsersDocumentRepository implements AdminUsersRepository {
   ) {}
 
   async create(data: AdminUsers): Promise<AdminUsers> {
-    console.log("data repository", data);
     const persistenceModel = AdminUsersMapper.toPersistence(data);
     const createdEntity = new this.adminUsersModel(persistenceModel);
     const entityObject = await createdEntity.save();

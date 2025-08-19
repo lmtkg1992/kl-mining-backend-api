@@ -16,15 +16,18 @@ export class AdminUserGroups {
   description: string;
 
   @ApiProperty({
-    enum: ["super_admin", "provincial_official", "site_owner"],
+    enum: ["admin", "provincial_official", "site_owner"],
   })
-  role: "super_admin" | "provincial_official" | "site_owner";
+  role: "admin" | "provincial_official" | "site_owner";
 
-  @ApiProperty({ type: [Number], example: [1, 2, 3] })
-  site_ids: number[];
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
+  site_ids: string[];
 
-  @ApiProperty({ type: [Number], example: [1, 2, 3] })
-  province_ids: number[];
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
+  province_ids: string[];
+
+  @ApiProperty({ type: [String], example: ["1", "2", "3"] })
+  permission_ids: string[];
 
   @ApiProperty()
   createdAt: Date;

@@ -11,6 +11,7 @@ export class AdminUserGroupsMapper {
     domainEntity.role = raw.role;
     domainEntity.site_ids = JSON.parse(raw.site_ids);
     domainEntity.province_ids = JSON.parse(raw.province_ids);
+    domainEntity.permission_ids = JSON.parse(raw.permission_ids);
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
 
@@ -30,6 +31,9 @@ export class AdminUserGroupsMapper {
     persistenceSchema.role = domainEntity.role;
     persistenceSchema.site_ids = JSON.stringify(domainEntity.site_ids);
     persistenceSchema.province_ids = JSON.stringify(domainEntity.province_ids);
+    persistenceSchema.permission_ids = JSON.stringify(
+      domainEntity.permission_ids,
+    );
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 

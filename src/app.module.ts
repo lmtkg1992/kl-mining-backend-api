@@ -30,8 +30,11 @@ import { MiningSitesModule } from "./mining-sites/mining-sites.module";
 
 import { AdminUserGroupsModule } from "./admin-user-groups/admin-user-groups.module";
 
+import { PermissionsModule } from "./permissions/permissions.module";
+
 @Module({
   imports: [
+    PermissionsModule,
     AdminUserGroupsModule,
     MiningSitesModule,
     ProvincesModule,
