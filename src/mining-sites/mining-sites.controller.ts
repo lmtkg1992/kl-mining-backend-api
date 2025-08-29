@@ -30,6 +30,7 @@ import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-wit
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
 import { PermissionsGuard } from "src/common/guards/permissions.guard";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
+import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -130,4 +131,14 @@ export class MiningSitesController {
   async getStatistics(@Param("id") id: string) {
     return this.miningSitesService.getStatistics(id);
   }
+
+  @RequirePermissions("mining_sites::transport")
+  @Get("transport/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: MiningSitesTransportResponseDto })
+  @RequirePermissions("mining_sites::transport")
+  async getTransport(@Param("id") id: string) {
+    return this.miningSitesService.getTransport(id);
+  }
+
 }

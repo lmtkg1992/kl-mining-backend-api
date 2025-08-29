@@ -10,6 +10,7 @@ import { MiningSites } from "./domain/mining-sites";
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { Provinces } from "../provinces/domain/provinces";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
+import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -114,4 +115,42 @@ export class MiningSitesService {
       },
     };
   }
+
+  async getTransport(siteId: string): Promise<MiningSitesTransportResponseDto> {
+    return {
+      siteId,
+      lastUpdated: new Date().toISOString(),
+      hourlyData: [
+        { hour: "6 AM", value: 7.0 },
+        { hour: "7 AM", value: 7.5 },
+        { hour: "8 AM", value: 8.0 },
+        { hour: "9 AM", value: 8.5 },
+        { hour: "10 AM", value: 9.2 },
+        { hour: "11 AM", value: 8.8 },
+        { hour: "12 PM", value: 8.0 },
+        { hour: "1 PM", value: 7.9 },
+        { hour: "2 PM", value: 8.1 },
+        { hour: "3 PM", value: 8.3 },
+        { hour: "4 PM", value: 7.7 },
+        { hour: "5 PM", value: 7.4 },
+      ],
+      currentHour: {
+        value: 8.2,
+        unit: "tons",
+      },
+      dailyAverage: {
+        value: 7.6,
+        unit: "tons/hr",
+      },
+      peakHours: {
+        range: "10-12 AM",
+      },
+      efficiency: {
+        percentage: 94.3,
+      },
+    };
+  }
+
+
+  
 }
