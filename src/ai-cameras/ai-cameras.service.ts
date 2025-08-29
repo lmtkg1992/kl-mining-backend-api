@@ -23,8 +23,13 @@ export class AiCamerasService {
     // <creating-property />
 
     return this.aiCamerasRepository.create({
-      // Do not remove comment below.
-      // <creating-property-payload />
+      code: createAiCamerasDto.code,
+      site_id: createAiCamerasDto.site_id,
+      type: createAiCamerasDto.type,
+      location_description: createAiCamerasDto.location_description,
+      ai_features: createAiCamerasDto.ai_features,
+      status: createAiCamerasDto.status,
+      installed_at: createAiCamerasDto.installed_at,
     });
   }
 

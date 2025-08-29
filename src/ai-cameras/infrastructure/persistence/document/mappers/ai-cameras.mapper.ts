@@ -5,6 +5,13 @@ export class AiCamerasMapper {
   public static toDomain(raw: AiCamerasSchemaClass): AiCameras {
     const domainEntity = new AiCameras();
     domainEntity.id = raw._id.toString();
+    domainEntity.code = raw.code;
+    domainEntity.site_id = raw.site_id;
+    domainEntity.type = raw.type;
+    domainEntity.location_description = raw.location_description;
+    domainEntity.ai_features = raw.ai_features;
+    domainEntity.status = raw.status;
+    domainEntity.installed_at = raw.installed_at;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
 
@@ -16,6 +23,13 @@ export class AiCamerasMapper {
     if (domainEntity.id) {
       persistenceSchema._id = domainEntity.id;
     }
+    persistenceSchema.code = domainEntity.code;
+    persistenceSchema.site_id = domainEntity.site_id;
+    persistenceSchema.type = domainEntity.type;
+    persistenceSchema.location_description = domainEntity.location_description;
+    persistenceSchema.ai_features = domainEntity.ai_features;
+    persistenceSchema.status = domainEntity.status;
+    persistenceSchema.installed_at = domainEntity.installed_at;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 
