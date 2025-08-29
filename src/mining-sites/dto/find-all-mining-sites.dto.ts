@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsMongoId, IsNumber, IsOptional } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class FindAllMiningSitesDto {
@@ -14,4 +14,9 @@ export class FindAllMiningSitesDto {
   @IsNumber()
   @IsOptional()
   limit?: number;
+
+  @ApiPropertyOptional({ example: "66c9e5f23e86c97d3ab7c9b1" })
+  @IsMongoId()
+  @IsOptional()
+  province_id?: string;
 }

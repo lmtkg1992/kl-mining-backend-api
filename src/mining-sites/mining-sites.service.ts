@@ -48,6 +48,10 @@ export class MiningSitesService {
   ) {
     const filter = {};
 
+    if (query.province_id) {
+      filter["province"] = query.province_id;
+    }
+
     const [entites, total] = await Promise.all([
       this.miningSitesRepository.findAllWithFilterAndPagination({
         filter,
