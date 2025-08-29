@@ -97,7 +97,7 @@ export class MiningSitesService {
     query: FindStatisticsDto,
   ): Promise<MiningSitesStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
-    
+
     return {
       siteId,
       lastUpdated: new Date().toISOString(),
@@ -156,7 +156,4 @@ export class MiningSitesService {
       },
     };
   }
-
-
-  
 }

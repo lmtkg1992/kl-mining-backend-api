@@ -8,7 +8,13 @@ export class MiningSitesStatisticsResponseDto {
   @ApiProperty()
   lastUpdated: string;
 
-  @ApiProperty({ example: { totalSites: 1, operationalSites: 1, statusText: "All system operational" } })
+  @ApiProperty({
+    example: {
+      totalSites: 1,
+      operationalSites: 1,
+      statusText: "All system operational",
+    },
+  })
   siteStatus: {
     totalSites: number;
     operationalSites: number;

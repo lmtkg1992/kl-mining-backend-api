@@ -135,7 +135,7 @@ export class MiningSitesController {
   ) {
     return this.miningSitesService.getStatistics(id, query);
   }
-  
+
   @RequirePermissions("mining_sites::transport")
   @Get("transport/:id")
   @ApiParam({ name: "id", type: String, required: true })
@@ -144,5 +144,4 @@ export class MiningSitesController {
   async getTransport(@Param("id") id: string) {
     return this.miningSitesService.getTransport(id);
   }
-
 }
