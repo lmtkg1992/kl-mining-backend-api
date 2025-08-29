@@ -32,8 +32,11 @@ import { AdminUserGroupsModule } from "./admin-user-groups/admin-user-groups.mod
 
 import { PermissionsModule } from "./permissions/permissions.module";
 
+import { AiCamerasModule } from "./ai-cameras/ai-cameras.module";
+
 @Module({
   imports: [
+    AiCamerasModule,
     PermissionsModule,
     AdminUserGroupsModule,
     MiningSitesModule,
