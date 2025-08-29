@@ -11,6 +11,7 @@ import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { Provinces } from "../provinces/domain/provinces";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
+import { FindStatisticsDto } from "./dto/find-statistics.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -91,7 +92,12 @@ export class MiningSitesService {
     return this.miningSitesRepository.remove(id);
   }
 
-  async getStatistics(siteId: string): Promise<MiningSitesStatisticsResponseDto> {
+  async getStatistics(
+    siteId: string,
+    query: FindStatisticsDto,
+  ): Promise<MiningSitesStatisticsResponseDto> {
+    const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
+    
     return {
       siteId,
       lastUpdated: new Date().toISOString(),

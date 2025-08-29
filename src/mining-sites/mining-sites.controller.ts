@@ -31,6 +31,7 @@ import { RequirePermissions } from "../common/decorators/require-permissions.dec
 import { PermissionsGuard } from "src/common/guards/permissions.guard";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
+import { FindStatisticsDto } from "./dto/find-statistics.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -128,10 +129,13 @@ export class MiningSitesController {
   @Get("statistics/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: MiningSitesStatisticsResponseDto })
-  async getStatistics(@Param("id") id: string) {
-    return this.miningSitesService.getStatistics(id);
+  async getStatistics(
+    @Param("id") id: string,
+    @Query() query: FindStatisticsDto,
+  ) {
+    return this.miningSitesService.getStatistics(id, query);
   }
-
+  
   @RequirePermissions("mining_sites::transport")
   @Get("transport/:id")
   @ApiParam({ name: "id", type: String, required: true })
