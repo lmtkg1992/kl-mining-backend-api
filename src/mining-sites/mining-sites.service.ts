@@ -9,6 +9,7 @@ import { IPaginationOptions } from "../utils/types/pagination-options";
 import { MiningSites } from "./domain/mining-sites";
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { Provinces } from "../provinces/domain/provinces";
+import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -87,5 +88,30 @@ export class MiningSitesService {
 
   remove(id: MiningSites["id"]) {
     return this.miningSitesRepository.remove(id);
+  }
+
+  async getStatistics(siteId: string): Promise<MiningSitesStatisticsResponseDto> {
+    return {
+      siteId,
+      lastUpdated: new Date().toISOString(),
+      siteStatus: {
+        totalSites: 1,
+        operationalSites: 1,
+        statusText: "All system operational",
+      },
+      breachAlerts: {
+        count: 7,
+        change: -5.1,
+      },
+      truckActivities: {
+        count: 89,
+        change: 12.4,
+      },
+      totalVolume: {
+        value: 2150,
+        unit: "m3",
+        percentageQuota: 92,
+      },
+    };
   }
 }

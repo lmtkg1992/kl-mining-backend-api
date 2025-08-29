@@ -29,6 +29,7 @@ import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
 import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -120,5 +121,13 @@ export class MiningSitesController {
   })
   remove(@Param("id") id: string) {
     return this.miningSitesService.remove(id);
+  }
+
+  @RequirePermissions("mining_sites::statistics")
+  @Get("statistics/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: MiningSitesStatisticsResponseDto })
+  async getStatistics(@Param("id") id: string) {
+    return this.miningSitesService.getStatistics(id);
   }
 }
