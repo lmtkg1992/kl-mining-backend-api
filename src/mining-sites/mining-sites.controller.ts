@@ -147,7 +147,7 @@ export class MiningSitesController {
     return this.miningSitesService.getTransport(id); 
   }
 
-  @RequirePermissions("ai_cameras::list")
+  @RequirePermissions("mining_sites::ai_cameras::list")
   @Get("ai-cameras/list/:id")
   @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
   async getLiveAiCameras(

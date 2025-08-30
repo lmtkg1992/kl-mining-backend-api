@@ -20,6 +20,11 @@ export class FindAllAiCamerasDto {
   @IsOptional()
   site_id?: string;
 
+  @ApiPropertyOptional({ description: "Filter by province_id" })
+  @IsString()
+  @IsOptional()
+  province_id?: string;
+
   @ApiPropertyOptional({ description: "Filter by status" })
   @IsString()
   @IsOptional()

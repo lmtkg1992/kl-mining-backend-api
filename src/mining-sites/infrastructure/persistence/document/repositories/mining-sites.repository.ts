@@ -119,4 +119,11 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
   async remove(id: MiningSites["id"]): Promise<void> {
     await this.miningSitesModel.deleteOne({ _id: id });
   }
+
+  async findByProvinceId(provinceId: string): Promise<MiningSites[]> {
+    const entityObjects = await this.miningSitesModel.find({ province: provinceId });
+    return entityObjects.map((entityObject) =>
+      MiningSitesMapper.toDomain(entityObject),
+    );
+  }
 }

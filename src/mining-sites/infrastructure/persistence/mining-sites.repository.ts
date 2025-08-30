@@ -34,4 +34,6 @@ export abstract class MiningSitesRepository {
   ): Promise<MiningSites | null>;
 
   abstract remove(id: MiningSites["id"]): Promise<void>;
+
+  abstract findByProvinceId(provinceId: string): Promise<MiningSites[]>;
 }

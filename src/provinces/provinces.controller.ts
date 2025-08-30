@@ -27,8 +27,10 @@ import {
 } from "../utils/dto/infinity-pagination-response.dto";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
-import { PermissionsGuard } from "src/common/guards/permissions.guard";
-import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
+import { PermissionsGuard } from "../common/guards/permissions.guard";
+import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
+import { AiCameras } from "../ai-cameras/domain/ai-cameras";
+import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -120,5 +122,27 @@ export class ProvincesController {
   })
   remove(@Param("id") id: string) {
     return this.provincesService.remove(id);
+  }
+
+  @RequirePermissions("provinces::ai_cameras::list")
+  @Get("ai-cameras/list/:id")
+  @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
+  async getLiveAiCameras(
+    @Param("id") id: string,
+    @Query() query: FindAllAiCamerasDto,
+  ): Promise<InfinityPaginationResponseDto<AiCameras>> {
+    let page = query?.page ?? 1;
+    if (page < 1) page = 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) limit = 50;
+
+    query.province_id = id;
+
+    const data = await this.provincesService.getLiveAiCameras(
+      query,
+      { page, limit },
+    );
+
+    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
   }
 }
