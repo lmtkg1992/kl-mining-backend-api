@@ -2,9 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class AdminStatisticsResponseDto {
   @ApiProperty()
-  admin_user_id: string;
-
-  @ApiProperty()
   last_updated: string;
 
   @ApiProperty({

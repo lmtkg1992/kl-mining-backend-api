@@ -12,6 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PermissionsModule } from "src/permissions/permissions.module";
 import { ProvincesModule } from "src/provinces/provinces.module";
 import { MiningSitesModule } from "src/mining-sites/mining-sites.module";
+import { AiCamerasModule } from "src/ai-cameras/ai-cameras.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MiningSitesModule } from "src/mining-sites/mining-sites.module";
     forwardRef(() => AuthModule),
     forwardRef(() => ProvincesModule),
     forwardRef(() => MiningSitesModule),
+    forwardRef(() => AiCamerasModule),
   ],
   controllers: [AdminUsersController],
   providers: [AdminUsersService],

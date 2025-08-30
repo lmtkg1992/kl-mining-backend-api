@@ -39,6 +39,12 @@ import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-wi
 import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 import { AdminStatisticsResponseDto } from "./dto/admin-statistics-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { AiCameras } from "src/ai-cameras/domain/ai-cameras";
+import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto";
+import { MiningSites } from "src/mining-sites/domain/mining-sites";
+import { FindAllMiningSitesDto } from "src/mining-sites/dto/find-all-mining-sites.dto";
+import { MiningSitesService } from "src/mining-sites/mining-sites.service";
+
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -51,6 +57,7 @@ export class AdminUsersController {
   constructor(
     private readonly adminUsersService: AdminUsersService,
     private readonly authService: AuthService,
+    private readonly miningSitesService: MiningSitesService,
   ) {}
 
   // Admin Users Auth
@@ -194,13 +201,63 @@ export class AdminUsersController {
   }
 
   @RequirePermissions("admin_users::statistics")
-  @Get("statistics/:id")
-  @ApiParam({ name: "id", type: String, required: true })
+  @Get("statistics")
   @ApiOkResponse({ type: AdminStatisticsResponseDto })
   async getStatistics(
-    @Param("id") id: string,
     @Query() query: FindStatisticsDto,
   ) {
-    return this.adminUsersService.getStatistics(id, query);
+    return this.adminUsersService.getStatistics(query);
+  }
+
+  @RequirePermissions("admin_users::ai_cameras::list")
+  @Get("ai-cameras/list")
+  @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
+  async getLiveAiCameras(
+    @Query() query: FindAllAiCamerasDto,
+  ): Promise<InfinityPaginationResponseDto<AiCameras>> {
+    let page = query?.page ?? 1;
+    if (page < 1) page = 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) limit = 50;
+
+    const data = await this.adminUsersService.getLiveAiCameras(query, {
+      page,
+      limit,
+    });
+
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+  
+  @RequirePermissions("admin_users::mining_sites::list")
+  @Get("mining-sites/list")
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(MiningSites),
+  })
+  async getMiningSites(
+    @Query() query: FindAllMiningSitesDto,
+  ): Promise<InfinityPaginationResponseDto<MiningSites>> {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    const data = await this.miningSitesService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
+    );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 }

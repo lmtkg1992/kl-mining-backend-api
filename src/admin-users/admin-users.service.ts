@@ -12,29 +12,36 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import ms from "ms";
 
-import { JwtPayloadType } from "src/auth/strategies/types/jwt-payload.type";
-import { AllConfigType } from "src/config/config.type";
-import { Session } from "src/session/domain/session";
-import { SessionService } from "src/session/session.service";
-import { RoleEnum } from "src/roles/roles.enum";
-import { User } from "src/users/domain/user";
+import { JwtPayloadType } from "../auth/strategies/types/jwt-payload.type";
+import { AllConfigType } from "../config/config.type";
+import { JwtRefreshPayloadType } from "../auth/strategies/types/jwt-refresh-payload.type";
 import { IPaginationOptions } from "../utils/types/pagination-options";
+import { UserStatusEnum } from "./admin-users.enum";
+import { RoleEnum } from "../roles/roles.enum";
+
+import { AdminUsers } from "./domain/admin-users";
+import { Session } from "../session/domain/session";
+import { User } from "../users/domain/user";
+import { AdminUserGroups } from "../admin-user-groups/domain/admin-user-groups";
 
 import { CreateAdminUsersDto } from "./dto/create-admin-users.dto";
 import { UpdateAdminUsersDto } from "./dto/update-admin-users.dto";
 import { AdminLoginDto } from "./dto/admin-login.dto";
 import { AdminLoginResponseDto } from "./dto/admin-login-response.dto";
-import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.repository";
-import { AdminUsers } from "./domain/admin-users";
-import { UserStatusEnum } from "./admin-users.enum";
-import { JwtRefreshPayloadType } from "src/auth/strategies/types/jwt-refresh-payload.type";
-import { AdminUserGroups } from "src/admin-user-groups/domain/admin-user-groups";
 import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
-import { PermissionsService } from "src/permissions/permissions.service";
-import { ProvincesService } from "src/provinces/provinces.service";
-import { MiningSitesService } from "src/mining-sites/mining-sites.service";
 import { AdminStatisticsResponseDto } from "./dto/admin-statistics-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
+
+
+import { SessionService } from "../session/session.service";
+import { PermissionsService } from "../permissions/permissions.service";
+import { ProvincesService } from "../provinces/provinces.service";
+import { MiningSitesService } from "../mining-sites/mining-sites.service";
+
+import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.repository";
+import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
+
 
 @Injectable()
 export class AdminUsersService {
@@ -47,6 +54,7 @@ export class AdminUsersService {
     private readonly permissionsService: PermissionsService,
     private readonly provincesService: ProvincesService,
     private readonly miningSitesService: MiningSitesService,
+    private readonly aiCamerasRepository: AiCamerasRepository,
   ) {}
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {
@@ -350,13 +358,11 @@ export class AdminUsersService {
   }
 
   async getStatistics(
-    adminUserId: string,
     query: FindStatisticsDto,
   ): Promise<AdminStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
-      admin_user_id: adminUserId,
       last_updated: new Date().toISOString(),
       site_status: {
         total_sites: 1,
@@ -377,5 +383,25 @@ export class AdminUsersService {
         percentage_quota: 92,
       },
     };
+  }
+
+  async getLiveAiCameras(
+    query: FindAllAiCamerasDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.status) {
+      filter.status = query.status;
+    }
+
+    const [entities, total] = await Promise.all([
+      this.aiCamerasRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.aiCamerasRepository.countWithFilter(filter),
+    ]);
+
+    return { entities, total };
   }
 }
