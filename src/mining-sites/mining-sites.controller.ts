@@ -31,6 +31,7 @@ import { RequirePermissions } from "../common/decorators/require-permissions.dec
 import { PermissionsGuard } from "../common/guards/permissions.guard";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
+import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCameras } from "../ai-cameras/domain/ai-cameras";
@@ -167,5 +168,13 @@ export class MiningSitesController {
     );
 
     return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
+  }
+  
+  @RequirePermissions("mining_sites::materials")
+  @Get("materials/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: MiningSitesMaterialsResponseDto })
+  async getMaterials(@Param("id") id: string) {
+    return this.miningSitesService.getMaterials(id);
   }
 }

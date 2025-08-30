@@ -31,6 +31,7 @@ import { PermissionsGuard } from "../common/guards/permissions.guard";
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
 import { AiCameras } from "../ai-cameras/domain/ai-cameras";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
+import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -144,5 +145,13 @@ export class ProvincesController {
     );
 
     return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
+  }
+
+  @RequirePermissions("provinces::materials")
+  @Get("materials/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: ProvincesMaterialsResponseDto })
+  async getMaterials(@Param("id") id: string) {
+    return this.provincesService.getMaterials(id);
   }
 }

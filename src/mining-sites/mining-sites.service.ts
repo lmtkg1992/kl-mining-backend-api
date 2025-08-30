@@ -14,6 +14,7 @@ import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-re
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
 import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/ai-cameras.repository";
+import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -182,5 +183,40 @@ export class MiningSitesService {
     ]);
   
     return { entities, total };
+  }
+
+
+
+  async getMaterials(siteId: string): Promise<MiningSitesMaterialsResponseDto> {
+    return {
+      siteId,
+      lastUpdated: new Date().toISOString(),
+      materials: [
+        {
+          name: "Gold Ore",
+          percentage: 42.3,
+          price: "1842",
+          unit: "oz",
+        },
+        {
+          name: "Silver Ore",
+          percentage: 31.8,
+          price: "23.5",
+          unit: "oz",
+        },
+        {
+          name: "Copper",
+          percentage: 18.4,
+          price: "4.12",
+          unit: "lb",
+        },
+        {
+          name: "Other Minerals",
+          percentage: 7.5,
+          price: "Various",
+          unit: "",
+        },
+      ],
+    };
   }
 }

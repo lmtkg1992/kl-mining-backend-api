@@ -11,6 +11,7 @@ import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
+import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
 
 @Injectable()
 export class ProvincesService {
@@ -99,8 +100,6 @@ export class ProvincesService {
     if (query.status) {
       filter.status = query.status;
     }
-
-    console.log(filter);
   
     const [entities, total] = await Promise.all([
       this.aiCamerasRepository.findAllWithFilterAndPagination({
@@ -111,5 +110,38 @@ export class ProvincesService {
     ]);
   
     return { entities, total };
+  }
+
+  async getMaterials(provinceId: string): Promise<ProvincesMaterialsResponseDto> {
+    return {
+      provinceId,
+      lastUpdated: new Date().toISOString(),
+      materials: [
+        {
+          name: "Gold Ore",
+          percentage: 42.3,
+          price: "1842",
+          unit: "oz",
+        },
+        {
+          name: "Silver Ore",
+          percentage: 31.8,
+          price: "23.5",
+          unit: "oz",
+        },
+        {
+          name: "Copper",
+          percentage: 18.4,
+          price: "4.12",
+          unit: "lb",
+        },
+        {
+          name: "Other Minerals",
+          percentage: 7.5,
+          price: "Various",
+          unit: "",
+        },
+      ],
+    };
   }
 }
