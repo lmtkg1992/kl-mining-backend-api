@@ -34,6 +34,8 @@ import { PermissionsModule } from "./permissions/permissions.module";
 
 import { AiCamerasModule } from "./ai-cameras/ai-cameras.module";
 
+import { CommonModule } from "./common/common.module";
+
 @Module({
   imports: [
     AiCamerasModule,
@@ -78,6 +80,7 @@ import { AiCamerasModule } from "./ai-cameras/ai-cameras.module";
     MailModule,
     MailerModule,
     HomeModule,
+    CommonModule
   ],
 })
 export class AppModule {}

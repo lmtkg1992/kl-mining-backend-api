@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
 
 export class AiCameras {
   @ApiProperty({
@@ -12,17 +13,18 @@ export class AiCameras {
   @ApiProperty()
   site_id: string;
 
-  @ApiProperty()
-  type: string;
+  @ApiProperty({ enum: AiCameraTypeEnum })
+  type: AiCameraTypeEnum;
 
   @ApiProperty()
   location_description: string;
 
-  @ApiProperty({ example: ["breach_detection", "truck_monitoring"] })
-  ai_features: string[];
 
-  @ApiProperty()
-  status: string;
+  @ApiProperty({ enum: AiCameraFeatureEnum, isArray: true })
+  ai_features: AiCameraFeatureEnum[];
+
+  @ApiProperty({ enum: AiCameraStatusEnum })
+  status: AiCameraStatusEnum;
 
   @ApiProperty()
   installed_at: Date;

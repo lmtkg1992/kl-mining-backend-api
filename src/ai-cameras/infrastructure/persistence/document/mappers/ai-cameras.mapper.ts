@@ -1,3 +1,4 @@
+import { AiCameraStatusEnum, AiCameraFeatureEnum, AiCameraTypeEnum } from "src/ai-cameras/ai-cameras.enum";
 import { AiCameras } from "../../../../domain/ai-cameras";
 import { AiCamerasSchemaClass } from "../entities/ai-cameras.schema";
 
@@ -7,10 +8,10 @@ export class AiCamerasMapper {
     domainEntity.id = raw._id.toString();
     domainEntity.code = raw.code;
     domainEntity.site_id = raw.site_id;
-    domainEntity.type = raw.type;
+    domainEntity.type = raw.type as AiCameraTypeEnum  ;
     domainEntity.location_description = raw.location_description;
-    domainEntity.ai_features = raw.ai_features;
-    domainEntity.status = raw.status;
+    domainEntity.ai_features = raw.ai_features as AiCameraFeatureEnum[];
+    domainEntity.status = raw.status as AiCameraStatusEnum;
     domainEntity.installed_at = raw.installed_at;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;

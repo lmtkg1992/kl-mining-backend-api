@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDateString, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsDateString, IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
 
 export class CreateAiCamerasDto {
   @ApiProperty()
@@ -12,22 +13,22 @@ export class CreateAiCamerasDto {
   @IsNotEmpty()
   site_id: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  type: string;
+  @ApiProperty({ enum: AiCameraTypeEnum })
+  @IsEnum(AiCameraTypeEnum)
+  type: AiCameraTypeEnum;
 
   @ApiProperty()
   @IsString()
   location_description: string;
 
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ type: [String], enum: AiCameraFeatureEnum })
   @IsArray()
-  ai_features: string[];
+  @IsEnum(AiCameraFeatureEnum, { each: true })
+  ai_features: AiCameraFeatureEnum[];
 
-  @ApiProperty()
-  @IsString()
-  status: string;
+  @ApiProperty({ enum: AiCameraStatusEnum })
+  @IsEnum(AiCameraStatusEnum)
+  status: AiCameraStatusEnum;
 
   @ApiProperty()
   @IsDateString()
