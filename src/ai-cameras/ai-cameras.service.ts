@@ -8,6 +8,7 @@ import { AiCamerasRepository } from "./infrastructure/persistence/ai-cameras.rep
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { AiCameras } from "./domain/ai-cameras";
 import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
+import { MiningSites } from "../mining-sites/domain/mining-sites";
 
 @Injectable()
 export class AiCamerasService {
@@ -25,7 +26,9 @@ export class AiCamerasService {
 
     return this.aiCamerasRepository.create({
       code: createAiCamerasDto.code,
-      site_id: createAiCamerasDto.site_id,
+      site_id: {
+        id: createAiCamerasDto.site_id,
+      } as MiningSites,
       type: createAiCamerasDto.type,
       location_description: createAiCamerasDto.location_description,
       ai_features: createAiCamerasDto.ai_features,

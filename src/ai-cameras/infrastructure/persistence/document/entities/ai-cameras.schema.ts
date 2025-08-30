@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { now, HydratedDocument } from "mongoose";
+import mongoose, { now, HydratedDocument, Types } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
+import { MiningSitesSchemaClass } from "../../../../../mining-sites/infrastructure/persistence/document/entities/mining-sites.schema";
 
 export type AiCamerasSchemaDocument = HydratedDocument<AiCamerasSchemaClass>;
 
@@ -16,7 +17,7 @@ export class AiCamerasSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true })
   code: string;
 
-  @Prop({ required: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: MiningSitesSchemaClass.name, required: true })
   site_id: string;
 
   @Prop({ required: true })

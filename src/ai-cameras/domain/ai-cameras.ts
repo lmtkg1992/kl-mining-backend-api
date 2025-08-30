@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
+import { MiningSites } from "src/mining-sites/domain/mining-sites";
 
 export class AiCameras {
   @ApiProperty({
@@ -10,15 +11,14 @@ export class AiCameras {
   @ApiProperty()
   code: string;
 
-  @ApiProperty()
-  site_id: string;
+  @ApiProperty({ type: () => MiningSites })
+  site_id: MiningSites;
 
   @ApiProperty({ enum: AiCameraTypeEnum })
   type: AiCameraTypeEnum;
 
   @ApiProperty()
   location_description: string;
-
 
   @ApiProperty({ enum: AiCameraFeatureEnum, isArray: true })
   ai_features: AiCameraFeatureEnum[];

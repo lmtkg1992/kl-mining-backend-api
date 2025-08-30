@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDateString, IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsDateString, IsEnum, IsMongoId, IsNotEmpty, IsString } from "class-validator";
 import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
 
 export class CreateAiCamerasDto {
@@ -8,9 +8,8 @@ export class CreateAiCamerasDto {
   @IsNotEmpty()
   code: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ type: String, description: "Reference to MiningSites _id" })
+  @IsMongoId()
   site_id: string;
 
   @ApiProperty({ enum: AiCameraTypeEnum })

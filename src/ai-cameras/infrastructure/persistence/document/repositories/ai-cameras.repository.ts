@@ -29,8 +29,12 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
   }): Promise<AiCameras[]> {
     const entityObjects = await this.aiCamerasModel
       .find()
+      .populate({
+        path: "site_id",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       AiCamerasMapper.toDomain(entityObject),
@@ -46,8 +50,12 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
   }): Promise<AiCameras[]> {
     const entityObjects = await this.aiCamerasModel
       .find(filter)
+      .populate({
+        path: "site_id",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
-      .limit(paginationOptions.limit);
+      .limit(paginationOptions.limit)
+      .lean();
 
     return entityObjects.map((entityObject) =>
       AiCamerasMapper.toDomain(entityObject),
@@ -60,12 +68,16 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
 
 
   async findById(id: AiCameras["id"]): Promise<NullableType<AiCameras>> {
-    const entityObject = await this.aiCamerasModel.findById(id);
+    const entityObject = await this.aiCamerasModel.findById(id).populate({
+      path: "site_id",
+    }).lean();
     return entityObject ? AiCamerasMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(ids: AiCameras["id"][]): Promise<AiCameras[]> {
-    const entityObjects = await this.aiCamerasModel.find({ _id: { $in: ids } });
+    const entityObjects = await this.aiCamerasModel.find({ _id: { $in: ids } }).populate({
+      path: "site_id",
+    }).lean();
     return entityObjects.map((entityObject) =>
       AiCamerasMapper.toDomain(entityObject),
     );
