@@ -28,10 +28,12 @@ import {
 import { FindAllMiningSitesDto } from "./dto/find-all-mining-sites.dto";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
-import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { PermissionsGuard } from "../common/guards/permissions.guard";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
+import { AiCameras } from "../ai-cameras/domain/ai-cameras";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -142,6 +144,28 @@ export class MiningSitesController {
   @ApiOkResponse({ type: MiningSitesTransportResponseDto })
   @RequirePermissions("mining_sites::transport")
   async getTransport(@Param("id") id: string) {
-    return this.miningSitesService.getTransport(id);
+    return this.miningSitesService.getTransport(id); 
+  }
+
+  @RequirePermissions("ai_cameras::list")
+  @Get("ai-cameras/list/:id")
+  @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
+  async getLiveAiCameras(
+    @Param("id") id: string,
+    @Query() query: FindAllAiCamerasDto,
+  ): Promise<InfinityPaginationResponseDto<AiCameras>> {
+    let page = query?.page ?? 1;
+    if (page < 1) page = 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) limit = 50;
+    
+    query.site_id = id;
+
+    const data = await this.miningSitesService.getLiveAiCameras(
+      query,
+      { page, limit },
+    );
+
+    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
   }
 }

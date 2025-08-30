@@ -12,12 +12,15 @@ import { Provinces } from "../provinces/domain/provinces";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto";
+import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/ai-cameras.repository";
 
 @Injectable()
 export class MiningSitesService {
   constructor(
     // Dependencies here
     private readonly miningSitesRepository: MiningSitesRepository,
+    private readonly aiCamerasRepository: AiCamerasRepository,
   ) {}
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
@@ -155,5 +158,29 @@ export class MiningSitesService {
         percentage: 94.3,
       },
     };
+  }
+
+
+  async getLiveAiCameras(
+    query: FindAllAiCamerasDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+    if (query.status) {
+      filter.status = query.status;
+    }
+  
+    const [entities, total] = await Promise.all([
+      this.aiCamerasRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.aiCamerasRepository.countWithFilter(filter),
+    ]);
+  
+    return { entities, total };
   }
 }

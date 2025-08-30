@@ -36,6 +36,12 @@ export class AiCamerasSchemaClass extends EntityDocumentHelper {
   url_live_stream: string;
 
   @Prop()
+  latest_captured_image: string;
+
+  @Prop()
+  latest_captured_image_at: Date;
+
+  @Prop()
   installed_at: Date;
   
   @Prop({ default: now })

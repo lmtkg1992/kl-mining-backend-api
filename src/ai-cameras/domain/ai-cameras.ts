@@ -30,6 +30,12 @@ export class AiCameras {
   url_live_stream: string;
 
   @ApiProperty()
+  latest_captured_image: string;
+
+  @ApiProperty()
+  latest_captured_image_at: Date;
+
+  @ApiProperty()
   installed_at: Date;
 
   @ApiProperty()

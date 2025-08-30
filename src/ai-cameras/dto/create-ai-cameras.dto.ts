@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDateString, IsEnum, IsMongoId, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsDateString, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
 
 export class CreateAiCamerasDto {
@@ -32,6 +32,16 @@ export class CreateAiCamerasDto {
   @ApiProperty()
   @IsString()
   url_live_stream: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  latest_captured_image: string;
+
+  @ApiProperty()
+  @IsDateString()
+  @IsOptional()
+  latest_captured_image_at: Date;
 
   @ApiProperty()
   @IsDateString()

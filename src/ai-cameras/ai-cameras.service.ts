@@ -34,6 +34,8 @@ export class AiCamerasService {
       ai_features: createAiCamerasDto.ai_features,
       status: createAiCamerasDto.status,
       url_live_stream: createAiCamerasDto.url_live_stream,
+      latest_captured_image: createAiCamerasDto.latest_captured_image?? "",
+      latest_captured_image_at: createAiCamerasDto.latest_captured_image_at?? new Date(),
       installed_at: createAiCamerasDto.installed_at,
     });
   }
