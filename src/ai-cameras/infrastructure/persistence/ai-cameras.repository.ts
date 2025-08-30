@@ -14,6 +14,16 @@ export abstract class AiCamerasRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<AiCameras[]>;
 
+  abstract findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AiCameras[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(id: AiCameras["id"]): Promise<NullableType<AiCameras>>;
 
   abstract findByIds(ids: AiCameras["id"][]): Promise<AiCameras[]>;

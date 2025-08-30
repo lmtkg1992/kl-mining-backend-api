@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class FindAllAiCamerasDto {
@@ -14,4 +14,14 @@ export class FindAllAiCamerasDto {
   @IsNumber()
   @IsOptional()
   limit?: number;
+
+  @ApiPropertyOptional({ description: "Filter by site_id" })
+  @IsString()
+  @IsOptional()
+  site_id?: string;
+
+  @ApiPropertyOptional({ description: "Filter by status" })
+  @IsString()
+  @IsOptional()
+  status?: string;
 }

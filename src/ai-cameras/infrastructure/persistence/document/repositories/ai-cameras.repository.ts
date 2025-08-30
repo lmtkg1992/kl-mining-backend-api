@@ -37,6 +37,28 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
     );
   }
 
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AiCameras[]> {
+    const entityObjects = await this.aiCamerasModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+
+    return entityObjects.map((entityObject) =>
+      AiCamerasMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.aiCamerasModel.countDocuments(filter);
+  }
+
+
   async findById(id: AiCameras["id"]): Promise<NullableType<AiCameras>> {
     const entityObject = await this.aiCamerasModel.findById(id);
     return entityObject ? AiCamerasMapper.toDomain(entityObject) : null;

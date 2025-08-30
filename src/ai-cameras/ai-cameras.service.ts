@@ -7,6 +7,7 @@ import { UpdateAiCamerasDto } from "./dto/update-ai-cameras.dto";
 import { AiCamerasRepository } from "./infrastructure/persistence/ai-cameras.repository";
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { AiCameras } from "./domain/ai-cameras";
+import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 
 @Injectable()
 export class AiCamerasService {
@@ -44,6 +45,29 @@ export class AiCamerasService {
         limit: paginationOptions.limit,
       },
     });
+  }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllAiCamerasDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+    if (query.status) {
+      filter.status = query.status;
+    }
+  
+    const [entities, total] = await Promise.all([
+      this.aiCamerasRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.aiCamerasRepository.countWithFilter(filter),
+    ]);
+  
+    return { entities, total };
   }
 
   findById(id: AiCameras["id"]) {

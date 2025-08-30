@@ -25,8 +25,9 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
+import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 
 @ApiTags("Aicameras")
 @ApiBearerAuth()
@@ -46,31 +47,28 @@ export class AiCamerasController {
     return this.aiCamerasService.create(createAiCamerasDto);
   }
 
-  @Get()
-  @ApiOkResponse({
-    type: InfinityPaginationResponse(AiCameras),
-  })
+  @RequirePermissions("ai_cameras::list")
+  @Get("list")
+  @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
   async findAll(
     @Query() query: FindAllAiCamerasDto,
   ): Promise<InfinityPaginationResponseDto<AiCameras>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) page = 1;
     let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
+    if (limit > 50) limit = 50;
 
-    return infinityPagination(
-      await this.aiCamerasService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
+    const data = await this.aiCamerasService.findAllWithFilterAndPagination(
+      query,
       { page, limit },
     );
+
+    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
   }
 
-  @Get(":id")
+
+  @RequirePermissions("ai_cameras::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -83,7 +81,8 @@ export class AiCamerasController {
     return this.aiCamerasService.findById(id);
   }
 
-  @Patch(":id")
+  @RequirePermissions("ai_cameras::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -99,7 +98,8 @@ export class AiCamerasController {
     return this.aiCamerasService.update(id, updateAiCamerasDto);
   }
 
-  @Delete(":id")
+  @RequirePermissions("ai_cameras::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,
