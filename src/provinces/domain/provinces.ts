@@ -7,10 +7,10 @@ export class Provinces {
   id: string;
 
   @ApiProperty()
-  provinceName: string;
+  province_name: string;
 
   @ApiProperty()
-  provinceCode: string;
+  province_code: string;
 
   @ApiProperty()
   status: string;

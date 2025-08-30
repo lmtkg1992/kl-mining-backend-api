@@ -5,7 +5,7 @@ export class CreateMiningSitesDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  siteName: string;
+  site_name: string;
 
   @ApiProperty()
   @IsString()
@@ -15,7 +15,7 @@ export class CreateMiningSitesDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  ownerUserId: string;
+  owner_user_id: string;
 
   @ApiProperty({ example: "66c9e5f23e86c97d3ab7c9b1" })
   @IsMongoId()
@@ -25,5 +25,5 @@ export class CreateMiningSitesDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  boundaryPolygon: string;
+  boundary_polygon: string;
 }

@@ -17,10 +17,10 @@ export class MaterialItemDto {
 
 export class ProvincesMaterialsResponseDto {
   @ApiProperty()
-  provinceId: string;
+  province_id: string;
 
   @ApiProperty()
-  lastUpdated: string;
+  last_updated: string;
 
   @ApiProperty({ type: [MaterialItemDto] })
   materials: MaterialItemDto[];

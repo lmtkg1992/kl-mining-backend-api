@@ -26,13 +26,13 @@ export class MiningSitesService {
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
     return this.miningSitesRepository.create({
-      siteName: createMiningSitesDto.siteName,
+      site_name: createMiningSitesDto.site_name,
       status: createMiningSitesDto.status,
-      ownerUserId: createMiningSitesDto.ownerUserId,
+      owner_user_id: createMiningSitesDto.owner_user_id,
       province: {
         id: createMiningSitesDto.province,
       } as Provinces,
-      boundaryPolygon: createMiningSitesDto.boundaryPolygon,
+      boundary_polygon: createMiningSitesDto.boundary_polygon,
     });
   }
 
@@ -103,34 +103,34 @@ export class MiningSitesService {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
-      siteId,
-      lastUpdated: new Date().toISOString(),
-      siteStatus: {
-        totalSites: 1,
-        operationalSites: 1,
-        statusText: "All system operational",
+      site_id: siteId,
+      last_updated: new Date().toISOString(),
+      site_status: {
+        total_sites: 1,
+        operational_sites: 1,
+        status_text: "All system operational",
       },
-      breachAlerts: {
+      breach_alerts: {
         count: 7,
         change: -5.1,
       },
-      truckActivities: {
+      truck_activities: {
         count: 89,
         change: 12.4,
       },
-      totalVolume: {
+      total_volume: {
         value: 2150,
         unit: "m3",
-        percentageQuota: 92,
+        percentage_quota: 92,
       },
     };
   }
 
   async getTransport(siteId: string): Promise<MiningSitesTransportResponseDto> {
     return {
-      siteId,
-      lastUpdated: new Date().toISOString(),
-      hourlyData: [
+      site_id: siteId,
+      last_updated: new Date().toISOString(),
+      hourly_data: [
         { hour: "6 AM", value: 7.0 },
         { hour: "7 AM", value: 7.5 },
         { hour: "8 AM", value: 8.0 },
@@ -144,15 +144,15 @@ export class MiningSitesService {
         { hour: "4 PM", value: 7.7 },
         { hour: "5 PM", value: 7.4 },
       ],
-      currentHour: {
+      current_hour: {
         value: 8.2,
         unit: "tons",
       },
-      dailyAverage: {
+      daily_average: {
         value: 7.6,
         unit: "tons/hr",
       },
-      peakHours: {
+      peak_hours: {
         range: "10-12 AM",
       },
       efficiency: {
@@ -189,8 +189,8 @@ export class MiningSitesService {
 
   async getMaterials(siteId: string): Promise<MiningSitesMaterialsResponseDto> {
     return {
-      siteId,
-      lastUpdated: new Date().toISOString(),
+      site_id: siteId,
+      last_updated: new Date().toISOString(),
       materials: [
         {
           name: "Gold Ore",

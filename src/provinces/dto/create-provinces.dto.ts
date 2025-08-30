@@ -5,12 +5,12 @@ export class CreateProvincesDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  provinceName: string;
+  province_name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  provinceCode: string;
+  province_code: string;
 
   @ApiProperty()
   @IsString()

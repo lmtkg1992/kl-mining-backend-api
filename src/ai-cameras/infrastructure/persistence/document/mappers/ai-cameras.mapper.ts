@@ -14,10 +14,10 @@ export class AiCamerasMapper {
     } as MiningSites;
     if (raw.site_id && typeof raw.site_id === "object") {
       const siteData = raw.site_id as any;
-      const { _id, siteName } = siteData;
+      const { _id, site_name } = siteData;
       domainEntity.site_id = {
         id: _id?.toString() ?? "",
-        siteName
+        site_name,
       } as MiningSites;
     }
     domainEntity.type = raw.type as AiCameraTypeEnum  ;

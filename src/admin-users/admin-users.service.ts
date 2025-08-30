@@ -290,6 +290,10 @@ export class AdminUsersService {
       hash,
     });
 
+    await this.adminUsersRepository.update(user.id, {
+      last_login_at: new Date(),
+    });
+
     return {
       refreshToken,
       token,
@@ -352,25 +356,25 @@ export class AdminUsersService {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
-      adminUserId,
-      lastUpdated: new Date().toISOString(),
-      siteStatus: {
-        totalSites: 1,
-        operationalSites: 1,
-        statusText: "All system operational",
+      admin_user_id : adminUserId,
+      last_updated: new Date().toISOString(),
+      site_status: {
+        total_sites: 1,
+        operational_sites: 1,
+        status_text: "All system operational",
       },
-      breachAlerts: {
+      breach_alerts: {
         count: 7,
         change: -5.1,
       },
-      truckActivities: {
+      truck_activities: {
         count: 89,
         change: 12.4,
       },
-      totalVolume: {
+      total_volume: {
         value: 2150,
         unit: "m3",
-        percentageQuota: 92,
+        percentage_quota: 92,
       },
     };
   }

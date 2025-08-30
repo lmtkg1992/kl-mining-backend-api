@@ -32,6 +32,9 @@ export class AdminUsers {
   @ApiProperty({ type: () => AdminUserGroups })
   admin_user_group: AdminUserGroups;
 
+  @ApiProperty({required: false})
+  last_login_at?: Date;
+
   @ApiProperty()
   createdAt: Date;
 

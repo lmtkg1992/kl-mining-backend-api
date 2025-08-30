@@ -13,10 +13,10 @@ export type ProvincesSchemaDocument = HydratedDocument<ProvincesSchemaClass>;
 })
 export class ProvincesSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true, type: String })
-  provinceName: string;
+  province_name: string;
 
   @Prop({ required: true, type: String })
-  provinceCode: string;
+  province_code: string;
 
   @Prop({ required: true, type: String })
   status: string;

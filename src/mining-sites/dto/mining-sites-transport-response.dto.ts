@@ -2,10 +2,10 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class MiningSitesTransportResponseDto {
   @ApiProperty()
-  siteId: string;
+  site_id: string;
 
   @ApiProperty()
-  lastUpdated: string;
+  last_updated: string;
 
   @ApiProperty({
     example: [
@@ -13,22 +13,22 @@ export class MiningSitesTransportResponseDto {
       { hour: "7 AM", value: 7.5 },
     ],
   })
-  hourlyData: { hour: string; value: number }[];
+  hourly_data: { hour: string; value: number }[];
 
   @ApiProperty({ example: { value: 8.2, unit: "tons" } })
-  currentHour: {
+  current_hour: {
     value: number;
     unit: string;
   };
 
   @ApiProperty({ example: { value: 7.6, unit: "tons/hr" } })
-  dailyAverage: {
+  daily_average: {
     value: number;
     unit: string;
   };
 
   @ApiProperty({ example: { range: "10-12 AM" } })
-  peakHours: {
+  peak_hours: {
     range: string;
   };
 

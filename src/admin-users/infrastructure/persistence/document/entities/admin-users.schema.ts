@@ -38,6 +38,9 @@ export class AdminUsersSchemaClass extends EntityDocumentHelper {
   })
   admin_user_group: string;
 
+  @Prop({ required: false, type: Date, default: null })
+  last_login_at?: Date | null;
+
   @Prop({ default: now })
   createdAt: Date;
 

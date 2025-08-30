@@ -2,40 +2,40 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class AdminStatisticsResponseDto {
   @ApiProperty()
-  adminUserId: string;
+  admin_user_id: string;
 
   @ApiProperty()
-  lastUpdated: string;
+  last_updated: string;
 
   @ApiProperty({
     example: {
-      totalSites: 1,
-      operationalSites: 1,
-      statusText: "All system operational",
+      total_sites: 1,
+      operational_sites: 1,
+      status_text: "All system operational",
     },
   })
-  siteStatus: {
-    totalSites: number;
-    operationalSites: number;
-    statusText: string;
+  site_status: {
+    total_sites: number;
+    operational_sites: number;
+    status_text: string;
   };
 
   @ApiProperty({ example: { count: 7, change: -5.1 } })
-  breachAlerts: {
-    count: number;
+  breach_alerts: {
+    count: number;  
     change: number;
   };
 
   @ApiProperty({ example: { count: 89, change: 12.4 } })
-  truckActivities: {
+  truck_activities: {
     count: number;
     change: number;
   };
 
-  @ApiProperty({ example: { value: 2150, unit: "m3", percentageQuota: 92 } })
-  totalVolume: {
+  @ApiProperty({ example: { value: 2150, unit: "m3", percentage_quota: 92 } })
+  total_volume: {
     value: number;
     unit: string;
-    percentageQuota: number;
+    percentage_quota: number;
   };
 }

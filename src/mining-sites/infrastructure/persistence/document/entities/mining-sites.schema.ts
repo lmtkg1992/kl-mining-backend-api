@@ -14,13 +14,13 @@ export type MiningSitesSchemaDocument =
 })
 export class MiningSitesSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true, type: String })
-  siteName: string;
+  site_name: string;
 
   @Prop({ required: true, type: String })
   status: string;
 
   @Prop({ required: true, type: String })
-  ownerUserId: string;
+  owner_user_id: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +30,7 @@ export class MiningSitesSchemaClass extends EntityDocumentHelper {
   province: string;
 
   @Prop({ required: false, type: String })
-  boundaryPolygon: string;
+  boundary_polygon: string;
 
   @Prop({ default: now })
   createdAt: Date;

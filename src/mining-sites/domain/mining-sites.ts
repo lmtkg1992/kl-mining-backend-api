@@ -12,7 +12,7 @@ export class MiningSites {
     description: "Mining site name",
     required: true,
   })
-  siteName: string;
+  site_name: string;
 
   @ApiProperty({
     type: String,
@@ -26,7 +26,7 @@ export class MiningSites {
     description: "Site owner reference",
     required: true,
   })
-  ownerUserId: string;
+  owner_user_id: string;
 
   @ApiProperty({
     type: () => Provinces,
@@ -40,7 +40,7 @@ export class MiningSites {
     description: "Site boundary definition",
     required: false,
   })
-  boundaryPolygon?: string;
+  boundary_polygon?: string;
 
   @ApiProperty()
   createdAt: Date;

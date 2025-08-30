@@ -26,8 +26,8 @@ export class ProvincesService {
 
   async create(createProvincesDto: CreateProvincesDto) {
     return this.provincesRepository.create({
-      provinceName: createProvincesDto.provinceName,
-      provinceCode: createProvincesDto.provinceCode,
+      province_name: createProvincesDto.province_name,
+      province_code: createProvincesDto.province_code,
       status: createProvincesDto.status,
     });
   }
@@ -95,25 +95,25 @@ export class ProvincesService {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
-      provinceId,
-      lastUpdated: new Date().toISOString(),
-      siteStatus: {
-        totalSites: 1,
-        operationalSites: 1,
-        statusText: "All system operational",
+      province_id: provinceId,
+      last_updated: new Date().toISOString(),
+      site_status: {
+        total_sites: 1,
+        operational_sites: 1,
+        status_text: "All system operational",
       },
-      breachAlerts: {
+      breach_alerts: {
         count: 7,
         change: -5.1,
       },
-      truckActivities: {
+      truck_activities: {
         count: 89,
         change: 12.4,
       },
-      totalVolume: {
+      total_volume: {
         value: 2150,
         unit: "m3",
-        percentageQuota: 92,
+        percentage_quota: 92,
       },
     };
   }
@@ -146,8 +146,8 @@ export class ProvincesService {
 
   async getMaterials(provinceId: string): Promise<ProvincesMaterialsResponseDto> {
     return {
-      provinceId,
-      lastUpdated: new Date().toISOString(),
+      province_id: provinceId,
+      last_updated: new Date().toISOString(),
       materials: [
         {
           name: "Gold Ore",

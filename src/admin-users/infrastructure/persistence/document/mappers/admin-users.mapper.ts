@@ -19,6 +19,7 @@ export class AdminUsersMapper {
         ...leftGroupData,
       } as AdminUserGroups;
     }
+    domainEntity.last_login_at = raw.last_login_at ?? undefined;
 
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
@@ -37,6 +38,7 @@ export class AdminUsersMapper {
     persistenceSchema.password = domainEntity.password;
     persistenceSchema.admin_user_group =
       domainEntity.admin_user_group?.id ?? "";
+    persistenceSchema.last_login_at = domainEntity.last_login_at ?? undefined;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 
