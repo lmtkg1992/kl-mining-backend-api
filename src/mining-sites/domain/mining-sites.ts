@@ -15,6 +15,14 @@ export class MiningSites {
   })
   site_name: string;
 
+
+  @ApiProperty({
+    type: String,
+    description: "Mining site code",
+    required: true,
+  })
+  site_code: string;
+
   @ApiProperty({
     type: String,
     description: "Mining site status",

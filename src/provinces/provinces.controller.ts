@@ -34,6 +34,9 @@ import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
 import { ProvincesStatisticsResponseDto } from "./dto/provinces-statistics-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { FindAllMiningSitesDto } from "../mining-sites/dto/find-all-mining-sites.dto";
+import { MiningSites } from "../mining-sites/domain/mining-sites";
+import { MiningSitesService } from "../mining-sites/mining-sites.service";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -43,7 +46,10 @@ import { FindStatisticsDto } from "./dto/find-statistics.dto";
   version: "1",
 })
 export class ProvincesController {
-  constructor(private readonly provincesService: ProvincesService) {}
+  constructor(
+    private readonly provincesService: ProvincesService,
+    private readonly miningSitesService: MiningSitesService,
+  ) {}
 
   @RequirePermissions("provinces::create")
   @Post()
@@ -163,6 +169,41 @@ export class ProvincesController {
     });
   }
 
+  @RequirePermissions("provinces::mining_sites::list")
+  @Get("mining-sites/list/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(MiningSites),
+  })
+  async getMiningSites(
+    @Param("id") id: string,
+    @Query() query: FindAllMiningSitesDto,
+  ): Promise<InfinityPaginationResponseDto<MiningSites>> {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    query.province_id = id;
+
+    const data = await this.miningSitesService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
+    );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
+  }
+  
   @RequirePermissions("provinces::materials")
   @Get("materials/:id")
   @ApiParam({ name: "id", type: String, required: true })

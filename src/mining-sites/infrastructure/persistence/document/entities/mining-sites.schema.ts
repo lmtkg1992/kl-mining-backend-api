@@ -18,6 +18,9 @@ export class MiningSitesSchemaClass extends EntityDocumentHelper {
   site_name: string;
 
   @Prop({ required: true, type: String })
+  site_code: string;
+
+  @Prop({ required: true, type: String })
   status: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: AdminUsersSchemaClass.name, required: true })

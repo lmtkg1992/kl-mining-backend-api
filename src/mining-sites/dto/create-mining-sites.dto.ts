@@ -9,6 +9,11 @@ export class CreateMiningSitesDto {
 
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
+  site_code: string;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   status: string;
 

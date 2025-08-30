@@ -28,6 +28,7 @@ export class MiningSitesService {
   async create(createMiningSitesDto: CreateMiningSitesDto) {
     return this.miningSitesRepository.create({
       site_name: createMiningSitesDto.site_name,
+      site_code: createMiningSitesDto.site_code,
       status: createMiningSitesDto.status,
       owner_user_id: {
         id: createMiningSitesDto.owner_user_id,

@@ -8,6 +8,7 @@ export class MiningSitesMapper {
     const domainEntity = new MiningSites();
     domainEntity.id = raw._id.toString();
     domainEntity.site_name = raw.site_name;
+    domainEntity.site_code = raw.site_code;
     domainEntity.status = raw.status;
 
     if (raw.owner_user_id && typeof raw.owner_user_id === "object") {
@@ -44,6 +45,7 @@ export class MiningSitesMapper {
       persistenceSchema._id = domainEntity.id;
     }
     persistenceSchema.site_name = domainEntity.site_name;
+    persistenceSchema.site_code = domainEntity.site_code;
     persistenceSchema.status = domainEntity.status;
     persistenceSchema.owner_user_id = domainEntity.owner_user_id?.id ?? "";
     persistenceSchema.boundary_polygon = domainEntity.boundary_polygon || "";
