@@ -1,6 +1,7 @@
 import {
   // common
   Injectable,
+  NotFoundException,
 } from "@nestjs/common";
 import { CreateMiningSitesDto } from "./dto/create-mining-sites.dto";
 import { UpdateMiningSitesDto } from "./dto/update-mining-sites.dto";
@@ -37,6 +38,11 @@ export class MiningSitesService {
         id: createMiningSitesDto.province,
       } as Provinces,
       boundary_polygon: createMiningSitesDto.boundary_polygon,
+      volume: 0,
+      trucks: 0,
+      breaches: 0,
+      cameras_online: 0,
+      last_activity: new Date()
     });
   }
 
@@ -71,11 +77,31 @@ export class MiningSitesService {
       this.miningSitesRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    //mapping meta data
+    const enhancedEntites = entites.map((entity) => ({
+        ...entity,
+        volume: 243,
+        trucks: 45,
+        breaches: 3,
+        cameras_online: 4,
+        last_activity: new Date(),
+    }));
+    return { entites: enhancedEntites, total };
   }
 
-  findById(id: MiningSites["id"]) {
-    return this.miningSitesRepository.findById(id);
+  async findById(id: MiningSites["id"]) {
+    const site = await this.miningSitesRepository.findById(id);
+    if (!site) {
+      throw new NotFoundException("Site not found");
+    }
+    return {
+      ...site,
+      volume: 243,
+      trucks: 45,
+      breaches: 3,
+      cameras_online: 4,
+      last_activity: new Date(),
+    };
   }
 
   findByIds(ids: MiningSites["id"][]) {

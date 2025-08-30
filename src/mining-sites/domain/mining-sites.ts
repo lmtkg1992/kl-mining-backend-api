@@ -47,6 +47,21 @@ export class MiningSites {
   })
   boundary_polygon?: string;
 
+  @ApiProperty({required: false})
+  volume: number;
+
+  @ApiProperty({required: false})
+  trucks: number;
+
+  @ApiProperty({required: false}) 
+  breaches: number;
+
+  @ApiProperty({required: false})
+  cameras_online: number;
+
+  @ApiProperty({required: false})
+  last_activity: Date;
+
   @ApiProperty()
   createdAt: Date;
 
