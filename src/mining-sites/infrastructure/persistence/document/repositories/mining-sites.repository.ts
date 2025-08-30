@@ -32,6 +32,9 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       .populate({
         path: "province",
       })
+      .populate({
+        path: "owner_user_id",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();
@@ -53,6 +56,9 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       .populate({
         path: "province",
       })
+      .populate({
+        path: "owner_user_id",
+      })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();
@@ -72,6 +78,9 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       .populate({
         path: "province",
       })
+      .populate({
+        path: "owner_user_id",
+      })
       .lean();
     return entityObject ? MiningSitesMapper.toDomain(entityObject) : null;
   }
@@ -83,6 +92,9 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       })
       .populate({
         path: "province",
+      })
+      .populate({
+        path: "owner_user_id",
       })
       .lean();
     return entityObjects.map((entityObject) =>

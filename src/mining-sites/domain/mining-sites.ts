@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Provinces } from "../../provinces/domain/provinces";
+import { AdminUsers } from "src/admin-users/domain/admin-users";
 
 export class MiningSites {
   @ApiProperty({
@@ -21,12 +22,8 @@ export class MiningSites {
   })
   status: string;
 
-  @ApiProperty({
-    type: String,
-    description: "Site owner reference",
-    required: true,
-  })
-  owner_user_id: string;
+  @ApiProperty({ type: () => AdminUsers })
+  owner_user_id: AdminUsers;
 
   @ApiProperty({
     type: () => Provinces,

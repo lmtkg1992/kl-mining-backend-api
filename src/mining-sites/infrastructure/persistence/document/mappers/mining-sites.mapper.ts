@@ -1,6 +1,7 @@
 import { MiningSites } from "../../../../domain/mining-sites";
 import { MiningSitesSchemaClass } from "../entities/mining-sites.schema";
 import { Provinces } from "../../../../../provinces/domain/provinces";
+import { AdminUsers } from "src/admin-users/domain/admin-users";
 
 export class MiningSitesMapper {
   public static toDomain(raw: MiningSitesSchemaClass): MiningSites {
@@ -8,7 +9,16 @@ export class MiningSitesMapper {
     domainEntity.id = raw._id.toString();
     domainEntity.site_name = raw.site_name;
     domainEntity.status = raw.status;
-    domainEntity.owner_user_id = raw.owner_user_id;
+
+    if (raw.owner_user_id && typeof raw.owner_user_id === "object") {
+      const ownerUserData = raw.owner_user_id as any;
+      const { _id, email, name } = ownerUserData;
+      domainEntity.owner_user_id = {
+        id: _id?.toString() ?? "",
+        email,
+        name
+      } as AdminUsers;
+    }
 
     if (raw.province && typeof raw.province === "object") {
       const groupData = raw.province as any;
@@ -35,7 +45,7 @@ export class MiningSitesMapper {
     }
     persistenceSchema.site_name = domainEntity.site_name;
     persistenceSchema.status = domainEntity.status;
-    persistenceSchema.owner_user_id = domainEntity.owner_user_id;
+    persistenceSchema.owner_user_id = domainEntity.owner_user_id?.id ?? "";
     persistenceSchema.boundary_polygon = domainEntity.boundary_polygon || "";
     persistenceSchema.province = domainEntity.province?.id ?? "";
     persistenceSchema.createdAt = domainEntity.createdAt;

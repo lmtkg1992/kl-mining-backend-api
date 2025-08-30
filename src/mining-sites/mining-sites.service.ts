@@ -12,9 +12,10 @@ import { Provinces } from "../provinces/domain/provinces";
 import { MiningSitesStatisticsResponseDto } from "./dto/mining-sites-statistics-response.dto";
 import { MiningSitesTransportResponseDto } from "./dto/mining-sites-transport-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
-import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto";
-import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/ai-cameras.repository";
+import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
+import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
+import { AdminUsers } from "../admin-users/domain/admin-users";
 
 @Injectable()
 export class MiningSitesService {
@@ -28,7 +29,9 @@ export class MiningSitesService {
     return this.miningSitesRepository.create({
       site_name: createMiningSitesDto.site_name,
       status: createMiningSitesDto.status,
-      owner_user_id: createMiningSitesDto.owner_user_id,
+      owner_user_id: {
+        id: createMiningSitesDto.owner_user_id,
+      } as AdminUsers,
       province: {
         id: createMiningSitesDto.province,
       } as Provinces,
