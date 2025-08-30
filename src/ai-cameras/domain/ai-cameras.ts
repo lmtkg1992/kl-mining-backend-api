@@ -27,6 +27,9 @@ export class AiCameras {
   status: AiCameraStatusEnum;
 
   @ApiProperty()
+  url_live_stream: string;
+
+  @ApiProperty()
   installed_at: Date;
 
   @ApiProperty()

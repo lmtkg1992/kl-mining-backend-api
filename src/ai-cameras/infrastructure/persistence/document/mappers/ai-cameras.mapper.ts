@@ -24,6 +24,7 @@ export class AiCamerasMapper {
     domainEntity.location_description = raw.location_description;
     domainEntity.ai_features = raw.ai_features as AiCameraFeatureEnum[];
     domainEntity.status = raw.status as AiCameraStatusEnum;
+    domainEntity.url_live_stream = raw.url_live_stream;
     domainEntity.installed_at = raw.installed_at;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
@@ -42,6 +43,7 @@ export class AiCamerasMapper {
     persistenceSchema.location_description = domainEntity.location_description;
     persistenceSchema.ai_features = domainEntity.ai_features;
     persistenceSchema.status = domainEntity.status;
+    persistenceSchema.url_live_stream = domainEntity.url_live_stream;
     persistenceSchema.installed_at = domainEntity.installed_at;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;

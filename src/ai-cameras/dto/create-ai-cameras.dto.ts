@@ -30,6 +30,10 @@ export class CreateAiCamerasDto {
   status: AiCameraStatusEnum;
 
   @ApiProperty()
+  @IsString()
+  url_live_stream: string;
+
+  @ApiProperty()
   @IsDateString()
   installed_at: Date;
   

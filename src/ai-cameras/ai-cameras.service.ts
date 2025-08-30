@@ -33,6 +33,7 @@ export class AiCamerasService {
       location_description: createAiCamerasDto.location_description,
       ai_features: createAiCamerasDto.ai_features,
       status: createAiCamerasDto.status,
+      url_live_stream: createAiCamerasDto.url_live_stream,
       installed_at: createAiCamerasDto.installed_at,
     });
   }
