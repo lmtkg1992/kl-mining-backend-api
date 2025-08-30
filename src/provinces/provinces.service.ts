@@ -12,6 +12,8 @@ import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
 import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
+import { ProvincesStatisticsResponseDto } from "./dto/provinces-statistics-response.dto";
+import { FindStatisticsDto } from "./dto/find-statistics.dto";
 
 @Injectable()
 export class ProvincesService {
@@ -84,6 +86,36 @@ export class ProvincesService {
 
   remove(id: Provinces["id"]) {
     return this.provincesRepository.remove(id);
+  }
+
+  async getStatistics(
+    provinceId: string,
+    query: FindStatisticsDto,
+  ): Promise<ProvincesStatisticsResponseDto > {
+    const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
+
+    return {
+      provinceId,
+      lastUpdated: new Date().toISOString(),
+      siteStatus: {
+        totalSites: 1,
+        operationalSites: 1,
+        statusText: "All system operational",
+      },
+      breachAlerts: {
+        count: 7,
+        change: -5.1,
+      },
+      truckActivities: {
+        count: 89,
+        change: 12.4,
+      },
+      totalVolume: {
+        value: 2150,
+        unit: "m3",
+        percentageQuota: 92,
+      },
+    };
   }
 
   async getLiveAiCameras(

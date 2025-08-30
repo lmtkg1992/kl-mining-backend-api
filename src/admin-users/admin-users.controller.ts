@@ -37,6 +37,8 @@ import { AdminLoginResponseDto } from "./dto/admin-login-response.dto";
 import { AdminRefreshResponseDto } from "./dto/admin-refresh-response.dto";
 import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
 import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
+import { AdminStatisticsResponseDto } from "./dto/admin-statistics-response.dto";
+import { FindStatisticsDto } from "./dto/find-statistics.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -189,5 +191,13 @@ export class AdminUsersController {
   })
   remove(@Param("id") id: string) {
     return this.adminUsersService.remove(id);
+  }
+
+  @RequirePermissions("admin_users::statistics")
+  @Get("statistics/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: AdminStatisticsResponseDto })
+  async getStatistics(@Param("id") id: string, @Query() query: FindStatisticsDto) {
+    return this.adminUsersService.getStatistics(id, query);
   }
 }

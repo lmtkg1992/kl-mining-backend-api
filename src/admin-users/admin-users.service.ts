@@ -33,6 +33,8 @@ import { FindAllAdminUsersDto } from "./dto/find-all-admin-users.dto";
 import { PermissionsService } from "src/permissions/permissions.service";
 import { ProvincesService } from "src/provinces/provinces.service";
 import { MiningSitesService } from "src/mining-sites/mining-sites.service";
+import { AdminStatisticsResponseDto } from "./dto/admin-statistics-response.dto";
+import { FindStatisticsDto } from "./dto/find-statistics.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -342,4 +344,35 @@ export class AdminUsersService {
       tokenExpires,
     };
   }
+
+  async getStatistics(
+    adminUserId: string,
+    query: FindStatisticsDto,
+  ): Promise<AdminStatisticsResponseDto > {
+    const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
+
+    return {
+      adminUserId,
+      lastUpdated: new Date().toISOString(),
+      siteStatus: {
+        totalSites: 1,
+        operationalSites: 1,
+        statusText: "All system operational",
+      },
+      breachAlerts: {
+        count: 7,
+        change: -5.1,
+      },
+      truckActivities: {
+        count: 89,
+        change: 12.4,
+      },
+      totalVolume: {
+        value: 2150,
+        unit: "m3",
+        percentageQuota: 92,
+      },
+    };
+  }
+  
 }
