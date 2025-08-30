@@ -17,10 +17,7 @@ export class AiCamerasService {
     private readonly aiCamerasRepository: AiCamerasRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createAiCamerasDto: CreateAiCamerasDto,
-  ) {
+  async create(createAiCamerasDto: CreateAiCamerasDto) {
     // Do not remove comment below.
     // <creating-property />
 
@@ -34,8 +31,9 @@ export class AiCamerasService {
       ai_features: createAiCamerasDto.ai_features,
       status: createAiCamerasDto.status,
       url_live_stream: createAiCamerasDto.url_live_stream,
-      latest_captured_image: createAiCamerasDto.latest_captured_image?? "",
-      latest_captured_image_at: createAiCamerasDto.latest_captured_image_at?? new Date(),
+      latest_captured_image: createAiCamerasDto.latest_captured_image ?? "",
+      latest_captured_image_at:
+        createAiCamerasDto.latest_captured_image_at ?? new Date(),
       installed_at: createAiCamerasDto.installed_at,
     });
   }
@@ -64,7 +62,7 @@ export class AiCamerasService {
     if (query.status) {
       filter.status = query.status;
     }
-  
+
     const [entities, total] = await Promise.all([
       this.aiCamerasRepository.findAllWithFilterAndPagination({
         filter,
@@ -72,7 +70,7 @@ export class AiCamerasService {
       }),
       this.aiCamerasRepository.countWithFilter(filter),
     ]);
-  
+
     return { entities, total };
   }
 

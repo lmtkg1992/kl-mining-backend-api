@@ -352,11 +352,11 @@ export class AdminUsersService {
   async getStatistics(
     adminUserId: string,
     query: FindStatisticsDto,
-  ): Promise<AdminStatisticsResponseDto > {
+  ): Promise<AdminStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
-      admin_user_id : adminUserId,
+      admin_user_id: adminUserId,
       last_updated: new Date().toISOString(),
       site_status: {
         total_sites: 1,
@@ -378,5 +378,4 @@ export class AdminUsersService {
       },
     };
   }
-  
 }

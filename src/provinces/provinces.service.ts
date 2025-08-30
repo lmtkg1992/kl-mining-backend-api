@@ -91,7 +91,7 @@ export class ProvincesService {
   async getStatistics(
     provinceId: string,
     query: FindStatisticsDto,
-  ): Promise<ProvincesStatisticsResponseDto > {
+  ): Promise<ProvincesStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
     return {
@@ -123,16 +123,18 @@ export class ProvincesService {
     paginationOptions: IPaginationOptions,
   ) {
     const filter: any = {};
-    if (query.province_id) { 
-      const sites = await this.miningSitesRepository.findByProvinceId(query.province_id);
+    if (query.province_id) {
+      const sites = await this.miningSitesRepository.findByProvinceId(
+        query.province_id,
+      );
       if (sites.length) {
-        filter.site_id = { $in: sites.map(site => site.id) };
+        filter.site_id = { $in: sites.map((site) => site.id) };
       }
     }
     if (query.status) {
       filter.status = query.status;
     }
-  
+
     const [entities, total] = await Promise.all([
       this.aiCamerasRepository.findAllWithFilterAndPagination({
         filter,
@@ -140,11 +142,13 @@ export class ProvincesService {
       }),
       this.aiCamerasRepository.countWithFilter(filter),
     ]);
-  
+
     return { entities, total };
   }
 
-  async getMaterials(provinceId: string): Promise<ProvincesMaterialsResponseDto> {
+  async getMaterials(
+    provinceId: string,
+  ): Promise<ProvincesMaterialsResponseDto> {
     return {
       province_id: provinceId,
       last_updated: new Date().toISOString(),

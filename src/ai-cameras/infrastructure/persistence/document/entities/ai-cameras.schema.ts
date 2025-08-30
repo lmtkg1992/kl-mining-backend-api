@@ -13,11 +13,14 @@ export type AiCamerasSchemaDocument = HydratedDocument<AiCamerasSchemaClass>;
   },
 })
 export class AiCamerasSchemaClass extends EntityDocumentHelper {
-
   @Prop({ required: true })
   code: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: MiningSitesSchemaClass.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: MiningSitesSchemaClass.name,
+    required: true,
+  })
   site_id: string;
 
   @Prop({ required: true })
@@ -43,7 +46,7 @@ export class AiCamerasSchemaClass extends EntityDocumentHelper {
 
   @Prop()
   installed_at: Date;
-  
+
   @Prop({ default: now })
   createdAt: Date;
 

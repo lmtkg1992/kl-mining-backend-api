@@ -121,7 +121,9 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
   }
 
   async findByProvinceId(provinceId: string): Promise<MiningSites[]> {
-    const entityObjects = await this.miningSitesModel.find({ province: provinceId });
+    const entityObjects = await this.miningSitesModel.find({
+      province: provinceId,
+    });
     return entityObjects.map((entityObject) =>
       MiningSitesMapper.toDomain(entityObject),
     );

@@ -197,7 +197,10 @@ export class AdminUsersController {
   @Get("statistics/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: AdminStatisticsResponseDto })
-  async getStatistics(@Param("id") id: string, @Query() query: FindStatisticsDto) {
+  async getStatistics(
+    @Param("id") id: string,
+    @Query() query: FindStatisticsDto,
+  ) {
     return this.adminUsersService.getStatistics(id, query);
   }
 }

@@ -66,18 +66,23 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
     return this.aiCamerasModel.countDocuments(filter);
   }
 
-
   async findById(id: AiCameras["id"]): Promise<NullableType<AiCameras>> {
-    const entityObject = await this.aiCamerasModel.findById(id).populate({
-      path: "site_id",
-    }).lean();
+    const entityObject = await this.aiCamerasModel
+      .findById(id)
+      .populate({
+        path: "site_id",
+      })
+      .lean();
     return entityObject ? AiCamerasMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(ids: AiCameras["id"][]): Promise<AiCameras[]> {
-    const entityObjects = await this.aiCamerasModel.find({ _id: { $in: ids } }).populate({
-      path: "site_id",
-    }).lean();
+    const entityObjects = await this.aiCamerasModel
+      .find({ _id: { $in: ids } })
+      .populate({
+        path: "site_id",
+      })
+      .lean();
     return entityObjects.map((entityObject) =>
       AiCamerasMapper.toDomain(entityObject),
     );

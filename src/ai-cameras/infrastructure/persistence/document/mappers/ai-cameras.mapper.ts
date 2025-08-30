@@ -1,4 +1,8 @@
-import { AiCameraStatusEnum, AiCameraFeatureEnum, AiCameraTypeEnum } from "src/ai-cameras/ai-cameras.enum";
+import {
+  AiCameraStatusEnum,
+  AiCameraFeatureEnum,
+  AiCameraTypeEnum,
+} from "src/ai-cameras/ai-cameras.enum";
 import { AiCameras } from "../../../../domain/ai-cameras";
 import { AiCamerasSchemaClass } from "../entities/ai-cameras.schema";
 import { MiningSites } from "src/mining-sites/domain/mining-sites";
@@ -20,7 +24,7 @@ export class AiCamerasMapper {
         site_name,
       } as MiningSites;
     }
-    domainEntity.type = raw.type as AiCameraTypeEnum  ;
+    domainEntity.type = raw.type as AiCameraTypeEnum;
     domainEntity.location_description = raw.location_description;
     domainEntity.ai_features = raw.ai_features as AiCameraFeatureEnum[];
     domainEntity.status = raw.status as AiCameraStatusEnum;
@@ -46,8 +50,10 @@ export class AiCamerasMapper {
     persistenceSchema.ai_features = domainEntity.ai_features;
     persistenceSchema.status = domainEntity.status;
     persistenceSchema.url_live_stream = domainEntity.url_live_stream;
-    persistenceSchema.latest_captured_image = domainEntity.latest_captured_image;
-    persistenceSchema.latest_captured_image_at = domainEntity.latest_captured_image_at;
+    persistenceSchema.latest_captured_image =
+      domainEntity.latest_captured_image;
+    persistenceSchema.latest_captured_image_at =
+      domainEntity.latest_captured_image_at;
     persistenceSchema.installed_at = domainEntity.installed_at;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;

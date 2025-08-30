@@ -145,7 +145,7 @@ export class MiningSitesController {
   @ApiOkResponse({ type: MiningSitesTransportResponseDto })
   @RequirePermissions("mining_sites::transport")
   async getTransport(@Param("id") id: string) {
-    return this.miningSitesService.getTransport(id); 
+    return this.miningSitesService.getTransport(id);
   }
 
   @RequirePermissions("mining_sites::ai_cameras::list")
@@ -159,17 +159,20 @@ export class MiningSitesController {
     if (page < 1) page = 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) limit = 50;
-    
+
     query.site_id = id;
 
-    const data = await this.miningSitesService.getLiveAiCameras(
-      query,
-      { page, limit },
-    );
+    const data = await this.miningSitesService.getLiveAiCameras(query, {
+      page,
+      limit,
+    });
 
-    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
   }
-  
+
   @RequirePermissions("mining_sites::materials")
   @Get("materials/:id")
   @ApiParam({ name: "id", type: String, required: true })

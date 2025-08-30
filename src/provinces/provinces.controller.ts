@@ -137,7 +137,7 @@ export class ProvincesController {
   ) {
     return this.provincesService.getStatistics(id, query);
   }
-  
+
   @RequirePermissions("provinces::ai_cameras::list")
   @Get("ai-cameras/list/:id")
   @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })
@@ -152,12 +152,15 @@ export class ProvincesController {
 
     query.province_id = id;
 
-    const data = await this.provincesService.getLiveAiCameras(
-      query,
-      { page, limit },
-    );
+    const data = await this.provincesService.getLiveAiCameras(query, {
+      page,
+      limit,
+    });
 
-    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
   }
 
   @RequirePermissions("provinces::materials")

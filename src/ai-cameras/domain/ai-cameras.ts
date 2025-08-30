@@ -1,5 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { AiCameraFeatureEnum, AiCameraStatusEnum, AiCameraTypeEnum } from "../ai-cameras.enum";
+import {
+  AiCameraFeatureEnum,
+  AiCameraStatusEnum,
+  AiCameraTypeEnum,
+} from "../ai-cameras.enum";
 import { MiningSites } from "src/mining-sites/domain/mining-sites";
 
 export class AiCameras {

@@ -161,7 +161,6 @@ export class MiningSitesService {
     };
   }
 
-
   async getLiveAiCameras(
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
@@ -173,7 +172,7 @@ export class MiningSitesService {
     if (query.status) {
       filter.status = query.status;
     }
-  
+
     const [entities, total] = await Promise.all([
       this.aiCamerasRepository.findAllWithFilterAndPagination({
         filter,
@@ -181,11 +180,9 @@ export class MiningSitesService {
       }),
       this.aiCamerasRepository.countWithFilter(filter),
     ]);
-  
+
     return { entities, total };
   }
-
-
 
   async getMaterials(siteId: string): Promise<MiningSitesMaterialsResponseDto> {
     return {

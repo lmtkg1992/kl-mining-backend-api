@@ -63,9 +63,11 @@ export class AiCamerasController {
       { page, limit },
     );
 
-    return infinityPaginationWithMetadata(data.entities, data.total, { page, limit });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
   }
-
 
   @RequirePermissions("ai_cameras::detail")
   @Get("detail/:id")

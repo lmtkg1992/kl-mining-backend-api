@@ -22,7 +22,7 @@ export class AdminStatisticsResponseDto {
 
   @ApiProperty({ example: { count: 7, change: -5.1 } })
   breach_alerts: {
-    count: number;  
+    count: number;
     change: number;
   };
 

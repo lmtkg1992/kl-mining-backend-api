@@ -80,7 +80,7 @@ import { CommonModule } from "./common/common.module";
     MailModule,
     MailerModule,
     HomeModule,
-    CommonModule
+    CommonModule,
   ],
 })
 export class AppModule {}
