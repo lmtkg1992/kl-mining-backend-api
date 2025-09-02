@@ -14,6 +14,16 @@ export abstract class AiSnapshotsRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<AiSnapshots[]>;
 
+  abstract findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AiSnapshots[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(id: AiSnapshots["id"]): Promise<NullableType<AiSnapshots>>;
 
   abstract findByIds(ids: AiSnapshots["id"][]): Promise<AiSnapshots[]>;

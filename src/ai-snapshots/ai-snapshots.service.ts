@@ -7,6 +7,7 @@ import { UpdateAiSnapshotsDto } from "./dto/update-ai-snapshots.dto";
 import { AiSnapshotsRepository } from "./infrastructure/persistence/ai-snapshots.repository";
 import { IPaginationOptions } from "../utils/types/pagination-options";
 import { AiSnapshots } from "./domain/ai-snapshots";
+import { FindAllAiSnapshotsDto } from "./dto/find-all-ai-snapshots.dto";
 
 @Injectable()
 export class AiSnapshotsService {
@@ -40,6 +41,24 @@ export class AiSnapshotsService {
       },
     });
   }
+
+  async findAllWithFilterAndPagination(
+    query: FindAllAiSnapshotsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter = {};
+
+    const [entites, total] = await Promise.all([
+      this.aiSnapshotsRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.aiSnapshotsRepository.countWithFilter(filter),
+    ]);
+
+    return { entites, total };
+  }
+
 
   findById(id: AiSnapshots["id"]) {
     return this.aiSnapshotsRepository.findById(id);

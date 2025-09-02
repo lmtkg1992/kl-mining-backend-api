@@ -27,6 +27,8 @@ import {
 } from "../utils/dto/infinity-pagination-response.dto";
 import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllAiSnapshotsDto } from "./dto/find-all-ai-snapshots.dto";
+import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 
 @ApiTags("Aisnapshots")
 @ApiBearerAuth()
@@ -46,31 +48,39 @@ export class AiSnapshotsController {
     return this.aiSnapshotsService.create(createAiSnapshotsDto);
   }
 
-  @Get()
+  @RequirePermissions("ai_snapshots::list")
+  @Get("list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(AiSnapshots),
   })
   async findAll(
     @Query() query: FindAllAiSnapshotsDto,
   ): Promise<InfinityPaginationResponseDto<AiSnapshots>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.aiSnapshotsService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.aiSnapshotsService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
-  @Get(":id")
+  @RequirePermissions("ai_snapshots::detail")
+  @Get("detail/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -83,7 +93,8 @@ export class AiSnapshotsController {
     return this.aiSnapshotsService.findById(id);
   }
 
-  @Patch(":id")
+  @RequirePermissions("ai_snapshots::update")
+  @Patch("update/:id")
   @ApiParam({
     name: "id",
     type: String,
@@ -99,7 +110,8 @@ export class AiSnapshotsController {
     return this.aiSnapshotsService.update(id, updateAiSnapshotsDto);
   }
 
-  @Delete(":id")
+  @RequirePermissions("ai_snapshots::delete")
+  @Delete("delete/:id")
   @ApiParam({
     name: "id",
     type: String,

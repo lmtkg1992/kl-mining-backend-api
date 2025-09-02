@@ -36,6 +36,25 @@ export class AiSnapshotsDocumentRepository implements AiSnapshotsRepository {
       AiSnapshotsMapper.toDomain(entityObject),
     );
   }
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<AiSnapshots[]> {
+    const entityObjects = await this.aiSnapshotsModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+    return entityObjects.map((entityObject) =>
+      AiSnapshotsMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.aiSnapshotsModel.countDocuments(filter);
+  }
 
   async findById(id: AiSnapshots["id"]): Promise<NullableType<AiSnapshots>> {
     const entityObject = await this.aiSnapshotsModel.findById(id);
