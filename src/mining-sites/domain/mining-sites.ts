@@ -15,7 +15,6 @@ export class MiningSites {
   })
   site_name: string;
 
-
   @ApiProperty({
     type: String,
     description: "Mining site code",
@@ -47,19 +46,19 @@ export class MiningSites {
   })
   boundary_polygon?: string;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   volume: number;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   trucks: number;
 
-  @ApiProperty({required: false}) 
+  @ApiProperty({ required: false })
   breaches: number;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   cameras_online: number;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   last_activity: Date;
 
   @ApiProperty()

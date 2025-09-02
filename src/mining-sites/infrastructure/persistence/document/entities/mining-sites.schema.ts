@@ -23,9 +23,13 @@ export class MiningSitesSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true, type: String })
   status: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: AdminUsersSchemaClass.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: AdminUsersSchemaClass.name,
+    required: true,
+  })
   owner_user_id: string | AdminUsersSchemaClass;
-  
+
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: "ProvincesSchemaClass",

@@ -33,7 +33,6 @@ import { AdminStatisticsResponseDto } from "./dto/admin-statistics-response.dto"
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 
-
 import { SessionService } from "../session/session.service";
 import { PermissionsService } from "../permissions/permissions.service";
 import { ProvincesService } from "../provinces/provinces.service";
@@ -41,7 +40,6 @@ import { MiningSitesService } from "../mining-sites/mining-sites.service";
 
 import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.repository";
 import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
-
 
 @Injectable()
 export class AdminUsersService {

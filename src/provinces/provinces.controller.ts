@@ -203,7 +203,7 @@ export class ProvincesController {
       limit,
     });
   }
-  
+
   @RequirePermissions("provinces::materials")
   @Get("materials/:id")
   @ApiParam({ name: "id", type: String, required: true })

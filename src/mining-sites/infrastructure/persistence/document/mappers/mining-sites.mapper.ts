@@ -17,7 +17,7 @@ export class MiningSitesMapper {
       domainEntity.owner_user_id = {
         id: _id?.toString() ?? "",
         email,
-        name
+        name,
       } as AdminUsers;
     }
 

@@ -42,7 +42,7 @@ export class MiningSitesService {
       trucks: 0,
       breaches: 0,
       cameras_online: 0,
-      last_activity: new Date()
+      last_activity: new Date(),
     });
   }
 
@@ -79,12 +79,12 @@ export class MiningSitesService {
 
     //mapping meta data
     const enhancedEntites = entites.map((entity) => ({
-        ...entity,
-        volume: 243,
-        trucks: 45,
-        breaches: 3,
-        cameras_online: 4,
-        last_activity: new Date(),
+      ...entity,
+      volume: 243,
+      trucks: 45,
+      breaches: 3,
+      cameras_online: 4,
+      last_activity: new Date(),
     }));
     return { entites: enhancedEntites, total };
   }

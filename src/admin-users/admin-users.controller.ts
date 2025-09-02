@@ -45,7 +45,6 @@ import { MiningSites } from "src/mining-sites/domain/mining-sites";
 import { FindAllMiningSitesDto } from "src/mining-sites/dto/find-all-mining-sites.dto";
 import { MiningSitesService } from "src/mining-sites/mining-sites.service";
 
-
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
 // @UseGuards(AuthGuard("jwt"), PermissionsGuard)
@@ -203,9 +202,7 @@ export class AdminUsersController {
   @RequirePermissions("admin_users::statistics")
   @Get("statistics")
   @ApiOkResponse({ type: AdminStatisticsResponseDto })
-  async getStatistics(
-    @Query() query: FindStatisticsDto,
-  ) {
+  async getStatistics(@Query() query: FindStatisticsDto) {
     return this.adminUsersService.getStatistics(query);
   }
 
@@ -230,7 +227,7 @@ export class AdminUsersController {
       limit,
     });
   }
-  
+
   @RequirePermissions("admin_users::mining_sites::list")
   @Get("mining-sites/list")
   @ApiOkResponse({
