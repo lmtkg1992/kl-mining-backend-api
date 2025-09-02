@@ -36,8 +36,11 @@ import { AiCamerasModule } from "./ai-cameras/ai-cameras.module";
 
 import { CommonModule } from "./common/common.module";
 
+import { AiSnapshotsModule } from "./ai-snapshots/ai-snapshots.module";
+
 @Module({
   imports: [
+    AiSnapshotsModule,
     AiCamerasModule,
     PermissionsModule,
     AdminUserGroupsModule,
