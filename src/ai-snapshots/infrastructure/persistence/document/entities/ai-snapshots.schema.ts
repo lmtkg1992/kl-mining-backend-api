@@ -13,6 +13,24 @@ export type AiSnapshotsSchemaDocument =
   },
 })
 export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
+  @Prop({ required: true, type: String })
+  camera_id: string;
+
+  @Prop({ required: true, type: String, enum: ["breach", "truck"] })
+  event_type: "breach" | "truck";
+
+  @Prop({ required: true, type: String })
+  image_url: string;
+
+  @Prop({ required: false, type: String })
+  truck_type?: string;
+
+  @Prop({ required: false, type: Number })
+  fill_level?: number;
+
+  @Prop({ required: true, type: Number, min: 0, max: 1 })
+  confidence_score: number;
+
   @Prop({ default: now })
   createdAt: Date;
 

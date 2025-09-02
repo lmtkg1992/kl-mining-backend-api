@@ -20,12 +20,14 @@ export class AiSnapshotsService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     createAiSnapshotsDto: CreateAiSnapshotsDto,
   ) {
-    // Do not remove comment below.
-    // <creating-property />
 
     return this.aiSnapshotsRepository.create({
-      // Do not remove comment below.
-      // <creating-property-payload />
+      camera_id: createAiSnapshotsDto.camera_id,
+      event_type: createAiSnapshotsDto.event_type,
+      image_url: createAiSnapshotsDto.image_url,
+      truck_type: createAiSnapshotsDto.truck_type,
+      fill_level: createAiSnapshotsDto.fill_level,
+      confidence_score: createAiSnapshotsDto.confidence_score
     });
   }
 
