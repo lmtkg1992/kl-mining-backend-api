@@ -38,7 +38,6 @@ export class AiSnapshots {
   })
   confidence_score: number;
 
-
   @ApiProperty()
   createdAt: Date;
 

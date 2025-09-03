@@ -38,8 +38,26 @@ import { CommonModule } from "./common/common.module";
 
 import { AiSnapshotsModule } from "./ai-snapshots/ai-snapshots.module";
 
+import { TruckWeightBridgeRecordsModule } from "./truck-weight-bridge-records/truck-weight-bridge-records.module";
+
+import { TrucksModule } from "./trucks/trucks.module";
+
+import { FaqsModule } from "./faqs/faqs.module";
+
+import { AlertsModule } from "./alerts/alerts.module";
+
+import { AdminUserSettingsModule } from "./admin-user-settings/admin-user-settings.module";
+
+import { NotificationsModule } from "./notifications/notifications.module";
+
 @Module({
   imports: [
+    NotificationsModule,
+    AdminUserSettingsModule,
+    AlertsModule,
+    FaqsModule,
+    TrucksModule,
+    TruckWeightBridgeRecordsModule,
     AiSnapshotsModule,
     AiCamerasModule,
     PermissionsModule,

@@ -16,18 +16,14 @@ export class AiSnapshotsService {
     private readonly aiSnapshotsRepository: AiSnapshotsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createAiSnapshotsDto: CreateAiSnapshotsDto,
-  ) {
-
+  async create(createAiSnapshotsDto: CreateAiSnapshotsDto) {
     return this.aiSnapshotsRepository.create({
       camera_id: createAiSnapshotsDto.camera_id,
       event_type: createAiSnapshotsDto.event_type,
       image_url: createAiSnapshotsDto.image_url,
       truck_type: createAiSnapshotsDto.truck_type,
       fill_level: createAiSnapshotsDto.fill_level,
-      confidence_score: createAiSnapshotsDto.confidence_score
+      confidence_score: createAiSnapshotsDto.confidence_score,
     });
   }
 
@@ -60,7 +56,6 @@ export class AiSnapshotsService {
 
     return { entites, total };
   }
-
 
   findById(id: AiSnapshots["id"]) {
     return this.aiSnapshotsRepository.findById(id);

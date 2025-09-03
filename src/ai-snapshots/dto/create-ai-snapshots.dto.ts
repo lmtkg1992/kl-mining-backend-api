@@ -1,5 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Min, Max, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator";
+import {
+  Min,
+  Max,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from "class-validator";
 
 export class CreateAiSnapshotsDto {
   @ApiProperty()
