@@ -16,10 +16,7 @@ export class AlertsService {
     private readonly alertsRepository: AlertsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createAlertsDto: CreateAlertsDto,
-  ) {
+  async create(createAlertsDto: CreateAlertsDto) {
     // Do not remove comment below.
     // <creating-property />
 

@@ -16,10 +16,7 @@ export class FaqsService {
     private readonly faqsRepository: FaqsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createFaqsDto: CreateFaqsDto,
-  ) {
+  async create(createFaqsDto: CreateFaqsDto) {
     // Do not remove comment below.
     // <creating-property />
 

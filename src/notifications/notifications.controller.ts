@@ -47,7 +47,7 @@ export class NotificationsController {
     return this.notificationsService.create(createNotificationsDto);
   }
 
-  @Get('list')
+  @Get("list")
   @RequirePermissions("notifications::list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(Notifications),

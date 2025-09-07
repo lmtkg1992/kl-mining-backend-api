@@ -16,10 +16,7 @@ export class NotificationsService {
     private readonly notificationsRepository: NotificationsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createNotificationsDto: CreateNotificationsDto,
-  ) {
+  async create(createNotificationsDto: CreateNotificationsDto) {
     // Do not remove comment below.
     // <creating-property />
 

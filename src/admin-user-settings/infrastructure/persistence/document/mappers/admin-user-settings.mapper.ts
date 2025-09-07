@@ -32,8 +32,10 @@ export class AdminUserSettingsMapper {
       persistenceSchema._id = domainEntity.id;
     }
     persistenceSchema.admin_user_id = domainEntity.admin_user_id?.id ?? "";
-    persistenceSchema.security_breach_alerts = domainEntity.security_breach_alerts;
-    persistenceSchema.truck_detection_alerts = domainEntity.truck_detection_alerts;
+    persistenceSchema.security_breach_alerts =
+      domainEntity.security_breach_alerts;
+    persistenceSchema.truck_detection_alerts =
+      domainEntity.truck_detection_alerts;
     persistenceSchema.camera_health_alerts = domainEntity.camera_health_alerts;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;

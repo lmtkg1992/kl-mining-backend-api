@@ -21,7 +21,11 @@ export class AlertsSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true })
   site_id: string;
 
-  @Prop({ required: true, enum: ["info", "warning", "critical"], default: "warning" })
+  @Prop({
+    required: true,
+    enum: ["info", "warning", "critical"],
+    default: "warning",
+  })
   severity: string;
 
   @Prop({ default: false })

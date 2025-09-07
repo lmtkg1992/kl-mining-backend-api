@@ -5,13 +5,18 @@ export class Notifications {
   id: string;
 
   // Core event reference
-  @ApiProperty({ description: "Event category (breach, truck, camera, report)" })
+  @ApiProperty({
+    description: "Event category (breach, truck, camera, report)",
+  })
   event_type: string;
 
   @ApiProperty({ description: "Unique event identifier" })
   event_id: string;
 
-  @ApiProperty({ description: "Link to event details (UI or API)", required: false })
+  @ApiProperty({
+    description: "Link to event details (UI or API)",
+    required: false,
+  })
   event_link?: string;
 
   // Notification content
@@ -30,7 +35,10 @@ export class Notifications {
   @ApiProperty({ description: "Associated camera ID", required: false })
   camera_id?: string;
 
-  @ApiProperty({ enum: ["low", "medium", "high", "critical"], default: "medium" })
+  @ApiProperty({
+    enum: ["low", "medium", "high", "critical"],
+    default: "medium",
+  })
   priority: string;
 
   @ApiProperty({ description: "Read/unread status", default: false })

@@ -23,7 +23,7 @@ export abstract class FaqsRepository {
   }): Promise<Faqs[]>;
 
   abstract countWithFilter(filter: any): Promise<number>;
-  
+
   abstract findById(id: Faqs["id"]): Promise<NullableType<Faqs>>;
 
   abstract findByIds(ids: Faqs["id"][]): Promise<Faqs[]>;

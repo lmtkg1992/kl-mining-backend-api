@@ -47,7 +47,7 @@ export class FaqsController {
     return this.faqsService.create(createFaqsDto);
   }
 
-  @Get('list')
+  @Get("list")
   @RequirePermissions("faqs::list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(Faqs),
@@ -63,13 +63,10 @@ export class FaqsController {
     if (limit > 50) {
       limit = 50;
     }
-    const data = await this.faqsService.findAllWithFilterAndPagination(
-      query,
-      {
-        page,
-        limit,
-      },
-    );
+    const data = await this.faqsService.findAllWithFilterAndPagination(query, {
+      page,
+      limit,
+    });
 
     return infinityPaginationWithMetadata(data.entites, data.total, {
       page,

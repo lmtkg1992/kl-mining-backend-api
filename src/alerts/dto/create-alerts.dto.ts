@@ -1,5 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsBoolean, IsDateString } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsBoolean,
+  IsDateString,
+} from "class-validator";
 
 export class CreateAlertsDto {
   @ApiProperty({ enum: ["breach", "truck", "after_hours"] })

@@ -12,10 +12,16 @@ export class Faqs {
   @ApiProperty({ description: "Answer text, supports markdown/HTML" })
   answer: string;
 
-  @ApiProperty({ description: "Optional image or screenshot URL", required: false })
+  @ApiProperty({
+    description: "Optional image or screenshot URL",
+    required: false,
+  })
   image_url?: string;
 
-  @ApiProperty({ description: "Display order for sorting FAQs", required: false })
+  @ApiProperty({
+    description: "Display order for sorting FAQs",
+    required: false,
+  })
   order?: number;
 
   @ApiProperty()

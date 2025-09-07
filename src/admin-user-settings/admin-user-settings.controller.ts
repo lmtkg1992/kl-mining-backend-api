@@ -49,7 +49,7 @@ export class AdminUserSettingsController {
     return this.adminUserSettingsService.create(createAdminUserSettingsDto);
   }
 
-  @Get('list')
+  @Get("list")
   @RequirePermissions("admin_user_settings::list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(AdminUserSettings),
@@ -66,13 +66,14 @@ export class AdminUserSettingsController {
       limit = 50;
     }
 
-    const data = await this.adminUserSettingsService.findAllWithFilterAndPagination(
-      query,
-      {
-        page,
-        limit,
-      },
-    );
+    const data =
+      await this.adminUserSettingsService.findAllWithFilterAndPagination(
+        query,
+        {
+          page,
+          limit,
+        },
+      );
 
     return infinityPaginationWithMetadata(data.entites, data.total, {
       page,

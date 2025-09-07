@@ -17,20 +17,19 @@ export class AdminUserSettingsService {
     private readonly adminUserSettingsRepository: AdminUserSettingsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createAdminUserSettingsDto: CreateAdminUserSettingsDto,
-  ) {
-
+  async create(createAdminUserSettingsDto: CreateAdminUserSettingsDto) {
     console.log(createAdminUserSettingsDto);
 
     return this.adminUserSettingsRepository.create({
       admin_user_id: {
         id: createAdminUserSettingsDto.admin_user_id,
       } as AdminUsers,
-      security_breach_alerts: createAdminUserSettingsDto.security_breach_alerts || true,
-      truck_detection_alerts: createAdminUserSettingsDto.truck_detection_alerts || true,
-      camera_health_alerts: createAdminUserSettingsDto.camera_health_alerts || true,
+      security_breach_alerts:
+        createAdminUserSettingsDto.security_breach_alerts || true,
+      truck_detection_alerts:
+        createAdminUserSettingsDto.truck_detection_alerts || true,
+      camera_health_alerts:
+        createAdminUserSettingsDto.camera_health_alerts || true,
     });
   }
 

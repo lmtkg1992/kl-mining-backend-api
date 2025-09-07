@@ -47,7 +47,7 @@ export class AlertsController {
     return this.alertsService.create(createAlertsDto);
   }
 
-  @Get('list')
+  @Get("list")
   @RequirePermissions("alerts::list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(Alerts),

@@ -56,7 +56,7 @@ export class AlertsDocumentRepository implements AlertsRepository {
 
   async countWithFilter(filter: any): Promise<number> {
     return this.alertsModel.countDocuments(filter);
-  } 
+  }
 
   async findById(id: Alerts["id"]): Promise<NullableType<Alerts>> {
     const entityObject = await this.alertsModel.findById(id);

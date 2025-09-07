@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsOptional, IsUrl, IsBoolean } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+  IsBoolean,
+} from "class-validator";
 
 export class CreateNotificationsDto {
   // Event core
@@ -44,7 +50,10 @@ export class CreateNotificationsDto {
   @IsOptional()
   camera_id?: string;
 
-  @ApiProperty({ enum: ["low", "medium", "high", "critical"], default: "medium" })
+  @ApiProperty({
+    enum: ["low", "medium", "high", "critical"],
+    default: "medium",
+  })
   @IsString()
   priority: string;
 

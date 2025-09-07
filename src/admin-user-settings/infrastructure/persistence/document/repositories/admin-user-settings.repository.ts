@@ -74,20 +74,26 @@ export class AdminUserSettingsDocumentRepository
   async findById(
     id: AdminUserSettings["id"],
   ): Promise<NullableType<AdminUserSettings>> {
-    const entityObject = await this.adminUserSettingsModel.findById(id).populate({
-      path: "admin_user_id",
-    }).lean();
+    const entityObject = await this.adminUserSettingsModel
+      .findById(id)
+      .populate({
+        path: "admin_user_id",
+      })
+      .lean();
     return entityObject ? AdminUserSettingsMapper.toDomain(entityObject) : null;
   }
 
   async findByIds(
     ids: AdminUserSettings["id"][],
   ): Promise<AdminUserSettings[]> {
-    const entityObjects = await this.adminUserSettingsModel.find({
-      _id: { $in: ids },
-    }).populate({
-      path: "admin_user_id",
-    }).lean();
+    const entityObjects = await this.adminUserSettingsModel
+      .find({
+        _id: { $in: ids },
+      })
+      .populate({
+        path: "admin_user_id",
+      })
+      .lean();
     return entityObjects.map((entityObject) =>
       AdminUserSettingsMapper.toDomain(entityObject),
     );

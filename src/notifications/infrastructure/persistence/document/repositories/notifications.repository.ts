@@ -54,8 +54,8 @@ export class NotificationsDocumentRepository
     return entityObjects.map((entityObject) =>
       NotificationsMapper.toDomain(entityObject),
     );
-  }   
-  
+  }
+
   async countWithFilter(filter: any): Promise<number> {
     return this.notificationsModel.countDocuments(filter);
   }

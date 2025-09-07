@@ -14,8 +14,11 @@ export type AdminUserSettingsSchemaDocument =
   },
 })
 export class AdminUserSettingsSchemaClass extends EntityDocumentHelper {
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: AdminUsersSchemaClass.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: AdminUsersSchemaClass.name,
+    required: true,
+  })
   admin_user_id: string;
 
   @Prop({ default: true })
@@ -26,7 +29,7 @@ export class AdminUserSettingsSchemaClass extends EntityDocumentHelper {
 
   @Prop({ default: true })
   camera_health_alerts: boolean;
-  
+
   @Prop({ default: now })
   createdAt: Date;
 
