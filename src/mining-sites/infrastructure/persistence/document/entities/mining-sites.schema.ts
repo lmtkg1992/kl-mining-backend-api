@@ -14,6 +14,11 @@ export type MiningSitesSchemaDocument =
   },
 })
 export class MiningSitesSchemaClass extends EntityDocumentHelper {
+  @Prop({
+    type: String,
+  })
+  material_type: string;
+
   @Prop({ required: true, type: String })
   site_name: string;
 

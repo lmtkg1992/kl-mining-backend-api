@@ -1,7 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsNotEmpty, IsOptional, IsMongoId } from "class-validator";
 
+
 export class CreateMiningSitesDto {
+  @ApiProperty({
+    required: true,
+    type: () => String,
+  })
+  @IsString()
+  material_type: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

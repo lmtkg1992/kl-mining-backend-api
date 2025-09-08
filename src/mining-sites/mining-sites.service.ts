@@ -1,5 +1,4 @@
 import {
-  // common
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -38,6 +37,7 @@ export class MiningSitesService {
         id: createMiningSitesDto.province,
       } as Provinces,
       boundary_polygon: createMiningSitesDto.boundary_polygon,
+      material_type: createMiningSitesDto.material_type,
       volume: 0,
       trucks: 0,
       breaches: 0,
@@ -80,10 +80,10 @@ export class MiningSitesService {
     //mapping meta data
     const enhancedEntites = entites.map((entity) => ({
       ...entity,
-      volume: 243,
-      trucks: 45,
-      breaches: 3,
-      cameras_online: 4,
+      volume: Math.floor(Math.random() * 1000),
+      trucks: Math.floor(Math.random() * 100),
+      breaches: Math.floor(Math.random() * 20),
+      cameras_online: Math.floor(Math.random() * 10),
       last_activity: new Date(),
     }));
     return { entites: enhancedEntites, total };
@@ -116,9 +116,12 @@ export class MiningSitesService {
     // Do not remove comment below.
     // <updating-property />
 
+
     return this.miningSitesRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+  material_type: updateMiningSitesDto.material_type,
+
     });
   }
 

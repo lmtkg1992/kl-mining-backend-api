@@ -12,13 +12,12 @@ import { Faqs } from "./domain/faqs";
 import { FindAllFaqsDto } from "./dto/find-all-faqs.dto";
 import { UnprocessableEntityException } from "@nestjs/common";
 import { HttpStatus } from "@nestjs/common";
-import { FaqCategoriesService } from '../faq-categories/faq-categories.service';
-import { FaqCategories } from '../faq-categories/domain/faq-categories';
-
+import { FaqCategoriesService } from "../faq-categories/faq-categories.service";
+import { FaqCategories } from "../faq-categories/domain/faq-categories";
 
 @Injectable()
 export class FaqsService {
-  constructor(    
+  constructor(
     @Inject(forwardRef(() => FaqCategoriesService))
     private readonly faqCategoriesService: FaqCategoriesService,
     private readonly faqsRepository: FaqsRepository,
@@ -34,12 +33,12 @@ export class FaqsService {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          categories: 'notExists',
+          categories: "notExists",
         },
       });
     }
     const categories = categoriesObject;
-      
+
     return this.faqsRepository.create({
       categories,
       question: createFaqsDto.question,
@@ -89,12 +88,12 @@ export class FaqsService {
 
   async update(
     id: Faqs["id"],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateFaqsDto: UpdateFaqsDto,
   ) {
     // Do not remove comment below.
     // <updating-property />
-      let categories: FaqCategories  | undefined = undefined;
+    let categories: FaqCategories | undefined = undefined;
 
     if (updateFaqsDto.categories) {
       const categoriesObject = await this.faqCategoriesService.findById(
@@ -104,19 +103,17 @@ export class FaqsService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            categories: 'notExists',
+            categories: "notExists",
           },
         });
       }
       categories = categoriesObject;
     }
-      
 
     return this.faqsRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-  categories,
-
+      categories,
     });
   }
 

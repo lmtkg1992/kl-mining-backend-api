@@ -6,7 +6,6 @@ import {
 import { AiCameras } from "../../../../domain/ai-cameras";
 import { AiCamerasSchemaClass } from "../entities/ai-cameras.schema";
 import { MiningSites } from "src/mining-sites/domain/mining-sites";
-import { Types } from "mongoose";
 
 export class AiCamerasMapper {
   public static toDomain(raw: AiCamerasSchemaClass): AiCameras {

@@ -7,7 +7,6 @@ import { AdminUserSettingsRepository } from "../../admin-user-settings.repositor
 import { AdminUserSettings } from "../../../../domain/admin-user-settings";
 import { AdminUserSettingsMapper } from "../mappers/admin-user-settings.mapper";
 import { IPaginationOptions } from "../../../../../utils/types/pagination-options";
-import { AdminUsersMapper } from "src/admin-users/infrastructure/persistence/document/mappers/admin-users.mapper";
 
 @Injectable()
 export class AdminUserSettingsDocumentRepository
@@ -19,7 +18,6 @@ export class AdminUserSettingsDocumentRepository
   ) {}
 
   async create(data: AdminUserSettings): Promise<AdminUserSettings> {
-    console.log(data);
     const persistenceModel = AdminUserSettingsMapper.toPersistence(data);
     const createdEntity = new this.adminUserSettingsModel(persistenceModel);
     const entityObject = await createdEntity.save();

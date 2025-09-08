@@ -4,6 +4,12 @@ import { AdminUsers } from "src/admin-users/domain/admin-users";
 
 export class MiningSites {
   @ApiProperty({
+    type: () => String,
+    nullable: false,
+  })
+  material_type: string;
+
+  @ApiProperty({
     type: String,
   })
   id: string;

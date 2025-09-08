@@ -25,11 +25,9 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
-import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllFaqCategoriesDto } from "./dto/find-all-faq-categories.dto";
 
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
-import { PermissionsGuard } from "../common/guards/permissions.guard";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 
 @ApiTags("Faqcategories")

@@ -1,4 +1,5 @@
 import { MiningSites } from "../../../../domain/mining-sites";
+
 import { MiningSitesSchemaClass } from "../entities/mining-sites.schema";
 import { Provinces } from "../../../../../provinces/domain/provinces";
 import { AdminUsers } from "src/admin-users/domain/admin-users";
@@ -6,6 +7,8 @@ import { AdminUsers } from "src/admin-users/domain/admin-users";
 export class MiningSitesMapper {
   public static toDomain(raw: MiningSitesSchemaClass): MiningSites {
     const domainEntity = new MiningSites();
+    domainEntity.material_type = raw.material_type;
+
     domainEntity.id = raw._id.toString();
     domainEntity.site_name = raw.site_name;
     domainEntity.site_code = raw.site_code;
@@ -41,6 +44,8 @@ export class MiningSitesMapper {
     domainEntity: MiningSites,
   ): MiningSitesSchemaClass {
     const persistenceSchema = new MiningSitesSchemaClass();
+    persistenceSchema.material_type = domainEntity.material_type;
+
     if (domainEntity.id) {
       persistenceSchema._id = domainEntity.id;
     }
