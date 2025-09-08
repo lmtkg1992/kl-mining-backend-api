@@ -1,3 +1,7 @@
+import { FaqCategoriesSchemaClass } from "../../../../../faq-categories/infrastructure/persistence/document/entities/faq-categories.schema";
+
+import mongoose from "mongoose";
+
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
@@ -12,6 +16,13 @@ export type FaqsSchemaDocument = HydratedDocument<FaqsSchemaClass>;
   },
 })
 export class FaqsSchemaClass extends EntityDocumentHelper {
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "FaqCategoriesSchemaClass",
+    autopopulate: true,
+  })
+  categories: FaqCategoriesSchemaClass;
+
   @Prop({ required: true })
   question: string;
 

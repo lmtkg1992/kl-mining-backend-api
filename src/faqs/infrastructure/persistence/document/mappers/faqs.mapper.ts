@@ -1,9 +1,15 @@
 import { Faqs } from "../../../../domain/faqs";
+import { FaqCategoriesMapper } from "../../../../../faq-categories/infrastructure/persistence/document/mappers/faq-categories.mapper";
+
 import { FaqsSchemaClass } from "../entities/faqs.schema";
 
 export class FaqsMapper {
   public static toDomain(raw: FaqsSchemaClass): Faqs {
     const domainEntity = new Faqs();
+    if (raw.categories) {
+      domainEntity.categories = FaqCategoriesMapper.toDomain(raw.categories);
+    }
+
     domainEntity.id = raw._id.toString();
     domainEntity.question = raw.question;
     domainEntity.answer = raw.answer;
@@ -17,6 +23,12 @@ export class FaqsMapper {
 
   public static toPersistence(domainEntity: Faqs): FaqsSchemaClass {
     const persistenceSchema = new FaqsSchemaClass();
+    if (domainEntity.categories) {
+      persistenceSchema.categories = FaqCategoriesMapper.toPersistence(
+        domainEntity.categories,
+      );
+    }
+
     if (domainEntity.id) {
       persistenceSchema._id = domainEntity.id;
     }

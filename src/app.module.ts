@@ -50,8 +50,11 @@ import { AdminUserSettingsModule } from "./admin-user-settings/admin-user-settin
 
 import { NotificationsModule } from "./notifications/notifications.module";
 
+import { FaqCategoriesModule } from "./faq-categories/faq-categories.module";
+
 @Module({
   imports: [
+    FaqCategoriesModule,
     NotificationsModule,
     AdminUserSettingsModule,
     AlertsModule,

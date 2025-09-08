@@ -1,6 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { FaqCategories } from "../../faq-categories/domain/faq-categories";
 
 export class Faqs {
+  @ApiProperty({
+    type: () => FaqCategories,
+    nullable: false,
+  })
+  categories: FaqCategories;
+
   @ApiProperty({
     type: String,
   })

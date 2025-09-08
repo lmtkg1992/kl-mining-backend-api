@@ -47,7 +47,7 @@ export class MiningSitesController {
   constructor(private readonly miningSitesService: MiningSitesService) {}
 
   @RequirePermissions("mining_sites::create")
-  @Post()
+  @Post("create")
   @ApiCreatedResponse({
     type: MiningSites,
   })

@@ -1,13 +1,19 @@
+import { FaqCategoriesDto } from "../../faq-categories/dto/faq-categories.dto";
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsUrl,
-  IsNumber,
-} from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsUrl, IsNumber, ValidateNested, IsNotEmptyObject } from "class-validator";
+import { Type } from "class-transformer";
+
 
 export class CreateFaqsDto {
+  @ApiProperty({
+    required: true,
+    type: () => FaqCategoriesDto,
+  })
+  @ValidateNested()
+  @Type(() => FaqCategoriesDto)
+  @IsNotEmptyObject()
+  categories: FaqCategoriesDto;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

@@ -39,7 +39,7 @@ import { RequirePermissions } from "../common/decorators/require-permissions.dec
 export class FaqsController {
   constructor(private readonly faqsService: FaqsService) {}
 
-  @Post()
+  @Post("create")
   @ApiCreatedResponse({
     type: Faqs,
   })
