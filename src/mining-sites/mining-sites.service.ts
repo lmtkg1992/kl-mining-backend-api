@@ -96,10 +96,10 @@ export class MiningSitesService {
     }
     return {
       ...site,
-      volume: 243,
-      trucks: 45,
-      breaches: 3,
-      cameras_online: 4,
+      volume: Math.floor(Math.random() * 1000),
+      trucks: Math.floor(Math.random() * 100),
+      breaches: Math.floor(Math.random() * 20),
+      cameras_online: Math.floor(Math.random() * 10),
       last_activity: new Date(),
     };
   }
@@ -135,6 +135,12 @@ export class MiningSitesService {
   ): Promise<MiningSitesStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
+    const activeCameras = Math.floor(Math.random() * 10);
+    const totalCameras = Math.floor(Math.random() * 10);
+    const needingMaintenanceCameras = Math.floor(Math.random() * 10);
+    const offlineCameras = totalCameras - activeCameras;
+    const statusCamerasText = `${activeCameras}/${totalCameras} active — ${needingMaintenanceCameras} need maintenance`;
+
     return {
       site_id: siteId,
       last_updated: new Date().toISOString(),
@@ -143,16 +149,23 @@ export class MiningSitesService {
         operational_sites: 1,
         status_text: "All system operational",
       },
+      active_cameras: {
+        active: activeCameras,
+        total: totalCameras,
+        needing_maintenance: needingMaintenanceCameras,
+        offline: offlineCameras,
+        status_text: statusCamerasText,
+      },
       breach_alerts: {
-        count: 7,
-        change: -5.1,
+        count: Math.floor(Math.random() * 10),
+        change: Math.floor(Math.random() * 10),
       },
       truck_activities: {
-        count: 89,
-        change: 12.4,
+        count: Math.floor(Math.random() * 10),
+        change: Math.floor(Math.random() * 10),
       },
       total_volume: {
-        value: 2150,
+        value: Math.floor(Math.random() * 1000),
         unit: "m3",
         percentage_quota: 92,
       },
@@ -164,32 +177,32 @@ export class MiningSitesService {
       site_id: siteId,
       last_updated: new Date().toISOString(),
       hourly_data: [
-        { hour: "6 AM", value: 7.0 },
-        { hour: "7 AM", value: 7.5 },
-        { hour: "8 AM", value: 8.0 },
-        { hour: "9 AM", value: 8.5 },
-        { hour: "10 AM", value: 9.2 },
-        { hour: "11 AM", value: 8.8 },
-        { hour: "12 PM", value: 8.0 },
-        { hour: "1 PM", value: 7.9 },
-        { hour: "2 PM", value: 8.1 },
-        { hour: "3 PM", value: 8.3 },
-        { hour: "4 PM", value: 7.7 },
-        { hour: "5 PM", value: 7.4 },
+        { hour: "6 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "7 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "8 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "9 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "10 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "11 AM", value: Math.floor(Math.random() * 10) },
+        { hour: "12 PM", value: Math.floor(Math.random() * 10) },
+        { hour: "1 PM", value: Math.floor(Math.random() * 10) },
+        { hour: "2 PM", value: Math.floor(Math.random() * 10) },
+        { hour: "3 PM", value: Math.floor(Math.random() * 10) },
+        { hour: "4 PM", value: Math.floor(Math.random() * 10) },
+        { hour: "5 PM", value: Math.floor(Math.random() * 10) },
       ],
       current_hour: {
-        value: 8.2,
+        value: Math.floor(Math.random() * 10),
         unit: "tons",
       },
       daily_average: {
-        value: 7.6,
+        value: Math.floor(Math.random() * 10),
         unit: "tons/hr",
       },
       peak_hours: {
-        range: "10-12 AM",
+        range: `${Math.floor(Math.random() * 10)}-${Math.floor(Math.random() * 10)} AM`,
       },
       efficiency: {
-        percentage: 94.3,
+        percentage: Math.floor(Math.random() * 10),
       },
     };
   }
@@ -224,27 +237,27 @@ export class MiningSitesService {
       materials: [
         {
           name: "Gold Ore",
-          percentage: 42.3,
-          price: "1842",
+          percentage: Math.floor(Math.random() * 10),
+          price: Math.floor(Math.random() * 10).toString(),
           unit: "oz",
         },
         {
           name: "Silver Ore",
-          percentage: 31.8,
-          price: "23.5",
+          percentage: Math.floor(Math.random() * 10),
+          price: Math.floor(Math.random() * 10).toString(),
           unit: "oz",
         },
         {
           name: "Copper",
-          percentage: 18.4,
-          price: "4.12",
+          percentage: Math.floor(Math.random() * 10),
+          price: Math.floor(Math.random() * 10).toString(),
           unit: "lb",
         },
         {
           name: "Other Minerals",
-          percentage: 7.5,
-          price: "Various",
-          unit: "",
+          percentage: Math.floor(Math.random() * 10),
+          price: Math.floor(Math.random() * 10).toString(),
+          unit: "Various",
         },
       ],
     };

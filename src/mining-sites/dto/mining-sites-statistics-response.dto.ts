@@ -21,6 +21,15 @@ export class MiningSitesStatisticsResponseDto {
     status_text: string;
   };
 
+  @ApiProperty({ example: { active: 8, total: 10, needing_maintenance: 2, offline: 2, status_text: "8/10 active — 2 need maintenance" } })
+  active_cameras: {
+    active: number;
+    total: number;
+    needing_maintenance: number;
+    offline: number;
+    status_text: string;
+  };
+
   @ApiProperty({ example: { count: 7, change: -5.1 } })
   breach_alerts: {
     count: number;
