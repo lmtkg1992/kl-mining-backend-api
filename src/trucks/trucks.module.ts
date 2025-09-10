@@ -2,6 +2,7 @@ import { MiningSitesModule } from "../mining-sites/mining-sites.module";
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from "@nestjs/common";
 import { TrucksService } from "./trucks.service";
 import { TrucksController } from "./trucks.controller";
@@ -9,10 +10,9 @@ import { DocumentTrucksPersistenceModule } from "./infrastructure/persistence/do
 
 @Module({
   imports: [
-    MiningSitesModule,
-
     // do not remove this comment
     DocumentTrucksPersistenceModule,
+    forwardRef(() => MiningSitesModule)
   ],
   controllers: [TrucksController],
   providers: [TrucksService],

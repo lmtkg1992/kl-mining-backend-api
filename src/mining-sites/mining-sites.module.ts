@@ -9,6 +9,7 @@ import { DocumentMiningSitesPersistenceModule } from "./infrastructure/persisten
 import { PermissionsModule } from "../permissions/permissions.module";
 import { AdminUsersModule } from "../admin-users/admin-users.module";
 import { AiCamerasModule } from "src/ai-cameras/ai-cameras.module";
+import { ActivitiesModule } from "../activities/activities.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AiCamerasModule } from "src/ai-cameras/ai-cameras.module";
     PermissionsModule,
     forwardRef(() => AdminUsersModule),
     forwardRef(() => AiCamerasModule),
+    forwardRef(() => ActivitiesModule),
   ],
   controllers: [MiningSitesController],
   providers: [MiningSitesService],

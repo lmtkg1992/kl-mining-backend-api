@@ -35,6 +35,9 @@ import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-re
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCameras } from "../ai-cameras/domain/ai-cameras";
+import { FindAllActivitiesDto } from "../activities/dto/find-all-activities.dto";
+import { Activities } from "../activities/domain/activities";
+import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -180,6 +183,13 @@ export class MiningSitesController {
       limit,
     });
   }
+  @RequirePermissions("mining_sites::ai_cameras::summary")
+  @Get("ai-cameras/summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: AiCamerasSummaryDto })
+  async getAiCamerasSummary(@Param("id") id: string) {
+    return this.miningSitesService.getAiCamerasSummary(id);
+  }
 
   @RequirePermissions("mining_sites::materials")
   @Get("materials/:id")
@@ -187,5 +197,34 @@ export class MiningSitesController {
   @ApiOkResponse({ type: MiningSitesMaterialsResponseDto })
   async getMaterials(@Param("id") id: string) {
     return this.miningSitesService.getMaterials(id);
+  }
+
+  @RequirePermissions("mining_sites::activities")
+  @Get("activities/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Activities) })
+  async getActivities(
+    @Param("id") id: string,
+    @Query() query: FindAllActivitiesDto,
+  ) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.site_id = id;
+
+    const data = await this.miningSitesService.getActivities(query, {
+      page,
+      limit,
+    });
+
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
   }
 }

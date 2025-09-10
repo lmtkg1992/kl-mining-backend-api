@@ -14,13 +14,16 @@ import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai
 import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
 import { AdminUsers } from "../admin-users/domain/admin-users";
 import { MiningSitesBusyHoursResponseDto } from "./dto/mining-sites-busy-hours-response.dto";
-
+import { ActivitiesRepository } from "../activities/infrastructure/persistence/activities.repository";
+import { FindAllActivitiesDto } from "../activities/dto/find-all-activities.dto";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 @Injectable()
 export class MiningSitesService {
   constructor(
     // Dependencies here
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly activitiesRepository: ActivitiesRepository,
   ) {}
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
@@ -286,6 +289,16 @@ export class MiningSitesService {
     return { entities, total };
   }
 
+  async getAiCamerasSummary(siteId: string): Promise<AiCamerasSummaryDto> {
+
+    return {
+      total_cameras: Math.floor(Math.random() * 10),
+      operational: Math.floor(Math.random() * 10),
+      maintenance: Math.floor(Math.random() * 10),
+      offline: Math.floor(Math.random() * 10),
+    };
+  }
+
   async getMaterials(siteId: string): Promise<MiningSitesMaterialsResponseDto> {
     return {
       site_id: siteId,
@@ -317,5 +330,25 @@ export class MiningSitesService {
         },
       ],
     };
+  }
+
+  async getActivities(
+    query: FindAllActivitiesDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+
+    const [entities, total] = await Promise.all([
+      this.activitiesRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.activitiesRepository.countWithFilter(filter),
+    ]);
+
+    return { entities, total };
   }
 }
