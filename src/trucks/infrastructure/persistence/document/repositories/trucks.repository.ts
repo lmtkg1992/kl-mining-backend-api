@@ -37,6 +37,27 @@ export class TrucksDocumentRepository implements TrucksRepository {
     );
   }
 
+  async findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<Trucks[]> {
+    const entityObjects = await this.trucksModel
+      .find(filter)
+      .skip((paginationOptions.page - 1) * paginationOptions.limit)
+      .limit(paginationOptions.limit);
+
+    return entityObjects.map((entityObject) =>
+      TrucksMapper.toDomain(entityObject),
+    );
+  }
+
+  async countWithFilter(filter: any): Promise<number> {
+    return this.trucksModel.countDocuments(filter);
+  }
+
   async findById(id: Trucks["id"]): Promise<NullableType<Trucks>> {
     const entityObject = await this.trucksModel.findById(id);
     return entityObject ? TrucksMapper.toDomain(entityObject) : null;

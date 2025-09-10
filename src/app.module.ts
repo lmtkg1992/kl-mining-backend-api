@@ -40,8 +40,6 @@ import { AiSnapshotsModule } from "./ai-snapshots/ai-snapshots.module";
 
 import { TruckWeightBridgeRecordsModule } from "./truck-weight-bridge-records/truck-weight-bridge-records.module";
 
-import { TrucksModule } from "./trucks/trucks.module";
-
 import { FaqsModule } from "./faqs/faqs.module";
 
 import { AlertsModule } from "./alerts/alerts.module";
@@ -54,15 +52,17 @@ import { FaqCategoriesModule } from "./faq-categories/faq-categories.module";
 
 import { ActivitiesModule } from "./activities/activities.module";
 
+import { TrucksModule } from "./trucks/trucks.module";
+
 @Module({
   imports: [
+    TrucksModule,
     ActivitiesModule,
     FaqCategoriesModule,
     NotificationsModule,
     AdminUserSettingsModule,
     AlertsModule,
     FaqsModule,
-    TrucksModule,
     TruckWeightBridgeRecordsModule,
     AiSnapshotsModule,
     AiCamerasModule,

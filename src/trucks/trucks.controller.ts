@@ -28,6 +28,10 @@ import {
 import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllTrucksDto } from "./dto/find-all-trucks.dto";
 
+import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
+import { PermissionsGuard } from "../common/guards/permissions.guard";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
+
 @ApiTags("Trucks")
 @ApiBearerAuth()
 @UseGuards(AuthGuard("jwt"))
@@ -38,7 +42,8 @@ import { FindAllTrucksDto } from "./dto/find-all-trucks.dto";
 export class TrucksController {
   constructor(private readonly trucksService: TrucksService) {}
 
-  @Post()
+  @RequirePermissions("trucks::create")
+  @Post("create")
   @ApiCreatedResponse({
     type: Trucks,
   })
@@ -46,31 +51,39 @@ export class TrucksController {
     return this.trucksService.create(createTrucksDto);
   }
 
-  @Get()
+  @Get("list")
+  @RequirePermissions("trucks::list")
   @ApiOkResponse({
     type: InfinityPaginationResponse(Trucks),
   })
   async findAll(
     @Query() query: FindAllTrucksDto,
   ): Promise<InfinityPaginationResponseDto<Trucks>> {
-    const page = query?.page ?? 1;
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.trucksService.findAllWithPagination({
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
+    const data = await this.trucksService.findAllWithFilterAndPagination(
+      query,
+      {
+        page,
+        limit,
+      },
     );
+
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
   }
 
-  @Get(":id")
+  @Get("detail/:id")
+  @RequirePermissions("trucks::list")
   @ApiParam({
     name: "id",
     type: String,
@@ -83,7 +96,8 @@ export class TrucksController {
     return this.trucksService.findById(id);
   }
 
-  @Patch(":id")
+  @Patch("update/:id")
+  @RequirePermissions("trucks::update")
   @ApiParam({
     name: "id",
     type: String,
@@ -96,7 +110,8 @@ export class TrucksController {
     return this.trucksService.update(id, updateTrucksDto);
   }
 
-  @Delete(":id")
+  @Delete("delete/:id")
+  @RequirePermissions("trucks::delete")
   @ApiParam({
     name: "id",
     type: String,

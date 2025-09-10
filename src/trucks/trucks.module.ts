@@ -1,3 +1,4 @@
+import { MiningSitesModule } from "../mining-sites/mining-sites.module";
 import {
   // do not remove this comment
   Module,
@@ -8,6 +9,8 @@ import { DocumentTrucksPersistenceModule } from "./infrastructure/persistence/do
 
 @Module({
   imports: [
+    MiningSitesModule,
+
     // do not remove this comment
     DocumentTrucksPersistenceModule,
   ],

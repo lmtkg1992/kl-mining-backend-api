@@ -1,6 +1,10 @@
+import { TrucksModule } from "../trucks/trucks.module";
+import { AiCamerasModule } from "../ai-cameras/ai-cameras.module";
+import { MiningSitesModule } from "../mining-sites/mining-sites.module";
 import {
   // do not remove this comment
   Module,
+  forwardRef,
 } from "@nestjs/common";
 import { ActivitiesService } from "./activities.service";
 import { ActivitiesController } from "./activities.controller";
@@ -10,6 +14,9 @@ import { DocumentActivitiesPersistenceModule } from "./infrastructure/persistenc
   imports: [
     // do not remove this comment
     DocumentActivitiesPersistenceModule,
+    forwardRef(() => TrucksModule),
+    forwardRef(() => AiCamerasModule),
+    forwardRef(() => MiningSitesModule),
   ],
   controllers: [ActivitiesController],
   providers: [ActivitiesService],

@@ -14,6 +14,16 @@ export abstract class TrucksRepository {
     paginationOptions: IPaginationOptions;
   }): Promise<Trucks[]>;
 
+  abstract findAllWithFilterAndPagination({
+    filter,
+    paginationOptions,
+  }: {
+    filter: any;
+    paginationOptions: IPaginationOptions;
+  }): Promise<Trucks[]>;
+
+  abstract countWithFilter(filter: any): Promise<number>;
+
   abstract findById(id: Trucks["id"]): Promise<NullableType<Trucks>>;
 
   abstract findByIds(ids: Trucks["id"][]): Promise<Trucks[]>;
