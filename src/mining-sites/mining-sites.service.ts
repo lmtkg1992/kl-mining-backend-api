@@ -290,7 +290,6 @@ export class MiningSitesService {
   }
 
   async getAiCamerasSummary(siteId: string): Promise<AiCamerasSummaryDto> {
-
     return {
       total_cameras: Math.floor(Math.random() * 10),
       operational: Math.floor(Math.random() * 10),

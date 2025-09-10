@@ -9,10 +9,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 
 export enum TruckStatus {
-  IDLE = 'idle',
-  LOADING = 'loading',
-  DEPARTED = 'departed',
-  COMPLETED = 'completed',
+  IDLE = "idle",
+  LOADING = "loading",
+  DEPARTED = "departed",
+  COMPLETED = "completed",
 }
 
 export class CreateTrucksDto {

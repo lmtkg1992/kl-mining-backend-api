@@ -25,9 +25,12 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from "../utils/dto/infinity-pagination-response.dto";
+import { infinityPagination } from "../utils/infinity-pagination";
 import { FindAllAlertsDto } from "./dto/find-all-alerts.dto";
+
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
-import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-with-metadata";
+import { PermissionsGuard } from "../common/guards/permissions.guard";
+import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 
 @ApiTags("Alerts")
 @ApiBearerAuth()
@@ -39,7 +42,8 @@ import { infinityPaginationWithMetadata } from "src/utils/infinity-pagination-wi
 export class AlertsController {
   constructor(private readonly alertsService: AlertsService) {}
 
-  @Post()
+  @RequirePermissions("alerts::create")
+  @Post("create")
   @ApiCreatedResponse({
     type: Alerts,
   })
@@ -79,7 +83,7 @@ export class AlertsController {
   }
 
   @Get("detail/:id")
-  @RequirePermissions("alerts::detail")
+  @RequirePermissions("alerts::list")
   @ApiParam({
     name: "id",
     type: String,

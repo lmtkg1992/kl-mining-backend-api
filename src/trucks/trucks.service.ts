@@ -28,7 +28,7 @@ export class TrucksService {
     // <creating-property />
 
     const site_idObjects = await this.miningSitesService.findByIds(
-      createTrucksDto.site_id
+      createTrucksDto.site_id,
     );
     if (site_idObjects.length !== createTrucksDto.site_id.length) {
       throw new UnprocessableEntityException({
@@ -109,7 +109,7 @@ export class TrucksService {
 
     if (updateTrucksDto.site_id) {
       const site_idObjects = await this.miningSitesService.findByIds(
-        updateTrucksDto.site_id
+        updateTrucksDto.site_id,
       );
       if (site_idObjects.length !== updateTrucksDto.site_id.length) {
         throw new UnprocessableEntityException({

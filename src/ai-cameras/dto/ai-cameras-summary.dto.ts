@@ -2,13 +2,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsNotEmpty } from "class-validator";
 
 export class AiCamerasSummaryDto {
-
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
   total_cameras: number;
 
-  @ApiProperty() 
+  @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
   operational: number;

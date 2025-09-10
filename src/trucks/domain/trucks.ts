@@ -22,10 +22,10 @@ export class Trucks {
 
   @ApiProperty({
     type: String,
-    enum: ['idle', 'loading', 'departed', 'completed'],
+    enum: ["idle", "loading", "departed", "completed"],
     nullable: false,
   })
-  status: 'idle' | 'loading' | 'departed' | 'completed';
+  status: "idle" | "loading" | "departed" | "completed";
 
   @ApiProperty({
     type: () => [MiningSites],

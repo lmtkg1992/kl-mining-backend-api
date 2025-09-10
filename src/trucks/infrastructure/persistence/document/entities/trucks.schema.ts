@@ -36,10 +36,10 @@ export class TrucksSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     type: String,
-    enum: ['idle', 'loading', 'departed', 'completed'],
+    enum: ["idle", "loading", "departed", "completed"],
     required: true,
   })
-  status: 'idle' | 'loading' | 'departed' | 'completed';
+  status: "idle" | "loading" | "departed" | "completed";
 
   @Prop({
     type: [

@@ -12,7 +12,7 @@ import { DocumentTrucksPersistenceModule } from "./infrastructure/persistence/do
   imports: [
     // do not remove this comment
     DocumentTrucksPersistenceModule,
-    forwardRef(() => MiningSitesModule)
+    forwardRef(() => MiningSitesModule),
   ],
   controllers: [TrucksController],
   providers: [TrucksService],

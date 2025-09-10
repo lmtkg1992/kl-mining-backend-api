@@ -1,40 +1,122 @@
+import { Activities } from '../../activities/domain/activities';
+import { AiCameras } from '../../ai-cameras/domain/ai-cameras';
+import { Trucks } from '../../trucks/domain/trucks';
+import { MiningSites } from '../../mining-sites/domain/mining-sites';
 import { ApiProperty } from "@nestjs/swagger";
 
 export class Alerts {
-  @ApiProperty({ type: String })
-  id: string;
+  @ApiProperty({
+    type: [String],
+    nullable: true,
+  })
+  evidence_url?: string[] | null;
 
   @ApiProperty({
-    description: "Alert category: breach, truck, after_hours, etc.",
+    type: String,
+    enum: ['unauthorized_access', 'equipment_tampering', 'perimeter_breach', 'restricted_zone_entry'],
+    nullable: true,
   })
-  type: string;
+  breach_type?: 'unauthorized_access' | 'equipment_tampering' | 'perimeter_breach' | 'restricted_zone_entry' | null;
 
-  @ApiProperty({ description: "Title of the alert" })
-  title: string;
+  @ApiProperty({
+    type: String,
+    enum: ['in', 'out'],
+    nullable: true,
+  })
+  direction?: 'in' | 'out' | null;
 
-  @ApiProperty({ description: "Detailed message/description" })
+  @ApiProperty({
+    type: Boolean,
+    nullable: true,
+  })
+  overloaded?: boolean | null;
+
+  @ApiProperty({
+    type: Number,
+    nullable: true,
+  })
+  fill_level?: number | null;
+
+  @ApiProperty({
+    type: Number,
+    nullable: true,
+  })
+  confidence?: number | null;
+
+  @ApiProperty({
+    type: String,
+    enum: ['new', 'under_review', 'acknowledged', 'resolved'],
+    nullable: false,
+  })
+  status: 'new' | 'under_review' | 'acknowledged' | 'resolved';
+
+  @ApiProperty({
+    type: String,
+    enum: ['low', 'medium', 'high', 'critical'],
+    nullable: false,
+  })
+  severity: 'low' | 'medium' | 'high' | 'critical';
+
+  @ApiProperty({
+    type: () => Activities,
+    nullable: true,
+  })
+  event_id?: Activities | null;
+
+  @ApiProperty({
+    type: () => AiCameras,
+    nullable: true,
+  })
+  camera_id?: AiCameras | null;
+
+  @ApiProperty({
+    type: String,
+    enum: ['dump_truck', 'loader', 'hauler'],
+    nullable: false,
+  })
+  truck_type: 'dump_truck' | 'loader' | 'hauler';
+
+  @ApiProperty({
+    type: () => Trucks,
+    nullable: true,
+  })
+  truck_id?: Trucks | null;
+
+  @ApiProperty({
+    type: () => MiningSites,
+    nullable: false,
+  })
+  site_id: MiningSites;
+
+  @ApiProperty({
+    type: Date,
+    nullable: false,
+  })
+  timestamp: Date;
+
+  @ApiProperty({
+    type: String,
+    nullable: false,
+  })
   description: string;
 
-  @ApiProperty({ description: "Associated mining site ID" })
-  site_id: string;
-
-  @ApiProperty({ description: "Alert severity level: info, warning, critical" })
-  severity: string;
+  @ApiProperty({
+    type: String,
+    nullable: false,
+  })
+  title: string;
 
   @ApiProperty({
-    description: "Whether alert is resolved or active",
-    default: false,
+    type: String,
+    enum: ['truck_activity', 'breach_event'],
+    nullable: false,
   })
-  resolved: boolean;
+  alert_type: 'truck_activity' | 'breach_event';
 
   @ApiProperty({
-    description: "Optional truck ID for truck-related alerts",
-    required: false,
+    type: String,
   })
-  truck_id?: string;
-
-  @ApiProperty({ description: "Timestamp when the alert occurred" })
-  timestamp: Date;
+  id: string;
 
   @ApiProperty()
   createdAt: Date;
