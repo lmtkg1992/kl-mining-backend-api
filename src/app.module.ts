@@ -52,8 +52,11 @@ import { NotificationsModule } from "./notifications/notifications.module";
 
 import { FaqCategoriesModule } from "./faq-categories/faq-categories.module";
 
+import { ActivitiesModule } from "./activities/activities.module";
+
 @Module({
   imports: [
+    ActivitiesModule,
     FaqCategoriesModule,
     NotificationsModule,
     AdminUserSettingsModule,

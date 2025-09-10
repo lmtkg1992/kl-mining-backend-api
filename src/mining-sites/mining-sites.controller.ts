@@ -148,6 +148,14 @@ export class MiningSitesController {
     return this.miningSitesService.getTransport(id);
   }
 
+  @RequirePermissions("mining_sites::busy_hours")
+  @Get("busy-hours/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: MiningSitesTransportResponseDto })
+  @RequirePermissions("mining_sites::busy_hours")
+  async getBusyHours(@Param("id") id: string) {
+    return this.miningSitesService.getBusyHours(id);
+  }
   @RequirePermissions("mining_sites::ai_cameras::list")
   @Get("ai-cameras/list/:id")
   @ApiOkResponse({ type: InfinityPaginationResponse(AiCameras) })

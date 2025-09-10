@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateMiningSitesDto } from "./dto/create-mining-sites.dto";
 import { UpdateMiningSitesDto } from "./dto/update-mining-sites.dto";
 import { MiningSitesRepository } from "./infrastructure/persistence/mining-sites.repository";
@@ -16,6 +13,7 @@ import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
 import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
 import { AdminUsers } from "../admin-users/domain/admin-users";
+import { MiningSitesBusyHoursResponseDto } from "./dto/mining-sites-busy-hours-response.dto";
 
 @Injectable()
 export class MiningSitesService {
@@ -110,18 +108,16 @@ export class MiningSitesService {
 
   async update(
     id: MiningSites["id"],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateMiningSitesDto: UpdateMiningSitesDto,
   ) {
     // Do not remove comment below.
     // <updating-property />
 
-
     return this.miningSitesRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-  material_type: updateMiningSitesDto.material_type,
-
+      material_type: updateMiningSitesDto.material_type,
     });
   }
 
@@ -204,6 +200,66 @@ export class MiningSitesService {
       efficiency: {
         percentage: Math.floor(Math.random() * 10),
       },
+    };
+  }
+
+  async getBusyHours(siteId: string): Promise<MiningSitesBusyHoursResponseDto> {
+    const labels = [
+      "6AM",
+      "7AM",
+      "8AM",
+      "9AM",
+      "10AM",
+      "11AM",
+      "12PM",
+      "1PM",
+      "2PM",
+      "3PM",
+      "4PM",
+      "5PM",
+      "6PM",
+      "7PM",
+      "8PM",
+    ];
+    const truckEntries = labels.map(() => Math.floor(Math.random() * 15));
+    const volumeExtractedTons = labels.map(() =>
+      Math.floor(Math.random() * 100),
+    );
+
+    // Find peak values and their indices
+    const maxTruckIndex = truckEntries.reduce(
+      (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
+      0,
+    );
+    const maxVolumeIndex = volumeExtractedTons.reduce(
+      (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
+      0,
+    );
+
+    const peaks = {
+      truck_activity: {
+        time: `${labels[maxTruckIndex].replace("AM", ":00 AM").replace("PM", ":00 PM")}`,
+        count: truckEntries[maxTruckIndex],
+        label: labels[maxTruckIndex],
+      },
+      extraction: {
+        time: `${labels[maxVolumeIndex].replace("AM", ":00 AM").replace("PM", ":00 PM")}`,
+        tons: volumeExtractedTons[maxVolumeIndex],
+        label: labels[maxVolumeIndex],
+      },
+    };
+
+    return {
+      site_id: siteId,
+      date: new Date().toISOString().slice(0, 10),
+      range: "today",
+      series: {
+        labels: labels,
+        truck_entries: truckEntries,
+        volume_extracted_tons: volumeExtractedTons,
+      },
+      peaks: peaks,
+      last_updated: new Date().toISOString(),
     };
   }
 
