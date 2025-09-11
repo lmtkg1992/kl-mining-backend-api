@@ -217,7 +217,7 @@ export class ProvincesController {
 
 
   @RequirePermissions("provinces::alerts")
-  @Get("alerts/:id")
+  @Get("alerts/list/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
   async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {

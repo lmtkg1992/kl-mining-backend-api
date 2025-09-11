@@ -232,7 +232,7 @@ export class MiningSitesController {
   }
 
   @RequirePermissions("mining_sites::alerts")
-  @Get("alerts/:id")
+  @Get("alerts/list/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
   @RequirePermissions("mining_sites::alerts")

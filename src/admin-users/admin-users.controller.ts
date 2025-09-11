@@ -284,7 +284,7 @@ export class AdminUsersController {
   }
 
   @RequirePermissions("admin_users::alerts::summary")
-  @Get("alerts/summary")
+  @Get("alerts-summary")
   @ApiOkResponse({ type: AlertSummaryDto })
   async getAlertSummary(@Query() query: FindAllAlertsDto) {
     return this.adminUsersService.getAlertSummary();
