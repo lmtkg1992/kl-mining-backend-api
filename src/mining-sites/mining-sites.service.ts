@@ -380,8 +380,8 @@ export class MiningSitesService {
 
   async getAlertSummary(siteId: string): Promise<AlertSummaryDto> {
     const [breachAlertData, truckActivitiesData] = await Promise.all([
-      this.alertsRepository.getBreachAlertSummary(siteId),
-      this.alertsRepository.getTruckActivitiesSummary(siteId),
+      this.alertsRepository.getBreachAlertSummary("site", [siteId]),
+      this.alertsRepository.getTruckActivitiesSummary("site", [siteId]),
     ]);
 
     return {

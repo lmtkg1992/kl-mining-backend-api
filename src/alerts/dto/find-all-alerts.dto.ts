@@ -23,5 +23,10 @@ export class FindAllAlertsDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  province_id?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   alert_type?: string;
 }

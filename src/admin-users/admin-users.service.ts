@@ -40,6 +40,10 @@ import { MiningSitesService } from "../mining-sites/mining-sites.service";
 
 import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.repository";
 import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
+import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
+
+import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
+import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -53,6 +57,7 @@ export class AdminUsersService {
     private readonly provincesService: ProvincesService,
     private readonly miningSitesService: MiningSitesService,
     private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly alertsRepository: AlertsRepository,    
   ) {}
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {
@@ -401,5 +406,48 @@ export class AdminUsersService {
     ]);
 
     return { entities, total };
+  }
+
+  async getAlerts(
+    query: FindAllAlertsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+    if (query.alert_type) {
+      filter.alert_type = query.alert_type;
+    }
+    const [entities, total] = await Promise.all([
+      this.alertsRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.alertsRepository.countWithFilter(filter),
+    ]);
+    return { entities, total };
+  }
+
+  async getAlertSummary(): Promise<AlertSummaryDto> {
+    const [breachAlertData, truckActivitiesData] = await Promise.all([
+      this.alertsRepository.getBreachAlertSummary("admin"),
+      this.alertsRepository.getTruckActivitiesSummary("admin"),
+    ]);
+
+    return {
+      breach_alert_summary: {
+        total_alerts: breachAlertData.total_alerts,
+        critical_alerts: breachAlertData.critical_alerts,
+        high_confidence_alerts: breachAlertData.high_confidence_alerts,
+        acknowledged_resolved: breachAlertData.acknowledged_resolved,
+      },
+      truck_activity_summary: {
+        trucks_in: truckActivitiesData.trucks_in,
+        trucks_out: truckActivitiesData.trucks_out,
+        truck_in_activities: truckActivitiesData.truck_in_activities,
+        truck_overloaded: truckActivitiesData.truck_overloaded,
+      },
+    };
   }
 }

@@ -37,6 +37,9 @@ import { FindStatisticsDto } from "./dto/find-statistics.dto";
 import { FindAllMiningSitesDto } from "../mining-sites/dto/find-all-mining-sites.dto";
 import { MiningSites } from "../mining-sites/domain/mining-sites";
 import { MiningSitesService } from "../mining-sites/mining-sites.service";
+import { Alerts } from "../alerts/domain/alerts";
+import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
+import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -210,5 +213,40 @@ export class ProvincesController {
   @ApiOkResponse({ type: ProvincesMaterialsResponseDto })
   async getMaterials(@Param("id") id: string) {
     return this.provincesService.getMaterials(id);
+  }
+
+
+  @RequirePermissions("provinces::alerts")
+  @Get("alerts/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
+  async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {
+    
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.province_id = id;
+
+    const data = await this.provincesService.getAlerts(id, query, {
+      page,
+      limit,
+    });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("provinces::alerts::summary")
+  @Get("alerts-summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: AlertSummaryDto })
+  async getAlertSummary(@Param("id") id: string) {
+    return this.provincesService.getAlertSummary(id);
   }
 }

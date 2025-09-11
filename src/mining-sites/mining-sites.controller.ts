@@ -236,32 +236,7 @@ export class MiningSitesController {
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
   @RequirePermissions("mining_sites::alerts")
-  async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {
-    let page = query?.page ?? 1;
-    if (page < 1) {
-      page = 1;
-    }
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
-    query.site_id = id;
-    const data = await this.miningSitesService.getAlerts(id, query, {
-      page,
-      limit,
-    });
-    return infinityPaginationWithMetadata(data.entities, data.total, {
-      page,
-      limit,
-    });
-  }
-
-  @RequirePermissions("mining_sites::breach_alerts")
-  @Get("breach-alerts/:id")
-  @ApiParam({ name: "id", type: String, required: true })
-  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
-  @RequirePermissions("mining_sites::breach_alerts")
-  async getBreachAlerts(
+  async getAlerts(
     @Param("id") id: string,
     @Query() query: FindAllAlertsDto,
   ) {
@@ -274,36 +249,7 @@ export class MiningSitesController {
       limit = 50;
     }
     query.site_id = id;
-    query.alert_type = "breach_event";
-    const data = await this.miningSitesService.getAlerts(id, query, {
-      page,
-      limit,
-    });
-    return infinityPaginationWithMetadata(data.entities, data.total, {
-      page,
-      limit,
-    });
-  }
-
-  @RequirePermissions("mining_sites::truck_activity_alerts")
-  @Get("truck-activity-alerts/:id")
-  @ApiParam({ name: "id", type: String, required: true })
-  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
-  @RequirePermissions("mining_sites::truck_activity_alerts")
-  async getTruckActivityAlerts(
-    @Param("id") id: string,
-    @Query() query: FindAllAlertsDto,
-  ) {
-    let page = query?.page ?? 1;
-    if (page < 1) {
-      page = 1;
-    }
-    let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
-    }
-    query.site_id = id;
-    query.alert_type = "truck_activity";
+    
     const data = await this.miningSitesService.getAlerts(id, query, {
       page,
       limit,

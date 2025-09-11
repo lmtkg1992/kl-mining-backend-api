@@ -14,6 +14,9 @@ import { MiningSitesRepository } from "../mining-sites/infrastructure/persistenc
 import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
 import { ProvincesStatisticsResponseDto } from "./dto/provinces-statistics-response.dto";
 import { FindStatisticsDto } from "./dto/find-statistics.dto";
+import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
+import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
+import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 
 @Injectable()
 export class ProvincesService {
@@ -22,6 +25,7 @@ export class ProvincesService {
     private readonly provincesRepository: ProvincesRepository,
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly alertsRepository: AlertsRepository,
   ) {}
 
   async create(createProvincesDto: CreateProvincesDto) {
@@ -178,6 +182,64 @@ export class ProvincesService {
           unit: "",
         },
       ],
+    };
+  }
+
+  async getAlerts(
+    provinceId: string,
+    query: FindAllAlertsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.province_id) {
+      const sites = await this.miningSitesRepository.findByProvinceId(
+        query.province_id,
+      );
+      if (sites.length) {
+        filter.site_id = { $in: sites.map((site) => site.id) };
+      }
+    }
+    if (query.alert_type) {
+      filter.alert_type = query.alert_type;
+    }
+    const [entities, total] = await Promise.all([
+      this.alertsRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.alertsRepository.countWithFilter(filter),
+    ]);
+    return { entities, total };
+  }
+
+  async getAlertSummary(provinceId: string): Promise<AlertSummaryDto> {
+    let siteIds: string[] = [];
+    if (provinceId) {
+      const sites = await this.miningSitesRepository.findByProvinceId(
+        provinceId,
+      );
+      if (sites.length > 0) {
+        siteIds = sites.map((site) => site.id);
+      }
+    }
+    const [breachAlertData, truckActivitiesData] = await Promise.all([
+      this.alertsRepository.getBreachAlertSummary("province", siteIds),
+      this.alertsRepository.getTruckActivitiesSummary("province", siteIds),
+    ]);
+
+    return {
+      breach_alert_summary: {
+        total_alerts: breachAlertData.total_alerts,
+        critical_alerts: breachAlertData.critical_alerts,
+        high_confidence_alerts: breachAlertData.high_confidence_alerts,
+        acknowledged_resolved: breachAlertData.acknowledged_resolved,
+      },
+      truck_activity_summary: {
+        trucks_in: truckActivitiesData.trucks_in,
+        trucks_out: truckActivitiesData.trucks_out,
+        truck_in_activities: truckActivitiesData.truck_in_activities,
+        truck_overloaded: truckActivitiesData.truck_overloaded,
+      },
     };
   }
 }

@@ -44,6 +44,9 @@ import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto"
 import { MiningSites } from "src/mining-sites/domain/mining-sites";
 import { FindAllMiningSitesDto } from "src/mining-sites/dto/find-all-mining-sites.dto";
 import { MiningSitesService } from "src/mining-sites/mining-sites.service";
+import { FindAllAlertsDto } from "src/alerts/dto/find-all-alerts.dto";
+import { Alerts } from "src/alerts/domain/alerts";
+import { AlertSummaryDto } from "src/alerts/dto/alert-summary.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -256,5 +259,34 @@ export class AdminUsersController {
       page,
       limit,
     });
+  }
+
+
+  @RequirePermissions("admin_users::alerts::list")
+  @Get("alerts/list")
+  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
+  async getAlerts(
+    @Query() query: FindAllAlertsDto,
+  ): Promise<InfinityPaginationResponseDto<Alerts>> {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    const data = await this.adminUsersService.getAlerts(query, { page, limit });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("admin_users::alerts::summary")
+  @Get("alerts/summary")
+  @ApiOkResponse({ type: AlertSummaryDto })
+  async getAlertSummary(@Query() query: FindAllAlertsDto) {
+    return this.adminUsersService.getAlertSummary();
   }
 }
