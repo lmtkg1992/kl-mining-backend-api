@@ -38,6 +38,9 @@ import { AiCameras } from "../ai-cameras/domain/ai-cameras";
 import { FindAllActivitiesDto } from "../activities/dto/find-all-activities.dto";
 import { Activities } from "../activities/domain/activities";
 import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
+import { Alerts } from "src/alerts/domain/alerts";
+import { FindAllAlertsDto } from "src/alerts/dto/find-all-alerts.dto";
+import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -226,5 +229,96 @@ export class MiningSitesController {
       page,
       limit,
     });
+  }
+
+  @RequirePermissions("mining_sites::alerts")
+  @Get("alerts/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
+  @RequirePermissions("mining_sites::alerts")
+  async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.site_id = id;
+    const data = await this.miningSitesService.getAlerts(id, query, {
+      page,
+      limit,
+    });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("mining_sites::breach_alerts")
+  @Get("breach-alerts/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
+  @RequirePermissions("mining_sites::breach_alerts")
+  async getBreachAlerts(
+    @Param("id") id: string,
+    @Query() query: FindAllAlertsDto,
+  ) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.site_id = id;
+    query.alert_type = "breach_event";
+    const data = await this.miningSitesService.getAlerts(id, query, {
+      page,
+      limit,
+    });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("mining_sites::truck_activity_alerts")
+  @Get("truck-activity-alerts/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
+  @RequirePermissions("mining_sites::truck_activity_alerts")
+  async getTruckActivityAlerts(
+    @Param("id") id: string,
+    @Query() query: FindAllAlertsDto,
+  ) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.site_id = id;
+    query.alert_type = "truck_activity";
+    const data = await this.miningSitesService.getAlerts(id, query, {
+      page,
+      limit,
+    });
+    return infinityPaginationWithMetadata(data.entities, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("mining_sites::alerts::summary")
+  @Get("alerts-summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: AlertSummaryDto })
+  async getAlertSummary(@Param("id") id: string) {
+    return this.miningSitesService.getAlertSummary(id);
   }
 }

@@ -99,4 +99,88 @@ export class AlertsDocumentRepository implements AlertsRepository {
   async remove(id: Alerts["id"]): Promise<void> {
     await this.alertsModel.deleteOne({ _id: id });
   }
+
+  async getBreachAlertSummary(siteId: string) {
+    const baseFilter = {
+      site_id: siteId,
+      alert_type: "breach_event",
+    };
+
+    const [
+      totalAlerts,
+      criticalAlerts,
+      highConfidenceAlerts,
+      acknowledgedResolved,
+    ] = await Promise.all([
+      // Total alerts
+      this.alertsModel.countDocuments(baseFilter),
+
+      // Critical alerts
+      this.alertsModel.countDocuments({
+        ...baseFilter,
+        severity: "critical",
+      }),
+
+      // High confidence alerts (confidence >= 80)
+      this.alertsModel.countDocuments({
+        ...baseFilter,
+        confidence: { $gte: 80 },
+      }),
+
+      // Acknowledged and resolved
+      this.alertsModel.countDocuments({
+        ...baseFilter,
+        status: { $in: ["acknowledged", "resolved"] },
+      }),
+    ]);
+
+    return {
+      total_alerts: totalAlerts,
+      critical_alerts: criticalAlerts,
+      high_confidence_alerts: highConfidenceAlerts,
+      acknowledged_resolved: acknowledgedResolved,
+    };
+  }
+
+  async getTruckActivitiesSummary(siteId: string) {
+    const baseFilter = {
+      site_id: siteId,
+      alert_type: "truck_activity",
+    };
+
+    const [trucksIn, trucksOut, truckInActivities, truckOverloaded] =
+      await Promise.all([
+        // Trucks entering (direction: 'in')
+        this.alertsModel.countDocuments({
+          ...baseFilter,
+          direction: "in",
+        }),
+
+        // Trucks leaving (direction: 'out')
+        this.alertsModel.countDocuments({
+          ...baseFilter,
+          direction: "out",
+        }),
+
+        // Truck in activities (direction: 'in' and status: 'new' or 'under_review')
+        this.alertsModel.countDocuments({
+          ...baseFilter,
+          direction: "in",
+          status: { $in: ["new", "under_review"] },
+        }),
+
+        // Overloaded trucks
+        this.alertsModel.countDocuments({
+          ...baseFilter,
+          overloaded: true,
+        }),
+      ]);
+
+    return {
+      trucks_in: trucksIn,
+      trucks_out: trucksOut,
+      truck_in_activities: truckInActivities,
+      truck_overloaded: truckOverloaded,
+    };
+  }
 }

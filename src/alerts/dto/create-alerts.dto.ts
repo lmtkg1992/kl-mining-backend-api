@@ -5,10 +5,9 @@ import {
   IsBoolean,
   IsEnum,
   IsDateString,
-} from 'class-validator';
+} from "class-validator";
 
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateAlertsDto {
   @ApiProperty({
@@ -22,22 +21,37 @@ export class CreateAlertsDto {
   @ApiProperty({
     required: false,
     type: String,
-    enum: ['unauthorized_access', 'equipment_tampering', 'perimeter_breach', 'restricted_zone_entry'],
+    enum: [
+      "unauthorized_access",
+      "equipment_tampering",
+      "perimeter_breach",
+      "restricted_zone_entry",
+    ],
     nullable: true,
   })
   @IsOptional()
-  @IsEnum(['unauthorized_access', 'equipment_tampering', 'perimeter_breach', 'restricted_zone_entry'])
-  breach_type?: 'unauthorized_access' | 'equipment_tampering' | 'perimeter_breach' | 'restricted_zone_entry' | null;
+  @IsEnum([
+    "unauthorized_access",
+    "equipment_tampering",
+    "perimeter_breach",
+    "restricted_zone_entry",
+  ])
+  breach_type?:
+    | "unauthorized_access"
+    | "equipment_tampering"
+    | "perimeter_breach"
+    | "restricted_zone_entry"
+    | null;
 
   @ApiProperty({
     required: false,
     type: String,
-    enum: ['in', 'out'],
+    enum: ["in", "out"],
     nullable: true,
   })
   @IsOptional()
-  @IsEnum(['in', 'out'])
-  direction?: 'in' | 'out' | null;
+  @IsEnum(["in", "out"])
+  direction?: "in" | "out" | null;
 
   @ApiProperty({
     required: false,
@@ -69,18 +83,18 @@ export class CreateAlertsDto {
   @ApiProperty({
     required: true,
     type: String,
-    enum: ['new', 'under_review', 'acknowledged', 'resolved'],
+    enum: ["new", "under_review", "acknowledged", "resolved"],
   })
-  @IsEnum(['new', 'under_review', 'acknowledged', 'resolved'])
-  status: 'new' | 'under_review' | 'acknowledged' | 'resolved';
+  @IsEnum(["new", "under_review", "acknowledged", "resolved"])
+  status: "new" | "under_review" | "acknowledged" | "resolved";
 
   @ApiProperty({
     required: true,
     type: String,
-    enum: ['low', 'medium', 'high', 'critical'],
+    enum: ["low", "medium", "high", "critical"],
   })
-  @IsEnum(['low', 'medium', 'high', 'critical'])
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  @IsEnum(["low", "medium", "high", "critical"])
+  severity: "low" | "medium" | "high" | "critical";
 
   @ApiProperty({
     required: false,
@@ -88,7 +102,7 @@ export class CreateAlertsDto {
     nullable: true,
   })
   @IsOptional()
-  @Type(() => String)
+  @IsString()
   event_id?: string | null;
 
   @ApiProperty({
@@ -97,16 +111,18 @@ export class CreateAlertsDto {
     nullable: true,
   })
   @IsOptional()
-  @Type(() => String)
+  @IsString()
   camera_id?: string | null;
 
   @ApiProperty({
     required: false,
     type: String,
-    enum: ['dump_truck', 'loader', 'hauler'],
+    enum: ["dump_truck", "loader", "hauler"],
+    nullable: true,
   })
-  @IsEnum(['dump_truck', 'loader', 'hauler'])
-  truck_type: 'dump_truck' | 'loader' | 'hauler';
+  @IsOptional()
+  @IsEnum(["dump_truck", "loader", "hauler"])
+  truck_type?: "dump_truck" | "loader" | "hauler" | null;
 
   @ApiProperty({
     required: false,
@@ -114,14 +130,14 @@ export class CreateAlertsDto {
     nullable: true,
   })
   @IsOptional()
-  @Type(() => String)
+  @IsString()
   truck_id?: string | null;
 
   @ApiProperty({
     required: true,
     type: String,
   })
-  @Type(() => String)
+  @IsString()
   site_id: string;
 
   @ApiProperty({
@@ -148,8 +164,8 @@ export class CreateAlertsDto {
   @ApiProperty({
     required: true,
     type: String,
-    enum: ['truck_activity', 'breach_event'],
+    enum: ["truck_activity", "breach_event"],
   })
-  @IsEnum(['truck_activity', 'breach_event'])
-  alert_type: 'truck_activity' | 'breach_event';
+  @IsEnum(["truck_activity", "breach_event"])
+  alert_type: "truck_activity" | "breach_event";
 }

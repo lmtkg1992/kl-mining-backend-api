@@ -10,6 +10,7 @@ import { PermissionsModule } from "../permissions/permissions.module";
 import { AdminUsersModule } from "../admin-users/admin-users.module";
 import { AiCamerasModule } from "src/ai-cameras/ai-cameras.module";
 import { ActivitiesModule } from "../activities/activities.module";
+import { AlertsModule } from "../alerts/alerts.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ActivitiesModule } from "../activities/activities.module";
     forwardRef(() => AdminUsersModule),
     forwardRef(() => AiCamerasModule),
     forwardRef(() => ActivitiesModule),
+    forwardRef(() => AlertsModule),
   ],
   controllers: [MiningSitesController],
   providers: [MiningSitesService],

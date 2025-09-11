@@ -34,4 +34,18 @@ export abstract class AlertsRepository {
   ): Promise<Alerts | null>;
 
   abstract remove(id: Alerts["id"]): Promise<void>;
+
+  abstract getBreachAlertSummary(siteId: string): Promise<{
+    total_alerts: number;
+    critical_alerts: number;
+    high_confidence_alerts: number;
+    acknowledged_resolved: number;
+  }>;
+
+  abstract getTruckActivitiesSummary(siteId: string): Promise<{
+    trucks_in: number;
+    trucks_out: number;
+    truck_in_activities: number;
+    truck_overloaded: number;
+  }>;
 }

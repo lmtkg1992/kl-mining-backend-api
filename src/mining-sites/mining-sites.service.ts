@@ -16,7 +16,11 @@ import { AdminUsers } from "../admin-users/domain/admin-users";
 import { MiningSitesBusyHoursResponseDto } from "./dto/mining-sites-busy-hours-response.dto";
 import { ActivitiesRepository } from "../activities/infrastructure/persistence/activities.repository";
 import { FindAllActivitiesDto } from "../activities/dto/find-all-activities.dto";
-import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
+import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
+import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
+import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
+import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
+
 @Injectable()
 export class MiningSitesService {
   constructor(
@@ -24,6 +28,7 @@ export class MiningSitesService {
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly activitiesRepository: ActivitiesRepository,
+    private readonly alertsRepository: AlertsRepository,
   ) {}
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
@@ -349,5 +354,49 @@ export class MiningSitesService {
     ]);
 
     return { entities, total };
+  }
+
+  async getAlerts(
+    siteId: string,
+    query: FindAllAlertsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const filter: any = {};
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+    if (query.alert_type) {
+      filter.alert_type = query.alert_type;
+    }
+    const [entities, total] = await Promise.all([
+      this.alertsRepository.findAllWithFilterAndPagination({
+        filter,
+        paginationOptions,
+      }),
+      this.alertsRepository.countWithFilter(filter),
+    ]);
+    return { entities, total };
+  }
+
+  async getAlertSummary(siteId: string): Promise<AlertSummaryDto> {
+    const [breachAlertData, truckActivitiesData] = await Promise.all([
+      this.alertsRepository.getBreachAlertSummary(siteId),
+      this.alertsRepository.getTruckActivitiesSummary(siteId),
+    ]);
+
+    return {
+      breach_alert_summary: {
+        total_alerts: breachAlertData.total_alerts,
+        critical_alerts: breachAlertData.critical_alerts,
+        high_confidence_alerts: breachAlertData.high_confidence_alerts,
+        acknowledged_resolved: breachAlertData.acknowledged_resolved,
+      },
+      truck_activity_summary: {
+        trucks_in: truckActivitiesData.trucks_in,
+        trucks_out: truckActivitiesData.trucks_out,
+        truck_in_activities: truckActivitiesData.truck_in_activities,
+        truck_overloaded: truckActivitiesData.truck_overloaded,
+      },
+    };
   }
 }
