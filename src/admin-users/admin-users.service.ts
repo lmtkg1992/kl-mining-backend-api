@@ -44,6 +44,7 @@ import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.re
 
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
+import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -85,6 +86,7 @@ export class AdminUsersService {
     return this.adminUsersRepository.create({
       email: createAdminUsersDto.email,
       name: createAdminUsersDto.name,
+      phone_number: createAdminUsersDto.phone_number ?? undefined,
       status: createAdminUsersDto.status || UserStatusEnum.ACTIVE,
       password,
       admin_user_group: {
@@ -146,6 +148,13 @@ export class AdminUsersService {
     return this.adminUsersRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      email: updateAdminUsersDto.email,
+      name: updateAdminUsersDto.name,
+      phone_number: updateAdminUsersDto.phone_number ?? undefined,
+      status: updateAdminUsersDto.status,
+      admin_user_group: {
+        id: updateAdminUsersDto.admin_user_group,
+      } as AdminUserGroups,
     });
   }
 
@@ -387,6 +396,89 @@ export class AdminUsersService {
       },
     };
   }
+
+  async getAdminUsersSummary(): Promise<AdminUsersSummaryDto> {
+    const users = await this.adminUsersRepository.findAllWithFilterAndPagination({
+      filter: {},
+      paginationOptions: {
+        page: 1,
+        limit: 10000,
+      },
+    });
+  
+    const total = users.length;
+  
+    // Role distribution
+    const roleMap: Record<string, number> = {};
+    users.forEach((u) => {
+      const role = u.admin_user_group?.role || "Unknown";
+      roleMap[role] = (roleMap[role] || 0) + 1;
+    });
+  
+    const role_distribution = Object.entries(roleMap).map(([role, count]) => ({
+      role,
+      count,
+      percentage: Number(((count / total) * 100).toFixed(1)),
+    }));
+  
+    // Province distribution
+    const provinceMap: Record<string, number> = {};
+    
+    // Process users sequentially to avoid race conditions
+    for (const u of users) {
+      try {
+        let siteIds = u.admin_user_group?.site_ids || "[]";
+        
+        // Parse site_ids safely
+        let parsedSiteIds: string[] = [];
+        if (typeof siteIds === 'string') {
+          try {
+            parsedSiteIds = JSON.parse(siteIds);
+          } catch (error) {
+            console.warn(`Failed to parse site_ids for user ${u.id}:`, siteIds);
+            parsedSiteIds = [];
+          }
+        } else if (Array.isArray(siteIds)) {
+          parsedSiteIds = siteIds;
+        }
+
+        // Remove duplicates from parsedSiteIds
+        parsedSiteIds = [...new Set(parsedSiteIds)];
+
+        // Only proceed if we have valid site IDs
+        if (parsedSiteIds.length > 0) {
+          const sites = await this.miningSitesService.findByIds(parsedSiteIds);
+          let provinces: string[] = [];
+          for (const site of sites) {
+            if (site.province?.province_name) {
+              provinces.push(site.province?.province_name);
+            }
+          }
+          provinces = [...new Set(provinces)];
+          for (const province of provinces) {
+            provinceMap[province] = (provinceMap[province] || 0) + 1;
+          }
+        }
+      } catch (error) {
+        console.warn(`Error processing user ${u.id} for province distribution:`, error);
+      }
+    }
+
+
+      const provincial_distribution = Object.entries(provinceMap).map(
+      ([province, count]) => ({
+        province,
+        count,
+        percentage: Number(((count / total) * 100).toFixed(1)),
+      }),
+    );
+    
+    return {
+      role_distribution,
+      provincial_distribution,
+    };
+  }
+  
 
   async getLiveAiCameras(
     query: FindAllAiCamerasDto,

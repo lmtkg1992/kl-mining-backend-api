@@ -6,6 +6,7 @@ import {
   IsString,
   IsNotEmpty,
   IsMongoId,
+  IsOptional,
 } from "class-validator";
 import { lowerCaseTransformer } from "src/utils/transformers/lower-case.transformer";
 import { UserStatusEnum } from "../admin-users.enum";
@@ -23,6 +24,13 @@ export class CreateAdminUsersDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  phone_number?: string;
 
   @ApiProperty({
     type: String,

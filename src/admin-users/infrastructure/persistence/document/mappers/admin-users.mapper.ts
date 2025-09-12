@@ -8,6 +8,7 @@ export class AdminUsersMapper {
     domainEntity.id = raw._id.toString();
     domainEntity.email = raw.email;
     domainEntity.name = raw.name;
+    domainEntity.phone_number = raw.phone_number ?? undefined;
     domainEntity.status = raw.status;
     domainEntity.password = raw.password ?? undefined;
 
@@ -34,10 +35,14 @@ export class AdminUsersMapper {
     }
     persistenceSchema.email = domainEntity.email;
     persistenceSchema.name = domainEntity.name;
+    persistenceSchema.phone_number = domainEntity.phone_number ?? undefined;
     persistenceSchema.status = domainEntity.status;
     persistenceSchema.password = domainEntity.password;
-    persistenceSchema.admin_user_group =
-      domainEntity.admin_user_group?.id ?? "";
+    if (domainEntity.admin_user_group && domainEntity.admin_user_group.id) {
+      persistenceSchema.admin_user_group = domainEntity.admin_user_group.id;
+    } else if (domainEntity.admin_user_group && domainEntity.admin_user_group.id === null) {
+      persistenceSchema.admin_user_group = null as any;
+    }
     persistenceSchema.last_login_at = domainEntity.last_login_at ?? undefined;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;

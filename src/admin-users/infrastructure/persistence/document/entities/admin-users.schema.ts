@@ -21,6 +21,9 @@ export class AdminUsersSchemaClass extends EntityDocumentHelper {
   @Prop({ required: true, type: String })
   name: string;
 
+  @Prop({ required: false, type: String, default: null })
+  phone_number?: string | null;
+
   @Prop({
     required: true,
     enum: UserStatusEnum,

@@ -17,6 +17,11 @@ export class AdminUsers {
   @ApiProperty({
     type: String,
   })
+  phone_number?: string;
+
+  @ApiProperty({
+    type: String,
+  })
   name: string;
 
   @ApiProperty({

@@ -47,6 +47,7 @@ import { MiningSitesService } from "src/mining-sites/mining-sites.service";
 import { FindAllAlertsDto } from "src/alerts/dto/find-all-alerts.dto";
 import { Alerts } from "src/alerts/domain/alerts";
 import { AlertSummaryDto } from "src/alerts/dto/alert-summary.dto";
+import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -208,6 +209,14 @@ export class AdminUsersController {
   async getStatistics(@Query() query: FindStatisticsDto) {
     return this.adminUsersService.getStatistics(query);
   }
+
+  @Get("summary")
+  @ApiOkResponse({ type: AdminUsersSummaryDto })
+  @RequirePermissions("admin_users::summary")
+  async getAdminUsersSummary(): Promise<AdminUsersSummaryDto> {
+    return this.adminUsersService.getAdminUsersSummary();
+  }
+
 
   @RequirePermissions("admin_users::ai_cameras::list")
   @Get("ai-cameras/list")
