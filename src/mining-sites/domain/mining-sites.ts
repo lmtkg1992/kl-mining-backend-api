@@ -1,5 +1,3 @@
-
-
 import { ApiProperty } from "@nestjs/swagger";
 import { Provinces } from "../../provinces/domain/provinces";
 import { AdminUsers } from "src/admin-users/domain/admin-users";
@@ -11,7 +9,6 @@ export class MiningSites {
     nullable: true,
   })
   site_settings?: MiningSitesSettingsDto | null;
-
 
   @ApiProperty({
     type: () => String,
@@ -62,50 +59,50 @@ export class MiningSites {
   })
   boundary_polygon?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Number,
-    required: false 
+    required: false,
   })
   volume: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Number,
-    required: false 
+    required: false,
   })
   trucks: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Number,
-    required: false 
+    required: false,
   })
   breaches: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Number,
-    required: false 
+    required: false,
   })
   cameras_online: number;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Date,
-    required: false 
+    required: false,
   })
   last_activity: Date;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => Date,
-    required: false ,
-    nullable: true
+    required: false,
+    nullable: true,
   })
   last_updated_at: Date;
 
-  @ApiProperty({ 
-    type: () => Date 
+  @ApiProperty({
+    type: () => Date,
   })
   createdAt: Date;
 
-  @ApiProperty({ 
-    type: () => Date 
+  @ApiProperty({
+    type: () => Date,
   })
   updatedAt: Date;
 }

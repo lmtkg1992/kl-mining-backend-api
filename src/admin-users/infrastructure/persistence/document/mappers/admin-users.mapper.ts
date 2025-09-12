@@ -40,7 +40,10 @@ export class AdminUsersMapper {
     persistenceSchema.password = domainEntity.password;
     if (domainEntity.admin_user_group && domainEntity.admin_user_group.id) {
       persistenceSchema.admin_user_group = domainEntity.admin_user_group.id;
-    } else if (domainEntity.admin_user_group && domainEntity.admin_user_group.id === null) {
+    } else if (
+      domainEntity.admin_user_group &&
+      domainEntity.admin_user_group.id === null
+    ) {
       persistenceSchema.admin_user_group = null as any;
     }
     persistenceSchema.last_login_at = domainEntity.last_login_at ?? undefined;

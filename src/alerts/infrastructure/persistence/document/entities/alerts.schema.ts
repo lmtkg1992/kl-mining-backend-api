@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
+import { AlertsResolutionDto } from "../../../../dto/alerts-resolution.dto";
 
 export type AlertsSchemaDocument = HydratedDocument<AlertsSchemaClass>;
 
@@ -18,6 +19,12 @@ export type AlertsSchemaDocument = HydratedDocument<AlertsSchemaClass>;
   },
 })
 export class AlertsSchemaClass extends EntityDocumentHelper {
+  @Prop({
+    type: mongoose.Schema.Types.Mixed,
+    required: false,
+  })
+  alerts_resolution?: AlertsResolutionDto | null;
+
   @Prop({
     type: [String],
     required: false,

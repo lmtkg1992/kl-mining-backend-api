@@ -112,14 +112,20 @@ export class AdminUsersController {
       sessionId: request.user.sessionId,
     });
   }
-  
+
   @ApiBearerAuth()
   @RequirePermissions("admin_users::change_password")
   @Patch("change-password")
   @UseGuards(AuthGuard("jwt"))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async changePassword(@Request() request, @Body() changePasswordDto: AdminChangePasswordDto) {
-    return this.adminUsersService.changePassword(request.user.id, changePasswordDto);
+  public async changePassword(
+    @Request() request,
+    @Body() changePasswordDto: AdminChangePasswordDto,
+  ) {
+    return this.adminUsersService.changePassword(
+      request.user.id,
+      changePasswordDto,
+    );
   }
 
   // Admin Users CRUD
@@ -226,7 +232,6 @@ export class AdminUsersController {
   async getAdminUsersSummary(): Promise<AdminUsersSummaryDto> {
     return this.adminUsersService.getAdminUsersSummary();
   }
-
 
   @RequirePermissions("admin_users::ai_cameras::list")
   @Get("ai-cameras/list")

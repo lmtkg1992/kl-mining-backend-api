@@ -118,6 +118,8 @@ export class AlertsService {
     return this.alertsRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      alerts_resolution: createAlertsDto.alerts_resolution,
+
       evidence_url: createAlertsDto.evidence_url,
 
       breach_type: createAlertsDto.breach_type,
@@ -277,6 +279,8 @@ export class AlertsService {
     return this.alertsRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      alerts_resolution: updateAlertsDto.alerts_resolution,
+
       evidence_url: updateAlertsDto.evidence_url,
 
       breach_type: updateAlertsDto.breach_type,

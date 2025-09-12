@@ -1,5 +1,11 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsArray, IsString, IsOptional, IsObject } from "class-validator";
+import {
+  IsNumber,
+  IsArray,
+  IsString,
+  IsOptional,
+  IsObject,
+} from "class-validator";
 
 export class MiningSitesSettingsDto {
   @ApiPropertyOptional({ example: 70 })
@@ -33,5 +39,4 @@ export class MiningSitesSettingsDto {
     material_name: string;
     percentage: number;
   }>;
-  
 }

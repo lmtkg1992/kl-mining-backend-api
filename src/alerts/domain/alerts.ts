@@ -1,18 +1,26 @@
+
 import { Activities } from "../../activities/domain/activities";
 import { AiCameras } from "../../ai-cameras/domain/ai-cameras";
 import { Trucks } from "../../trucks/domain/trucks";
 import { MiningSites } from "../../mining-sites/domain/mining-sites";
 import { ApiProperty } from "@nestjs/swagger";
+import { AlertsResolutionDto } from "../dto/alerts-resolution.dto";
 
 export class Alerts {
   @ApiProperty({
-    type: [String],
+    type: () => AlertsResolutionDto,
+    nullable: true,
+  })
+  alerts_resolution?: AlertsResolutionDto | null;
+
+  @ApiProperty({
+    type: () => [String],
     nullable: true,
   })
   evidence_url?: string[] | null;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: [
       "unauthorized_access",
       "equipment_tampering",
@@ -29,39 +37,39 @@ export class Alerts {
     | null;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: ["in", "out"],
     nullable: true,
   })
   direction?: "in" | "out" | null;
 
   @ApiProperty({
-    type: Boolean,
+    type: () => Boolean,
     nullable: true,
   })
   overloaded?: boolean | null;
 
   @ApiProperty({
-    type: Number,
+    type: () => Number,
     nullable: true,
   })
   fill_level?: number | null;
 
   @ApiProperty({
-    type: Number,
+    type: () => Number,
     nullable: true,
   })
   confidence?: number | null;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: ["new", "under_review", "acknowledged", "resolved"],
     nullable: false,
   })
   status: "new" | "under_review" | "acknowledged" | "resolved";
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: ["low", "medium", "high", "critical"],
     nullable: false,
   })
@@ -80,7 +88,7 @@ export class Alerts {
   camera_id?: AiCameras | null;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: ["dump_truck", "loader", "hauler"],
     nullable: true,
   })
@@ -99,38 +107,42 @@ export class Alerts {
   site_id: MiningSites;
 
   @ApiProperty({
-    type: Date,
+    type: () => Date,
     nullable: false,
   })
   timestamp: Date;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     nullable: false,
   })
   description: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     nullable: false,
   })
   title: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     enum: ["truck_activity", "breach_event"],
     nullable: false,
   })
   alert_type: "truck_activity" | "breach_event";
 
   @ApiProperty({
-    type: String,
+    type: () => String,
   })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => Date 
+  })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => Date 
+  })
   updatedAt: Date;
 }

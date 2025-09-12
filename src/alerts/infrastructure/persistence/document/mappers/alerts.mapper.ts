@@ -13,6 +13,8 @@ import { AlertsSchemaClass } from "../entities/alerts.schema";
 export class AlertsMapper {
   public static toDomain(raw: AlertsSchemaClass): Alerts {
     const domainEntity = new Alerts();
+    domainEntity.alerts_resolution = raw.alerts_resolution;
+
     domainEntity.evidence_url = raw.evidence_url;
 
     domainEntity.breach_type = raw.breach_type;
@@ -70,6 +72,8 @@ export class AlertsMapper {
 
   public static toPersistence(domainEntity: Alerts): AlertsSchemaClass {
     const persistenceSchema = new AlertsSchemaClass();
+    persistenceSchema.alerts_resolution = domainEntity.alerts_resolution;
+
     persistenceSchema.evidence_url = domainEntity.evidence_url;
 
     persistenceSchema.breach_type = domainEntity.breach_type;

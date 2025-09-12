@@ -63,10 +63,13 @@ export class AdminUsersService {
     private readonly alertsRepository: AlertsRepository,
   ) {}
 
-  async changePassword(userId: string, dto: AdminChangePasswordDto): Promise<void> {
+  async changePassword(
+    userId: string,
+    dto: AdminChangePasswordDto,
+  ): Promise<void> {
     const user = await this.adminUsersRepository.findById(userId);
     if (!user) throw new NotFoundException("User not found");
-  
+
     // ensure we have the stored hash
     if (!user.password) {
       throw new UnprocessableEntityException({
@@ -74,7 +77,7 @@ export class AdminUsersService {
         errors: { old_password: "invalid" },
       });
     }
-  
+
     const ok = await bcrypt.compare(dto.old_password, user.password);
     if (!ok) {
       throw new UnprocessableEntityException({
@@ -82,9 +85,9 @@ export class AdminUsersService {
         errors: { old_password: "invalid" },
       });
     }
-  
+
     const salt = await bcrypt.genSalt();
-    const newHash = await bcrypt.hash(dto.new_password, salt);  
+    const newHash = await bcrypt.hash(dto.new_password, salt);
     await this.adminUsersRepository.update(userId, { password: newHash });
   }
 
@@ -166,7 +169,7 @@ export class AdminUsersService {
 
   async update(
     id: AdminUsers["id"],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateAdminUsersDto: UpdateAdminUsersDto,
   ) {
     // Do not remove comment below.
@@ -425,40 +428,41 @@ export class AdminUsersService {
   }
 
   async getAdminUsersSummary(): Promise<AdminUsersSummaryDto> {
-    const users = await this.adminUsersRepository.findAllWithFilterAndPagination({
-      filter: {},
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
-  
+    const users =
+      await this.adminUsersRepository.findAllWithFilterAndPagination({
+        filter: {},
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
+
     const total = users.length;
-  
+
     // Role distribution
     const roleMap: Record<string, number> = {};
     users.forEach((u) => {
       const role = u.admin_user_group?.role || "Unknown";
       roleMap[role] = (roleMap[role] || 0) + 1;
     });
-  
+
     const role_distribution = Object.entries(roleMap).map(([role, count]) => ({
       role,
       count,
       percentage: Number(((count / total) * 100).toFixed(1)),
     }));
-  
+
     // Province distribution
     const provinceMap: Record<string, number> = {};
-    
+
     // Process users sequentially to avoid race conditions
     for (const u of users) {
       try {
-        let siteIds = u.admin_user_group?.site_ids || "[]";
-        
+        const siteIds = u.admin_user_group?.site_ids || "[]";
+
         // Parse site_ids safely
         let parsedSiteIds: string[] = [];
-        if (typeof siteIds === 'string') {
+        if (typeof siteIds === "string") {
           try {
             parsedSiteIds = JSON.parse(siteIds);
           } catch (error) {
@@ -487,25 +491,26 @@ export class AdminUsersService {
           }
         }
       } catch (error) {
-        console.warn(`Error processing user ${u.id} for province distribution:`, error);
+        console.warn(
+          `Error processing user ${u.id} for province distribution:`,
+          error,
+        );
       }
     }
 
-
-      const provincial_distribution = Object.entries(provinceMap).map(
+    const provincial_distribution = Object.entries(provinceMap).map(
       ([province, count]) => ({
         province,
         count,
         percentage: Number(((count / total) * 100).toFixed(1)),
       }),
     );
-    
+
     return {
       role_distribution,
       provincial_distribution,
     };
   }
-  
 
   async getLiveAiCameras(
     query: FindAllAiCamerasDto,

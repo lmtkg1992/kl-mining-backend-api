@@ -1,7 +1,12 @@
-
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsString, IsNotEmpty, IsOptional, IsMongoId, ValidateNested } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsMongoId,
+  ValidateNested,
+} from "class-validator";
 import { MiningSitesSettingsDto } from "./mining-sites-settings.dto";
 
 export class CreateMiningSitesDto {

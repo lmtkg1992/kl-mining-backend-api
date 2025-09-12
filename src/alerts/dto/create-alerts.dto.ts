@@ -1,3 +1,4 @@
+
 import {
   IsString,
   IsOptional,
@@ -5,22 +6,28 @@ import {
   IsBoolean,
   IsEnum,
   IsDateString,
+  ValidateNested,
 } from "class-validator";
-
-import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { AlertsResolutionDto } from "./alerts-resolution.dto";
 
 export class CreateAlertsDto {
-  @ApiProperty({
-    required: false,
-    type: [String],
+  @ApiPropertyOptional({ type: () => AlertsResolutionDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AlertsResolutionDto)
+  alerts_resolution?: AlertsResolutionDto | null;
+
+  @ApiPropertyOptional({ 
+    type: () => [String],
     nullable: true,
   })
   @IsOptional()
   evidence_url?: string[] | null;
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     enum: [
       "unauthorized_access",
       "equipment_tampering",
@@ -43,9 +50,8 @@ export class CreateAlertsDto {
     | "restricted_zone_entry"
     | null;
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     enum: ["in", "out"],
     nullable: true,
   })
@@ -53,27 +59,24 @@ export class CreateAlertsDto {
   @IsEnum(["in", "out"])
   direction?: "in" | "out" | null;
 
-  @ApiProperty({
-    required: false,
-    type: Boolean,
+  @ApiPropertyOptional({
+    type: () => Boolean,
     nullable: true,
   })
   @IsOptional()
   @IsBoolean()
   overloaded?: boolean | null;
 
-  @ApiProperty({
-    required: false,
-    type: Number,
+  @ApiPropertyOptional({
+    type: () => Number,
     nullable: true,
   })
   @IsOptional()
   @IsNumber()
   fill_level?: number | null;
 
-  @ApiProperty({
-    required: false,
-    type: Number,
+  @ApiPropertyOptional({
+    type: () => Number,
     nullable: true,
   })
   @IsOptional()
@@ -82,7 +85,7 @@ export class CreateAlertsDto {
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
     enum: ["new", "under_review", "acknowledged", "resolved"],
   })
   @IsEnum(["new", "under_review", "acknowledged", "resolved"])
@@ -90,33 +93,30 @@ export class CreateAlertsDto {
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
     enum: ["low", "medium", "high", "critical"],
   })
   @IsEnum(["low", "medium", "high", "critical"])
   severity: "low" | "medium" | "high" | "critical";
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     nullable: true,
   })
   @IsOptional()
   @IsString()
   event_id?: string | null;
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     nullable: true,
   })
   @IsOptional()
   @IsString()
   camera_id?: string | null;
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     enum: ["dump_truck", "loader", "hauler"],
     nullable: true,
   })
@@ -124,9 +124,8 @@ export class CreateAlertsDto {
   @IsEnum(["dump_truck", "loader", "hauler"])
   truck_type?: "dump_truck" | "loader" | "hauler" | null;
 
-  @ApiProperty({
-    required: false,
-    type: String,
+  @ApiPropertyOptional({
+    type: () => String,
     nullable: true,
   })
   @IsOptional()
@@ -135,35 +134,35 @@ export class CreateAlertsDto {
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
   })
   @IsString()
   site_id: string;
 
   @ApiProperty({
     required: true,
-    type: Date,
+    type: () => Date,
   })
   @IsDateString()
   timestamp: Date;
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
   })
   @IsString()
   description: string;
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
   })
   @IsString()
   title: string;
 
   @ApiProperty({
     required: true,
-    type: String,
+    type: () => String,
     enum: ["truck_activity", "breach_event"],
   })
   @IsEnum(["truck_activity", "breach_event"])
