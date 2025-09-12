@@ -24,6 +24,9 @@ import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 @Injectable()
 export class MiningSitesService {
   constructor(
+
+
+
     // Dependencies here
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly aiCamerasRepository: AiCamerasRepository,
@@ -44,11 +47,13 @@ export class MiningSitesService {
       } as Provinces,
       boundary_polygon: createMiningSitesDto.boundary_polygon,
       material_type: createMiningSitesDto.material_type,
+      site_settings: createMiningSitesDto.site_settings,
       volume: 0,
       trucks: 0,
       breaches: 0,
       cameras_online: 0,
       last_activity: new Date(),
+      last_updated_at: new Date(),
     });
   }
 
@@ -122,10 +127,22 @@ export class MiningSitesService {
     // Do not remove comment below.
     // <updating-property />
 
+
     return this.miningSitesRepository.update(id, {
       // Do not remove comment below.
-      // <updating-property-payload />
+      site_name: updateMiningSitesDto.site_name,
+      site_code: updateMiningSitesDto.site_code,
+      status: updateMiningSitesDto.status,
+      owner_user_id: {
+        id: updateMiningSitesDto.owner_user_id,
+      } as AdminUsers,
+      province: {
+        id: updateMiningSitesDto.province,
+      } as Provinces,
+      boundary_polygon: updateMiningSitesDto.boundary_polygon,
       material_type: updateMiningSitesDto.material_type,
+      site_settings: updateMiningSitesDto.site_settings,
+      last_updated_at: new Date(),
     });
   }
 

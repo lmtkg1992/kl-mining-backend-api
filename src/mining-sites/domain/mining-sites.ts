@@ -1,8 +1,18 @@
+
+
 import { ApiProperty } from "@nestjs/swagger";
 import { Provinces } from "../../provinces/domain/provinces";
 import { AdminUsers } from "src/admin-users/domain/admin-users";
+import { MiningSitesSettingsDto } from "../dto/mining-sites-settings.dto";
 
 export class MiningSites {
+  @ApiProperty({
+    type: () => MiningSitesSettingsDto,
+    nullable: true,
+  })
+  site_settings?: MiningSitesSettingsDto | null;
+
+
   @ApiProperty({
     type: () => String,
     nullable: false,
@@ -10,26 +20,26 @@ export class MiningSites {
   material_type: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
   })
   id: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     description: "Mining site name",
     required: true,
   })
   site_name: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     description: "Mining site code",
     required: true,
   })
   site_code: string;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     description: "Mining site status",
     required: true,
   })
@@ -46,30 +56,56 @@ export class MiningSites {
   province: Provinces;
 
   @ApiProperty({
-    type: String,
+    type: () => String,
     description: "Site boundary definition",
     required: false,
   })
   boundary_polygon?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    type: () => Number,
+    required: false 
+  })
   volume: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    type: () => Number,
+    required: false 
+  })
   trucks: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    type: () => Number,
+    required: false 
+  })
   breaches: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    type: () => Number,
+    required: false 
+  })
   cameras_online: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    type: () => Date,
+    required: false 
+  })
   last_activity: Date;
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => Date,
+    required: false ,
+    nullable: true
+  })
+  last_updated_at: Date;
+
+  @ApiProperty({ 
+    type: () => Date 
+  })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => Date 
+  })
   updatedAt: Date;
 }

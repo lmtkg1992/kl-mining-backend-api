@@ -1,7 +1,16 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsOptional, IsMongoId } from "class-validator";
+
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsString, IsNotEmpty, IsOptional, IsMongoId, ValidateNested } from "class-validator";
+import { MiningSitesSettingsDto } from "./mining-sites-settings.dto";
 
 export class CreateMiningSitesDto {
+  @ApiPropertyOptional({ type: () => MiningSitesSettingsDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MiningSitesSettingsDto)
+  site_settings?: MiningSitesSettingsDto;
+
   @ApiProperty({
     required: true,
     type: () => String,
@@ -38,4 +47,11 @@ export class CreateMiningSitesDto {
   @IsString()
   @IsOptional()
   boundary_polygon: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => Date,
+  })
+  @IsOptional()
+  last_updated_at?: Date | null;
 }

@@ -100,16 +100,15 @@ export class AlertsDocumentRepository implements AlertsRepository {
     await this.alertsModel.deleteOne({ _id: id });
   }
 
-  async getBreachAlertSummary(level:string, id?: string[]) {
-
+  async getBreachAlertSummary(level: string, id?: string[]) {
     let baseFilter = {};
 
-    if(level === "site" || level === "province"){
+    if (level === "site" || level === "province") {
       baseFilter = {
         site_id: { $in: id },
         alert_type: "breach_event",
       };
-    }else if(level === "admin"){
+    } else if (level === "admin") {
       baseFilter = {
         alert_type: "breach_event",
       };
@@ -151,16 +150,15 @@ export class AlertsDocumentRepository implements AlertsRepository {
     };
   }
 
-  async getTruckActivitiesSummary(level:string, id?: string[]) {
-
+  async getTruckActivitiesSummary(level: string, id?: string[]) {
     let baseFilter = {};
 
-    if(level === "site" || level === "province"){
+    if (level === "site" || level === "province") {
       baseFilter = {
         site_id: { $in: id },
         alert_type: "truck_activity",
       };
-    }else if(level === "admin"){
+    } else if (level === "admin") {
       baseFilter = {
         alert_type: "truck_activity",
       };

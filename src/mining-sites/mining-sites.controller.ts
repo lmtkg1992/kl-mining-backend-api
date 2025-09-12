@@ -236,10 +236,7 @@ export class MiningSitesController {
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
   @RequirePermissions("mining_sites::alerts")
-  async getAlerts(
-    @Param("id") id: string,
-    @Query() query: FindAllAlertsDto,
-  ) {
+  async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {
     let page = query?.page ?? 1;
     if (page < 1) {
       page = 1;
@@ -249,7 +246,7 @@ export class MiningSitesController {
       limit = 50;
     }
     query.site_id = id;
-    
+
     const data = await this.miningSitesService.getAlerts(id, query, {
       page,
       limit,

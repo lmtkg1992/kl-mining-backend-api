@@ -57,7 +57,7 @@ export class AdminUsersService {
     private readonly provincesService: ProvincesService,
     private readonly miningSitesService: MiningSitesService,
     private readonly aiCamerasRepository: AiCamerasRepository,
-    private readonly alertsRepository: AlertsRepository,    
+    private readonly alertsRepository: AlertsRepository,
   ) {}
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {

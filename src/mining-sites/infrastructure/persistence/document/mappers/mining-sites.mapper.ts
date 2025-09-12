@@ -7,6 +7,10 @@ import { AdminUsers } from "src/admin-users/domain/admin-users";
 export class MiningSitesMapper {
   public static toDomain(raw: MiningSitesSchemaClass): MiningSites {
     const domainEntity = new MiningSites();
+    domainEntity.site_settings = raw.site_settings;
+
+    domainEntity.last_updated_at = raw.last_updated_at ?? new Date();
+
     domainEntity.material_type = raw.material_type;
 
     domainEntity.id = raw._id.toString();
@@ -44,6 +48,10 @@ export class MiningSitesMapper {
     domainEntity: MiningSites,
   ): MiningSitesSchemaClass {
     const persistenceSchema = new MiningSitesSchemaClass();
+    persistenceSchema.site_settings = domainEntity.site_settings;
+
+    persistenceSchema.last_updated_at = domainEntity.last_updated_at;
+
     persistenceSchema.material_type = domainEntity.material_type;
 
     if (domainEntity.id) {
@@ -52,9 +60,20 @@ export class MiningSitesMapper {
     persistenceSchema.site_name = domainEntity.site_name;
     persistenceSchema.site_code = domainEntity.site_code;
     persistenceSchema.status = domainEntity.status;
-    persistenceSchema.owner_user_id = domainEntity.owner_user_id?.id ?? "";
+    if (domainEntity.owner_user_id && domainEntity.owner_user_id.id) {
+      persistenceSchema.owner_user_id = domainEntity.owner_user_id.id;
+    } else if (
+      domainEntity.owner_user_id &&
+      domainEntity.owner_user_id.id === null
+    ) {
+      persistenceSchema.owner_user_id = null as any;
+    }
+    if (domainEntity.province && domainEntity.province.id) {
+      persistenceSchema.province = domainEntity.province.id;
+    } else if (domainEntity.province && domainEntity.province.id === null) {
+      persistenceSchema.province = null as any;
+    }
     persistenceSchema.boundary_polygon = domainEntity.boundary_polygon || "";
-    persistenceSchema.province = domainEntity.province?.id ?? "";
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 

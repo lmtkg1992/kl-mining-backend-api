@@ -261,7 +261,6 @@ export class AdminUsersController {
     });
   }
 
-
   @RequirePermissions("admin_users::alerts::list")
   @Get("alerts/list")
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })

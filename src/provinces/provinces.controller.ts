@@ -215,13 +215,11 @@ export class ProvincesController {
     return this.provincesService.getMaterials(id);
   }
 
-
   @RequirePermissions("provinces::alerts")
   @Get("alerts/list/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(Alerts) })
   async getAlerts(@Param("id") id: string, @Query() query: FindAllAlertsDto) {
-    
     let page = query?.page ?? 1;
     if (page < 1) {
       page = 1;

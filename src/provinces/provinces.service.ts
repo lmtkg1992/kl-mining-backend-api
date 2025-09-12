@@ -215,9 +215,8 @@ export class ProvincesService {
   async getAlertSummary(provinceId: string): Promise<AlertSummaryDto> {
     let siteIds: string[] = [];
     if (provinceId) {
-      const sites = await this.miningSitesRepository.findByProvinceId(
-        provinceId,
-      );
+      const sites =
+        await this.miningSitesRepository.findByProvinceId(provinceId);
       if (sites.length > 0) {
         siteIds = sites.map((site) => site.id);
       }
