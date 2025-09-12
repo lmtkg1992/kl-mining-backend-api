@@ -4,6 +4,7 @@ import {
   UnprocessableEntityException,
   HttpStatus,
   UnauthorizedException,
+  NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -45,6 +46,7 @@ import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.re
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
+import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -60,6 +62,31 @@ export class AdminUsersService {
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly alertsRepository: AlertsRepository,
   ) {}
+
+  async changePassword(userId: string, dto: AdminChangePasswordDto): Promise<void> {
+    const user = await this.adminUsersRepository.findById(userId);
+    if (!user) throw new NotFoundException("User not found");
+  
+    // ensure we have the stored hash
+    if (!user.password) {
+      throw new UnprocessableEntityException({
+        status: 422,
+        errors: { old_password: "invalid" },
+      });
+    }
+  
+    const ok = await bcrypt.compare(dto.old_password, user.password);
+    if (!ok) {
+      throw new UnprocessableEntityException({
+        status: 422,
+        errors: { old_password: "invalid" },
+      });
+    }
+  
+    const salt = await bcrypt.genSalt();
+    const newHash = await bcrypt.hash(dto.new_password, salt);  
+    await this.adminUsersRepository.update(userId, { password: newHash });
+  }
 
   async create(createAdminUsersDto: CreateAdminUsersDto) {
     // Do not remove comment below.

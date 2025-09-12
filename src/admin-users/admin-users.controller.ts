@@ -48,6 +48,7 @@ import { FindAllAlertsDto } from "src/alerts/dto/find-all-alerts.dto";
 import { Alerts } from "src/alerts/domain/alerts";
 import { AlertSummaryDto } from "src/alerts/dto/alert-summary.dto";
 import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
+import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -110,6 +111,15 @@ export class AdminUsersController {
     await this.authService.logout({
       sessionId: request.user.sessionId,
     });
+  }
+  
+  @ApiBearerAuth()
+  @RequirePermissions("admin_users::change_password")
+  @Patch("change-password")
+  @UseGuards(AuthGuard("jwt"))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async changePassword(@Request() request, @Body() changePasswordDto: AdminChangePasswordDto) {
+    return this.adminUsersService.changePassword(request.user.id, changePasswordDto);
   }
 
   // Admin Users CRUD
