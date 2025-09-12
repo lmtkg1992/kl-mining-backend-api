@@ -1,13 +1,17 @@
+import { AiCameras } from "../../ai-cameras/domain/ai-cameras";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class AiSnapshots {
   @ApiProperty({
+    type: () => AiCameras,
+    nullable: true,
+  })
+  camera_id?: AiCameras | null;
+
+  @ApiProperty({
     type: String,
   })
   id: string;
-
-  @ApiProperty({ type: String, description: "Source camera reference" })
-  camera_id: string;
 
   @ApiProperty({
     enum: ["breach", "truck"],

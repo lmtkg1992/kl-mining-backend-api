@@ -63,7 +63,7 @@ export class AiSnapshotsController {
     if (limit > 50) {
       limit = 50;
     }
-
+    
     const data = await this.aiSnapshotsService.findAllWithFilterAndPagination(
       query,
       {

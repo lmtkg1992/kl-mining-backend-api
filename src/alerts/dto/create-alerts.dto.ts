@@ -1,4 +1,3 @@
-
 import {
   IsString,
   IsOptional,
@@ -19,7 +18,7 @@ export class CreateAlertsDto {
   @Type(() => AlertsResolutionDto)
   alerts_resolution?: AlertsResolutionDto | null;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     type: () => [String],
     nullable: true,
   })

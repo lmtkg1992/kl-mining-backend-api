@@ -1,3 +1,7 @@
+import { AiCamerasSchemaClass } from "../../../../../ai-cameras/infrastructure/persistence/document/entities/ai-cameras.schema";
+
+import mongoose from "mongoose";
+
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
@@ -13,8 +17,12 @@ export type AiSnapshotsSchemaDocument =
   },
 })
 export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
-  @Prop({ required: true, type: String })
-  camera_id: string;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AiCamerasSchemaClass",
+    autopopulate: true,
+  })
+  camera_id?: AiCamerasSchemaClass | null;
 
   @Prop({ required: true, type: String, enum: ["breach", "truck"] })
   event_type: "breach" | "truck";

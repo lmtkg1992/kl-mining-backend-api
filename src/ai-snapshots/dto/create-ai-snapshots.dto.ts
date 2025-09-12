@@ -1,40 +1,50 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   Min,
   Max,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUrl,
 } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateAiSnapshotsDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  camera_id: string;
+  @IsOptional()
+  @Type(() => String)
+  camera_id?: string | null;
 
-  @ApiProperty({ enum: ["breach", "truck"] })
+  @ApiProperty({ 
+    type: () => String,
+    enum: ["breach", "truck"] 
+  })
   @IsEnum(["breach", "truck"])
   event_type: "breach" | "truck";
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => String 
+  })
   @IsUrl()
   image_url: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ 
+    type: () => String 
+  })
   @IsOptional()
   @IsString()
   truck_type?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ 
+    type: () => Number 
+  })
   @IsOptional()
   @IsNumber()
   fill_level?: number;
 
-  @ApiProperty()
+  @ApiProperty({ 
+    type: () => Number 
+  })
   @IsNumber()
   @Min(0)
   @Max(1)

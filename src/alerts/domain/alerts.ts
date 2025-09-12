@@ -1,4 +1,3 @@
-
 import { Activities } from "../../activities/domain/activities";
 import { AiCameras } from "../../ai-cameras/domain/ai-cameras";
 import { Trucks } from "../../trucks/domain/trucks";
@@ -136,13 +135,13 @@ export class Alerts {
   })
   id: string;
 
-  @ApiProperty({ 
-    type: () => Date 
+  @ApiProperty({
+    type: () => Date,
   })
   createdAt: Date;
 
-  @ApiProperty({ 
-    type: () => Date 
+  @ApiProperty({
+    type: () => Date,
   })
   updatedAt: Date;
 }
