@@ -78,7 +78,6 @@ export class AiSnapshotsService {
       filter.camera_id = new Types.ObjectId(query.camera_id) as any;
     }
     if (query.site_id) {
-      console.log("site_id", query.site_id);
       const cameras = await this.aiCameraRepository.findAllWithFilterAndPagination({
         filter: { site_id: query.site_id},
         paginationOptions: { page: 1, limit: 10000 },

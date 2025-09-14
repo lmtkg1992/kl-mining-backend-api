@@ -45,6 +45,18 @@ export class AlertsDocumentRepository implements AlertsRepository {
     filter: any;
     paginationOptions: IPaginationOptions;
   }): Promise<Alerts[]> {
+
+    if(filter.from_date || filter.to_date){
+      filter.timestamp = {};
+    }
+    if (filter.from_date) {
+      filter.timestamp.$gte = new Date(filter.from_date);
+      delete filter.from_date;
+    }
+    if (filter.to_date) {
+      filter.timestamp.$lte = new Date(filter.to_date);
+      delete filter.to_date;
+    }
     const entityObjects = await this.alertsModel
       .find(filter)
       .sort({ createdAt: -1 })
@@ -57,6 +69,17 @@ export class AlertsDocumentRepository implements AlertsRepository {
   }
 
   async countWithFilter(filter: any): Promise<number> {
+    if(filter.from_date || filter.to_date){
+      filter.timestamp = {};
+    }
+    if (filter.from_date) {
+      filter.timestamp.$gte = new Date(filter.from_date);
+      delete filter.from_date;
+    }
+    if (filter.to_date) {
+      filter.timestamp.$lte = new Date(filter.to_date);
+      delete filter.to_date;
+    }
     return this.alertsModel.countDocuments(filter);
   }
 

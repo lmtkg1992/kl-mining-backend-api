@@ -410,12 +410,64 @@ export class AdminUsersService {
     const operationalSites = await this.miningSitesRepository.countWithFilter({
       status: "active",
     });
+    const currentDate = new Date(dateFilter);
+    const nextDate = new Date(dateFilter);
+    nextDate.setDate(nextDate.getDate() + 1);
+    const previousDate = new Date(dateFilter);
+    previousDate.setDate(previousDate.getDate() - 1);
+    const listSites = await this.miningSitesRepository.findAllWithFilterAndPagination({
+      filter: {},
+      paginationOptions: {
+        page: 1,
+        limit: 10000,
+      },
+    });
+    const listSitesIds = listSites.map((site) => site.id);
     const totalBreachAlerts = await this.alertsRepository.countWithFilter({
       alert_type: "breach_event",
+      from_date: currentDate,
+      to_date: nextDate,
     });
+    const yesterdayBreachAlerts = await this.alertsRepository.countWithFilter({
+      alert_type: "breach_event",
+      from_date: previousDate,
+      to_date: currentDate,
+    });
+    let changeBreachAlerts = 0;
+    if(yesterdayBreachAlerts > 0){
+      changeBreachAlerts = (totalBreachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts * 100;
+    }
     const totalTruckActivities = await this.alertsRepository.countWithFilter({
       alert_type: "truck_activity",
+      from_date: currentDate,
+      to_date: nextDate,
     });
+    const yesterdayTruckActivities = await this.alertsRepository.countWithFilter({
+      alert_type: "truck_activity",
+      from_date: previousDate,
+      to_date: currentDate,
+    });
+    let changeTruckActivities = 0;
+    if(yesterdayTruckActivities > 0){
+      changeTruckActivities = (totalTruckActivities - yesterdayTruckActivities) / yesterdayTruckActivities * 100;
+    }
+    const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
+    const quotaMiningSitePerDay = MiningSitesService.QUOTA_MINING_SITE_PER_DAY;
+    const volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
+      filter: {
+        site_id: { $in: listSitesIds },
+        alert_type: "truck_activity",
+        direction: "out",
+        from_date: currentDate,
+        to_date: nextDate,
+      },
+      paginationOptions: {  
+        page: 1,
+        limit: 10000,
+      },
+    });
+    const totalVolumeTruckOut = Math.floor(volumeTruckOut.reduce((acc, curr) => acc + volumePerCar * (curr.fill_level ? curr.fill_level/100 : 0), 0));
+    const percentageQuota = Math.floor((totalVolumeTruckOut / quotaMiningSitePerDay) * 100) ;
     return {
       last_updated: new Date().toISOString(),
       site_status: {
@@ -425,16 +477,16 @@ export class AdminUsersService {
       },
       breach_alerts: {
         count: totalBreachAlerts,
-        change: 0,
+        change: changeBreachAlerts,
       },
       truck_activities: {
         count: totalTruckActivities,
-        change: 0,
+        change: changeTruckActivities,
       },
       total_volume: {
-        value: 2150,
+        value: totalVolumeTruckOut,
         unit: "m3",
-        percentage_quota: 92,
+        percentage_quota: percentageQuota,
       },
     };
   }

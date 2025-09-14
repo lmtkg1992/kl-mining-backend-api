@@ -29,4 +29,14 @@ export class FindAllAlertsDto {
   @IsOptional()
   @IsString()
   alert_type?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  from_date?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  to_date?: string;
 }
