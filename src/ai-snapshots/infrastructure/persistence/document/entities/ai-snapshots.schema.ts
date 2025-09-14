@@ -24,8 +24,8 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
   })
   camera_id?: AiCamerasSchemaClass | null;
 
-  @Prop({ required: true, type: String, enum: ["breach", "truck"] })
-  event_type: "breach" | "truck";
+  @Prop({ required: true, type: String, enum: ["breach", "truck", "normal"] })
+  event_type: "breach" | "truck" | "normal";
 
   @Prop({ required: true, type: String })
   image_url: string;

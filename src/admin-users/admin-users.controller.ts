@@ -107,7 +107,6 @@ export class AdminUsersController {
   @UseGuards(AuthGuard("jwt"))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(@Request() request): Promise<void> {
-    console.log(request.user);
     await this.authService.logout({
       sessionId: request.user.sessionId,
     });

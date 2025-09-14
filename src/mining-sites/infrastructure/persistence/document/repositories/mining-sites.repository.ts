@@ -35,6 +35,7 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       .populate({
         path: "owner_user_id",
       })
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();
@@ -59,6 +60,7 @@ export class MiningSitesDocumentRepository implements MiningSitesRepository {
       .populate({
         path: "owner_user_id",
       })
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();

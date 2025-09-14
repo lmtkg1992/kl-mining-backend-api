@@ -29,6 +29,7 @@ export class AlertsDocumentRepository implements AlertsRepository {
   }): Promise<Alerts[]> {
     const entityObjects = await this.alertsModel
       .find()
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit);
 
@@ -46,6 +47,7 @@ export class AlertsDocumentRepository implements AlertsRepository {
   }): Promise<Alerts[]> {
     const entityObjects = await this.alertsModel
       .find(filter)
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit);
 

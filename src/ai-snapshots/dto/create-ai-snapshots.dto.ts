@@ -17,10 +17,10 @@ export class CreateAiSnapshotsDto {
 
   @ApiProperty({ 
     type: () => String,
-    enum: ["breach", "truck"] 
+    enum: ["breach", "truck", "normal"] 
   })
-  @IsEnum(["breach", "truck"])
-  event_type: "breach" | "truck";
+  @IsEnum(["breach", "truck", "normal"])
+  event_type: "breach" | "truck" | "normal";
 
   @ApiProperty({ 
     type: () => String 

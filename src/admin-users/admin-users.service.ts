@@ -47,6 +47,7 @@ import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
+import { MiningSitesRepository } from "src/mining-sites/infrastructure/persistence/mining-sites.repository";
 
 @Injectable()
 export class AdminUsersService {
@@ -61,6 +62,7 @@ export class AdminUsersService {
     private readonly miningSitesService: MiningSitesService,
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly alertsRepository: AlertsRepository,
+    private readonly miningSitesRepository: MiningSitesRepository,
   ) {}
 
   async changePassword(
@@ -404,20 +406,30 @@ export class AdminUsersService {
   ): Promise<AdminStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
+    const totalSites = await this.miningSitesRepository.countWithFilter({});
+    const operationalSites = await this.miningSitesRepository.countWithFilter({
+      status: "active",
+    });
+    const totalBreachAlerts = await this.alertsRepository.countWithFilter({
+      alert_type: "breach_event",
+    });
+    const totalTruckActivities = await this.alertsRepository.countWithFilter({
+      alert_type: "truck_activity",
+    });
     return {
       last_updated: new Date().toISOString(),
       site_status: {
-        total_sites: 1,
-        operational_sites: 1,
-        status_text: "All system operational",
+        total_sites: totalSites,
+        operational_sites: operationalSites,
+        status_text: `${operationalSites}/${totalSites} operational`,
       },
       breach_alerts: {
-        count: 7,
-        change: -5.1,
+        count: totalBreachAlerts,
+        change: 0,
       },
       truck_activities: {
-        count: 89,
-        change: 12.4,
+        count: totalTruckActivities,
+        change: 0,
       },
       total_volume: {
         value: 2150,

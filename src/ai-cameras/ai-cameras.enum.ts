@@ -12,6 +12,7 @@ export enum AiCameraStatusEnum {
 
 export enum AiCameraFeatureEnum {
   truck_detection = "truck_detection",
+  breach_detection = "breach_detection",
   boundary = "boundary",
   volume = "volume",
   personnel = "personnel",

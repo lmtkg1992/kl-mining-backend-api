@@ -93,6 +93,14 @@ export class AiCamerasService {
     return this.aiCamerasRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      type: updateAiCamerasDto.type,
+      location_description: updateAiCamerasDto.location_description,
+      ai_features: updateAiCamerasDto.ai_features,
+      status: updateAiCamerasDto.status,
+      url_live_stream: updateAiCamerasDto.url_live_stream,
+      latest_captured_image: updateAiCamerasDto.latest_captured_image ?? "",
+      latest_captured_image_at:
+      updateAiCamerasDto.latest_captured_image_at ?? new Date(),  
     });
   }
 

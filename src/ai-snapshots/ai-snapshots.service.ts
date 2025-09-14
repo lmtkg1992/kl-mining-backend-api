@@ -15,6 +15,7 @@ import { AiCamerasService } from "src/ai-cameras/ai-cameras.service";
 import { UnprocessableEntityException } from "@nestjs/common";
 import { HttpStatus } from "@nestjs/common";
 import { Types } from "mongoose";
+import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/ai-cameras.repository";
 
 @Injectable()
 export class AiSnapshotsService {
@@ -23,6 +24,7 @@ export class AiSnapshotsService {
       private readonly aiCamerasService: AiCamerasService,
     // Dependencies here
       private readonly aiSnapshotsRepository: AiSnapshotsRepository,
+      private readonly aiCameraRepository: AiCamerasRepository,
   ) {}
 
   async create(createAiSnapshotsDto: CreateAiSnapshotsDto) {
@@ -74,6 +76,15 @@ export class AiSnapshotsService {
     const filter: any = {};
     if (query.camera_id) {
       filter.camera_id = new Types.ObjectId(query.camera_id) as any;
+    }
+    if (query.site_id) {
+      console.log("site_id", query.site_id);
+      const cameras = await this.aiCameraRepository.findAllWithFilterAndPagination({
+        filter: { site_id: query.site_id},
+        paginationOptions: { page: 1, limit: 10000 },
+      });
+      const cameraIds = cameras.map((camera) => camera.id);
+      filter.camera_id = { $in: cameraIds };
     }
 
     const [entites, total] = await Promise.all([

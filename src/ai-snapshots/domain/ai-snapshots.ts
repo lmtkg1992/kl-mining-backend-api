@@ -14,10 +14,10 @@ export class AiSnapshots {
   id: string;
 
   @ApiProperty({
-    enum: ["breach", "truck"],
+    enum: ["breach", "truck", "normal"],
     description: "Detected event classification",
   })
-  event_type: "breach" | "truck";
+  event_type: "breach" | "truck" | "normal";
 
   @ApiProperty({ type: String, description: "Cloud storage path" })
   image_url: string;

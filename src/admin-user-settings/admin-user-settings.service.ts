@@ -18,7 +18,6 @@ export class AdminUserSettingsService {
   ) {}
 
   async create(createAdminUserSettingsDto: CreateAdminUserSettingsDto) {
-    console.log(createAdminUserSettingsDto);
 
     return this.adminUserSettingsRepository.create({
       admin_user_id: {

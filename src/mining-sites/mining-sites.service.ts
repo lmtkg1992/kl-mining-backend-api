@@ -20,6 +20,8 @@ import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
+import { FindAllAiSnapshotsDto } from "src/ai-snapshots/dto/find-all-ai-snapshots.dto";
+import { AiSnapshotsService } from "src/ai-snapshots/ai-snapshots.service";
 
 @Injectable()
 export class MiningSitesService {
@@ -29,6 +31,7 @@ export class MiningSitesService {
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly activitiesRepository: ActivitiesRepository,
     private readonly alertsRepository: AlertsRepository,
+    private readonly aiSnapshotsService: AiSnapshotsService,
   ) {}
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
@@ -85,13 +88,27 @@ export class MiningSitesService {
       this.miningSitesRepository.countWithFilter(filter),
     ]);
 
+    for (const entity of entites) {
+      const totalBreachAlerts = await this.alertsRepository.countWithFilter({
+        alert_type: "breach_event",
+        site_id: entity.id,
+      });
+      const totalTruckActivities = await this.alertsRepository.countWithFilter({
+        alert_type: "truck_activity",
+        site_id: entity.id,
+      });
+      const camerasOnline = await this.aiCamerasRepository.countWithFilter({
+        site_id: entity.id
+      });
+      entity.trucks = totalTruckActivities;
+      entity.breaches = totalBreachAlerts;
+      entity.cameras_online = camerasOnline;
+      entity.last_activity = new Date();
+    }
     //mapping meta data
     const enhancedEntites = entites.map((entity) => ({
       ...entity,
       volume: Math.floor(Math.random() * 1000),
-      trucks: Math.floor(Math.random() * 100),
-      breaches: Math.floor(Math.random() * 20),
-      cameras_online: Math.floor(Math.random() * 10),
       last_activity: new Date(),
     }));
     return { entites: enhancedEntites, total };
@@ -308,11 +325,26 @@ export class MiningSitesService {
   }
 
   async getAiCamerasSummary(siteId: string): Promise<AiCamerasSummaryDto> {
+    const totalCameras = await this.aiCamerasRepository.countWithFilter({
+      site_id: siteId,
+    });
+    const operationalCameras = await this.aiCamerasRepository.countWithFilter({
+      site_id: siteId,
+      status: "online",
+    });
+    const maintenanceCameras = await this.aiCamerasRepository.countWithFilter({
+      site_id: siteId,
+      status: "maintenance",
+    });
+    const offlineCameras = await this.aiCamerasRepository.countWithFilter({
+      site_id: siteId,
+      status: "offline",
+    });
     return {
-      total_cameras: Math.floor(Math.random() * 10),
-      operational: Math.floor(Math.random() * 10),
-      maintenance: Math.floor(Math.random() * 10),
-      offline: Math.floor(Math.random() * 10),
+      total_cameras: totalCameras,
+      operational: operationalCameras,
+      maintenance: maintenanceCameras,
+      offline: offlineCameras,
     };
   }
 
@@ -322,29 +354,17 @@ export class MiningSitesService {
       last_updated: new Date().toISOString(),
       materials: [
         {
-          name: "Gold Ore",
-          percentage: Math.floor(Math.random() * 10),
-          price: Math.floor(Math.random() * 10).toString(),
-          unit: "oz",
+          name: "Kaolin",
+          percentage: 80,
+          price: "N/A",
+          unit: "ton"
         },
         {
-          name: "Silver Ore",
-          percentage: Math.floor(Math.random() * 10),
-          price: Math.floor(Math.random() * 10).toString(),
-          unit: "oz",
-        },
-        {
-          name: "Copper",
-          percentage: Math.floor(Math.random() * 10),
-          price: Math.floor(Math.random() * 10).toString(),
-          unit: "lb",
-        },
-        {
-          name: "Other Minerals",
-          percentage: Math.floor(Math.random() * 10),
-          price: Math.floor(Math.random() * 10).toString(),
-          unit: "Various",
-        },
+          name: "Bentonite", 
+          percentage: 20,
+          price: "N/A",
+          unit: "ton"
+        }
       ],
     };
   }
@@ -411,5 +431,10 @@ export class MiningSitesService {
         truck_overloaded: truckActivitiesData.truck_overloaded,
       },
     };
+  }
+
+  async getAiSnapshot(query: FindAllAiSnapshotsDto, paginationOptions: IPaginationOptions) {
+    const aiSnapshots = await this.aiSnapshotsService.findAllWithFilterAndPagination(query, paginationOptions);
+    return aiSnapshots;
   }
 }

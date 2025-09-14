@@ -19,4 +19,9 @@ export class FindAllAiSnapshotsDto {
   @IsMongoId()
   @IsOptional()
   camera_id?: string;
+
+  @ApiPropertyOptional()
+  @IsMongoId()
+  @IsOptional()
+  site_id?: string;
 }

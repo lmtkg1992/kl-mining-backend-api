@@ -32,6 +32,7 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
       .populate({
         path: "site_id",
       })
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();
@@ -53,6 +54,7 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
       .populate({
         path: "site_id",
       })
+      .sort({ createdAt: -1 })
       .skip((paginationOptions.page - 1) * paginationOptions.limit)
       .limit(paginationOptions.limit)
       .lean();

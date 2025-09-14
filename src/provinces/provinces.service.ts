@@ -98,21 +98,46 @@ export class ProvincesService {
   ): Promise<ProvincesStatisticsResponseDto> {
     const dateFilter = query.date ?? new Date().toISOString().slice(0, 10);
 
+    const totalSites = await this.miningSitesRepository.countWithFilter({
+      province: provinceId,
+    });
+    const operationalSites = await this.miningSitesRepository.countWithFilter({
+      province: provinceId,
+      status: "active",
+    });
+    const listSites = await this.miningSitesRepository.findAllWithFilterAndPagination({
+      filter: {
+        province: provinceId,
+      },
+      paginationOptions: {
+        page: 1,
+        limit: 10000,
+      },
+    });
+    const listSitesIds = listSites.map((site) => site.id);
+    const totalBreachAlerts = await this.alertsRepository.countWithFilter({
+      site_id: { $in: listSitesIds },
+      alert_type: "breach_event",
+    });
+    const totalTruckActivities = await this.alertsRepository.countWithFilter({
+      site_id: { $in: listSitesIds },
+      alert_type: "truck_activity",
+    });
     return {
       province_id: provinceId,
       last_updated: new Date().toISOString(),
       site_status: {
-        total_sites: 1,
-        operational_sites: 1,
+        total_sites: totalSites,
+        operational_sites: operationalSites,
         status_text: "All system operational",
       },
       breach_alerts: {
-        count: 7,
-        change: -5.1,
+        count: totalBreachAlerts,
+        change: 0,
       },
       truck_activities: {
-        count: 89,
-        change: 12.4,
+        count: totalTruckActivities,
+        change: 0,
       },
       total_volume: {
         value: 2150,
@@ -158,29 +183,17 @@ export class ProvincesService {
       last_updated: new Date().toISOString(),
       materials: [
         {
-          name: "Gold Ore",
-          percentage: 42.3,
-          price: "1842",
-          unit: "oz",
+          name: "Kaolin",
+          percentage: 80,
+          price: "N/A",
+          unit: "ton"
         },
         {
-          name: "Silver Ore",
-          percentage: 31.8,
-          price: "23.5",
-          unit: "oz",
-        },
-        {
-          name: "Copper",
-          percentage: 18.4,
-          price: "4.12",
-          unit: "lb",
-        },
-        {
-          name: "Other Minerals",
-          percentage: 7.5,
-          price: "Various",
-          unit: "",
-        },
+          name: "Bentonite", 
+          percentage: 20,
+          price: "N/A",
+          unit: "ton"
+        }
       ],
     };
   }
