@@ -370,7 +370,7 @@ export class MiningSitesService {
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
 
     for( const alert of volumeTruckOut){
-      const timestamp = new Date(alert.timestamp.getTime() - 7 * 60 * 60 * 1000);
+      const timestamp = new Date(alert.timestamp.getTime());
       const hour = timestamp.getHours();
       if (!hourlyVolumes.has(hour)) {
         hourlyVolumes.set(hour, 0);
@@ -442,7 +442,7 @@ export class MiningSitesService {
     const extractedTons = new Map<number, number>();
 
     for( const alert of volumeTruckOut){
-      const timestamp = new Date(alert.timestamp.getTime() - 7 * 60 * 60 * 1000);
+      const timestamp = new Date(alert.timestamp.getTime());
       const hour = timestamp.getHours();
       const labelHour = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? 'PM' : 'AM'}`;
       if (!labelHours.includes(labelHour)) {
