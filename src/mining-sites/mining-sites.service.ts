@@ -343,8 +343,8 @@ export class MiningSitesService {
       
     const hourlyVolumes = new Map<number, number>();
     // Initialize hourly volumes from fromDate to toDate
-    let currentDate = new Date(fromDate.getTime() - 6 * 60 * 60 * 1000);
-    const endDate = new Date(toDate.getTime() - 7 * 60 * 60 * 1000);    
+    let currentDate = new Date(fromDate.getTime());
+    const endDate = new Date(toDate.getTime());    
     while (currentDate <= endDate) {
       const hour = currentDate.getHours();
       hourlyVolumes.set(hour, 0);
