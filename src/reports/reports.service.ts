@@ -132,6 +132,12 @@ export class ReportsService {
     paginationOptions: IPaginationOptions,
   ) {
     const filter = {};
+    if (query.site_id) {
+      filter["site_id"] = query.site_id;
+    }
+    if (query.province_id) {
+      filter["province_id"] = query.province_id;
+    }
 
     const [entites, total] = await Promise.all([
       this.reportsRepository.findAllWithFilterAndPagination({
@@ -247,5 +253,9 @@ export class ReportsService {
 
   remove(id: Reports["id"]) {
     return this.reportsRepository.remove(id);
+  }
+
+  getReportSummary(type: string, id?: string) {
+    return this.reportsRepository.getReportSummary(type, id ?? "");
   }
 }

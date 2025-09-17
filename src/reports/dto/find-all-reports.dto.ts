@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class FindAllReportsDto {
@@ -14,4 +14,19 @@ export class FindAllReportsDto {
   @IsNumber()
   @IsOptional()
   limit?: number;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  site_id?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  province_id?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  report_type?: string;
 }

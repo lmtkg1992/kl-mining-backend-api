@@ -40,6 +40,9 @@ import { MiningSitesService } from "../mining-sites/mining-sites.service";
 import { Alerts } from "../alerts/domain/alerts";
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
+import { FindAllReportsDto } from "src/reports/dto/find-all-reports.dto";
+import { Reports } from "src/reports/domain/reports";
+import { ReportSummaryDto } from "src/reports/dto/report-summary.dto";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -246,5 +249,33 @@ export class ProvincesController {
   @ApiOkResponse({ type: AlertSummaryDto })
   async getAlertSummary(@Param("id") id: string) {
     return this.provincesService.getAlertSummary(id);
+  }
+
+  @RequirePermissions("provinces::reports")
+  @Get("reports/list/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Reports) })
+  async getReports(@Param("id") id: string, @Query() query: FindAllReportsDto) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.province_id = id;
+    return this.provincesService.getReports(query, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("provinces::reports::summary")
+  @Get("reports-summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: ReportSummaryDto })
+  async getReportSummary(@Param("id") id: string) {
+    return this.provincesService.getReportSummary(id);
   }
 }

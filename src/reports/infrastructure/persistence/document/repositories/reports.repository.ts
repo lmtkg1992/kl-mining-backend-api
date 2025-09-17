@@ -7,6 +7,7 @@ import { ReportsRepository } from "../../reports.repository";
 import { Reports } from "../../../../domain/reports";
 import { ReportsMapper } from "../mappers/reports.mapper";
 import { IPaginationOptions } from "../../../../../utils/types/pagination-options";
+import { ReportSummaryDto } from "src/reports/dto/report-summary.dto";
 
 @Injectable()
 export class ReportsDocumentRepository implements ReportsRepository {
@@ -98,5 +99,67 @@ export class ReportsDocumentRepository implements ReportsRepository {
 
   async remove(id: Reports["id"]): Promise<void> {
     await this.reportsModel.deleteOne({ _id: id });
+  }
+
+  async getReportSummary(type: string, id: string): Promise<ReportSummaryDto> {
+    let totalReports = 0;
+    let pendingReports = 0;
+    let completedTodayReports = 0;
+    let failedReports = 0;
+    if (type === "site") {
+      totalReports = await this.reportsModel.countDocuments({
+        site_id: id,
+      });
+      pendingReports = await this.reportsModel.countDocuments({
+        site_id: id,
+        status: "pending",
+      });
+      completedTodayReports = await this.reportsModel.countDocuments({
+        site_id: id,
+        status: "completed",
+      });
+      failedReports = await this.reportsModel.countDocuments({
+        site_id: id,
+        status: "failed",
+      });
+    } else if (type === "province") {
+      totalReports = await this.reportsModel.countDocuments({
+        province_id: id,
+      });
+      pendingReports = await this.reportsModel.countDocuments({
+        province_id: id,
+        status: "pending",
+      });
+      completedTodayReports = await this.reportsModel.countDocuments({
+        province_id: id,
+        status: "completed",
+      });
+      failedReports = await this.reportsModel.countDocuments({
+        province_id: id,
+        status: "failed",
+      });
+    } else if (type === "admin") {
+      totalReports = await this.reportsModel.countDocuments({
+        generated_by: id,
+      });
+      pendingReports = await this.reportsModel.countDocuments({
+        generated_by: id,
+        status: "pending",
+      });
+      completedTodayReports = await this.reportsModel.countDocuments({
+        generated_by: id,
+        status: "completed",
+      });
+      failedReports = await this.reportsModel.countDocuments({
+        generated_by: id,
+        status: "failed",
+      });
+    }
+    return {
+      total_reports: totalReports,
+      pending: pendingReports,
+      completed_today: completedTodayReports,
+      failed: failedReports,
+    };
   }
 }

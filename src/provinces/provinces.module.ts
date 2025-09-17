@@ -11,6 +11,7 @@ import { AdminUsersModule } from "../admin-users/admin-users.module";
 import { MiningSitesModule } from "../mining-sites/mining-sites.module";
 import { AiCamerasModule } from "../ai-cameras/ai-cameras.module";
 import { AlertsModule } from "../alerts/alerts.module";
+import { ReportsModule } from "../reports/reports.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AlertsModule } from "../alerts/alerts.module";
     forwardRef(() => MiningSitesModule),
     forwardRef(() => AiCamerasModule),
     forwardRef(() => AlertsModule),
+    forwardRef(() => ReportsModule),
   ],
   controllers: [ProvincesController],
   providers: [ProvincesService],

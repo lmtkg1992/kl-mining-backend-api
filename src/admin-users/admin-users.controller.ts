@@ -49,6 +49,8 @@ import { Alerts } from "src/alerts/domain/alerts";
 import { AlertSummaryDto } from "src/alerts/dto/alert-summary.dto";
 import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
+import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
+import { ReportsService } from "../reports/reports.service";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -62,6 +64,7 @@ export class AdminUsersController {
     private readonly adminUsersService: AdminUsersService,
     private readonly authService: AuthService,
     private readonly miningSitesService: MiningSitesService,
+    private readonly reportsService: ReportsService,
   ) {}
 
   // Admin Users Auth
@@ -310,5 +313,21 @@ export class AdminUsersController {
   @ApiOkResponse({ type: AlertSummaryDto })
   async getAlertSummary(@Query() query: FindAllAlertsDto) {
     return this.adminUsersService.getAlertSummary();
+  }
+
+  getReports(@Query() query: FindAllReportsDto) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    return this.adminUsersService.getReports(query, { page, limit });
+  }
+
+  getReportSummary(@Query() query: FindAllReportsDto) {
+    return this.adminUsersService.getReportSummary(query);
   }
 }

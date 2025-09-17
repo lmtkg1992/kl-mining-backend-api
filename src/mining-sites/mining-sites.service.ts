@@ -22,6 +22,8 @@ import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.re
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { FindAllAiSnapshotsDto } from "src/ai-snapshots/dto/find-all-ai-snapshots.dto";
 import { AiSnapshotsService } from "src/ai-snapshots/ai-snapshots.service";
+import { FindAllReportsDto } from "src/reports/dto/find-all-reports.dto";
+import { ReportsService } from "src/reports/reports.service";
 
 @Injectable()
 export class MiningSitesService {
@@ -35,6 +37,7 @@ export class MiningSitesService {
     private readonly activitiesRepository: ActivitiesRepository,
     private readonly alertsRepository: AlertsRepository,
     private readonly aiSnapshotsService: AiSnapshotsService,
+    private readonly reportsService: ReportsService,
   ) {}
 
   async create(createMiningSitesDto: CreateMiningSitesDto) {
@@ -674,5 +677,14 @@ export class MiningSitesService {
         paginationOptions,
       );
     return aiSnapshots;
+  }
+
+  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
+    const reports = await this.reportsService.findAllWithFilterAndPagination(query, paginationOptions);
+    return reports;
+  }
+  
+  async getReportSummary(siteId: string) {
+    return this.reportsService.getReportSummary("site", siteId);
   }
 }

@@ -2,6 +2,7 @@ import { DeepPartial } from "../../../utils/types/deep-partial.type";
 import { NullableType } from "../../../utils/types/nullable.type";
 import { IPaginationOptions } from "../../../utils/types/pagination-options";
 import { Reports } from "../../domain/reports";
+import { ReportSummaryDto } from "../../dto/report-summary.dto";
 
 export abstract class ReportsRepository {
   abstract create(
@@ -34,4 +35,6 @@ export abstract class ReportsRepository {
   ): Promise<Reports | null>;
 
   abstract remove(id: Reports["id"]): Promise<void>;
+
+  abstract getReportSummary(type: string, id?: string): Promise<ReportSummaryDto>;
 }

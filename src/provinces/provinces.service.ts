@@ -18,6 +18,8 @@ import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { MiningSitesService } from "../mining-sites/mining-sites.service";
+import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
+import { ReportsService } from "../reports/reports.service";
 
 @Injectable()
 export class ProvincesService {
@@ -27,6 +29,7 @@ export class ProvincesService {
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly alertsRepository: AlertsRepository,
+    private readonly reportService: ReportsService,
   ) {}
 
   async create(createProvincesDto: CreateProvincesDto) {
@@ -322,5 +325,13 @@ export class ProvincesService {
         truck_overloaded: truckActivitiesData.truck_overloaded,
       },
     };
+  }
+
+  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
+    return this.reportService.findAllWithFilterAndPagination(query, paginationOptions);
+  }
+
+  async getReportSummary(provinceId: string) {
+    return this.reportService.getReportSummary("province", provinceId);
   }
 }

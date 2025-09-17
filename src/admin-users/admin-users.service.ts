@@ -47,7 +47,10 @@ import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
-import { MiningSitesRepository } from "src/mining-sites/infrastructure/persistence/mining-sites.repository";
+import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
+
+import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
+import { ReportsService } from "../reports/reports.service";
 
 @Injectable()
 export class AdminUsersService {
@@ -63,6 +66,7 @@ export class AdminUsersService {
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly alertsRepository: AlertsRepository,
     private readonly miningSitesRepository: MiningSitesRepository,
+    private readonly reportsService: ReportsService,
   ) {}
 
   async changePassword(
@@ -653,5 +657,13 @@ export class AdminUsersService {
         truck_overloaded: truckActivitiesData.truck_overloaded,
       },
     };
+  }
+
+  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
+    return this.reportsService.findAllWithFilterAndPagination(query, paginationOptions);
+  }
+
+  async getReportSummary(query: FindAllReportsDto) {
+    return this.reportsService.getReportSummary("admin");
   }
 }

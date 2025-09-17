@@ -41,8 +41,11 @@ import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
 import { Alerts } from "src/alerts/domain/alerts";
 import { FindAllAlertsDto } from "src/alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
-import { AiSnapshots } from "src/ai-snapshots/domain/ai-snapshots";
-import { FindAllAiSnapshotsDto } from "src/ai-snapshots/dto/find-all-ai-snapshots.dto";
+import { AiSnapshots } from "../ai-snapshots/domain/ai-snapshots";
+import { FindAllAiSnapshotsDto } from "../ai-snapshots/dto/find-all-ai-snapshots.dto";
+import { Reports } from "../reports/domain/reports";
+import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
+import { ReportSummaryDto } from "../reports/dto/report-summary.dto";
 
 @ApiTags("Miningsites")
 @ApiBearerAuth()
@@ -292,5 +295,39 @@ export class MiningSitesController {
       page,
       limit,
     });
+  }
+
+
+  @RequirePermissions("mining_sites::reports")
+  @Get("reports/list/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: InfinityPaginationResponse(Reports) })
+  async getReports(@Param("id") id: string, @Query() query: FindAllReportsDto) {
+    let page = query?.page ?? 1;
+    if (page < 1) {
+      page = 1;
+    }
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+    query.site_id = id;
+    
+    const data = await this.miningSitesService.getReports(query, {
+      page,
+      limit,
+    });
+    return infinityPaginationWithMetadata(data.entites, data.total, {
+      page,
+      limit,
+    });
+  }
+
+  @RequirePermissions("mining_sites::reports::summary")
+  @Get("reports-summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: ReportSummaryDto })
+  async getReportSummary(@Param("id") id: string) {
+    return this.miningSitesService.getReportSummary(id);
   }
 }
