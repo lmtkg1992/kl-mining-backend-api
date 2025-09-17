@@ -25,7 +25,6 @@ import { AiSnapshotsService } from "src/ai-snapshots/ai-snapshots.service";
 
 @Injectable()
 export class MiningSitesService {
-
   public static readonly VOLUME_PER_CAR = 7;
   public static readonly QUOTA_MINING_SITE_PER_DAY = 210;
 
@@ -112,26 +111,33 @@ export class MiningSitesService {
         to_date: toDate,
       });
       const camerasOnline = await this.aiCamerasRepository.countWithFilter({
-        site_id: entity.id
+        site_id: entity.id,
       });
       entity.trucks = totalTruckActivities;
       entity.breaches = totalBreachAlerts;
       entity.cameras_online = camerasOnline;
 
-      const volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-        filter: {
-          site_id: entity.id,
-          alert_type: "truck_activity",
-          direction: "out",
-          from_date: fromDate,
-          to_date: toDate,
-        },
-        paginationOptions: {
-          page: 1,
-          limit: 10000,
-        },
-      });
-      const totalVolumeTruckOut = Math.floor(volumeTruckOut.reduce((acc, curr) => acc + volumePerCar * (curr.fill_level ? curr.fill_level/100 : 0), 0));
+      const volumeTruckOut =
+        await this.alertsRepository.findAllWithFilterAndPagination({
+          filter: {
+            site_id: entity.id,
+            alert_type: "truck_activity",
+            direction: "out",
+            from_date: fromDate,
+            to_date: toDate,
+          },
+          paginationOptions: {
+            page: 1,
+            limit: 10000,
+          },
+        });
+      const totalVolumeTruckOut = Math.floor(
+        volumeTruckOut.reduce(
+          (acc, curr) =>
+            acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
+          0,
+        ),
+      );
       entity.volume = totalVolumeTruckOut;
       entity.last_activity = new Date();
     }
@@ -159,20 +165,27 @@ export class MiningSitesService {
     fromDate.setHours(0, 0, 0, 0);
     const toDate = new Date();
     toDate.setHours(23, 59, 59, 999);
-    const volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-      filter: {
-        site_id: site.id,
-        alert_type: "truck_activity",
-        direction: "out",
-        from_date: fromDate,
-        to_date: toDate,
-      },
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
-    const totalVolumeTruckOut = Math.floor(volumeTruckOut.reduce((acc, curr) => acc + volumePerCar * (curr.fill_level ? curr.fill_level/100 : 0), 0));
+    const volumeTruckOut =
+      await this.alertsRepository.findAllWithFilterAndPagination({
+        filter: {
+          site_id: site.id,
+          alert_type: "truck_activity",
+          direction: "out",
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
+    const totalVolumeTruckOut = Math.floor(
+      volumeTruckOut.reduce(
+        (acc, curr) =>
+          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
+        0,
+      ),
+    );
     site.volume = totalVolumeTruckOut;
     site.last_activity = new Date();
     return {
@@ -228,14 +241,15 @@ export class MiningSitesService {
     const activeCameras = await this.aiCamerasRepository.countWithFilter({
       site_id: siteId,
       status: "online",
-    }); 
+    });
     const totalCameras = await this.aiCamerasRepository.countWithFilter({
       site_id: siteId,
     });
-    const needingMaintenanceCameras = await this.aiCamerasRepository.countWithFilter({
-      site_id: siteId,
-      status: "maintenance",
-    });
+    const needingMaintenanceCameras =
+      await this.aiCamerasRepository.countWithFilter({
+        site_id: siteId,
+        status: "maintenance",
+      });
     const offlineCameras = await this.aiCamerasRepository.countWithFilter({
       site_id: siteId,
       status: "offline",
@@ -261,8 +275,9 @@ export class MiningSitesService {
       to_date: currentDate,
     });
     let changeBreachAlerts = 0;
-    if(yesterdayBreachAlerts > 0){
-      changeBreachAlerts = (breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts * 100;
+    if (yesterdayBreachAlerts > 0) {
+      changeBreachAlerts =
+        ((breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) * 100;
     }
 
     const truckActivities = await this.alertsRepository.countWithFilter({
@@ -272,35 +287,48 @@ export class MiningSitesService {
       to_date: nextDate,
     });
 
-    const yesterdayTruckActivities = await this.alertsRepository.countWithFilter({
-      site_id: siteId,
-      alert_type: "truck_activity",
-      from_date: previousDate,
-      to_date: currentDate,
-    });
+    const yesterdayTruckActivities =
+      await this.alertsRepository.countWithFilter({
+        site_id: siteId,
+        alert_type: "truck_activity",
+        from_date: previousDate,
+        to_date: currentDate,
+      });
     let changeTruckActivities = 0;
-    if(yesterdayTruckActivities > 0){
-      changeTruckActivities = (truckActivities - yesterdayTruckActivities) / yesterdayTruckActivities * 100;
+    if (yesterdayTruckActivities > 0) {
+      changeTruckActivities =
+        ((truckActivities - yesterdayTruckActivities) /
+          yesterdayTruckActivities) *
+        100;
     }
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
     const quotaMiningSitePerDay = MiningSitesService.QUOTA_MINING_SITE_PER_DAY;
 
-    const volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-      filter: {
-        site_id: siteId,
-        alert_type: "truck_activity",
-        direction: "out",
-        from_date: currentDate,
-        to_date: nextDate,
-      },
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
-    const totalVolumeTruckOut = Math.floor(volumeTruckOut.reduce((acc, curr) => acc + volumePerCar * (curr.fill_level ? curr.fill_level/100 : 0), 0));
-    const percentageQuota = Math.floor((totalVolumeTruckOut / quotaMiningSitePerDay) * 100) ;
+    const volumeTruckOut =
+      await this.alertsRepository.findAllWithFilterAndPagination({
+        filter: {
+          site_id: siteId,
+          alert_type: "truck_activity",
+          direction: "out",
+          from_date: currentDate,
+          to_date: nextDate,
+        },
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
+    const totalVolumeTruckOut = Math.floor(
+      volumeTruckOut.reduce(
+        (acc, curr) =>
+          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
+        0,
+      ),
+    );
+    const percentageQuota = Math.floor(
+      (totalVolumeTruckOut / quotaMiningSitePerDay) * 100,
+    );
     return {
       site_id: siteId,
       last_updated: new Date().toISOString(),
@@ -333,43 +361,41 @@ export class MiningSitesService {
   }
 
   async getTransport(siteId: string): Promise<MiningSitesTransportResponseDto> {
-
     const toDate = new Date();
     toDate.setHours(toDate.getHours() + 7);
-    
-    
+
     const fromDate = new Date();
-    fromDate.setTime(toDate.getTime() - (24 * 60 * 60 * 1000));
-      
+    fromDate.setTime(toDate.getTime() - 24 * 60 * 60 * 1000);
+
     const hourlyVolumes = new Map<number, number>();
     // Initialize hourly volumes from fromDate to toDate
-    let currentDate = new Date(fromDate.getTime());
-    const endDate = new Date(toDate.getTime());    
+    const currentDate = new Date(fromDate.getTime());
+    const endDate = new Date(toDate.getTime());
     while (currentDate <= endDate) {
       const hour = currentDate.getHours();
       hourlyVolumes.set(hour, 0);
       currentDate.setHours(currentDate.getHours() + 1);
     }
 
-    let volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-      filter: {
-        site_id: siteId,
-        alert_type: "truck_activity",
-        direction: "out",
-        from_date: fromDate,
-        to_date: toDate,
-      },
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
+    let volumeTruckOut =
+      await this.alertsRepository.findAllWithFilterAndPagination({
+        filter: {
+          site_id: siteId,
+          alert_type: "truck_activity",
+          direction: "out",
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
     volumeTruckOut = volumeTruckOut.reverse();
-
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
 
-    for( const alert of volumeTruckOut){
+    for (const alert of volumeTruckOut) {
       const timestamp = new Date(alert.timestamp.getTime());
       const hour = timestamp.getHours();
       if (!hourlyVolumes.has(hour)) {
@@ -379,16 +405,19 @@ export class MiningSitesService {
       const volume = volumePerCar * (fillLevel / 100);
       hourlyVolumes.set(hour, Math.floor(hourlyVolumes.get(hour)! + volume));
     }
-    const hourlyData = Array.from(hourlyVolumes.entries()).map(([hour, volume]) => ({
-      hour: `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? 'PM' : 'AM'}`,
-      value: volume,
-    }));
+    const hourlyData = Array.from(hourlyVolumes.entries()).map(
+      ([hour, volume]) => ({
+        hour: `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? "PM" : "AM"}`,
+        value: volume,
+      }),
+    );
     // console.log("Hourly volumes:", Object.fromEntries(hourlyVolumes));
 
     // Get max value and its hour from hourly data
-    const maxHourData = hourlyData.reduce((max, current) => 
-      current.value > max.value ? current : max
-    , hourlyData[0]);
+    const maxHourData = hourlyData.reduce(
+      (max, current) => (current.value > max.value ? current : max),
+      hourlyData[0],
+    );
 
     return {
       site_id: siteId,
@@ -399,7 +428,10 @@ export class MiningSitesService {
         unit: "tons",
       },
       daily_average: {
-        value: Math.floor(hourlyData.reduce((acc, curr) => acc + curr.value, 0) / hourlyData.length),
+        value: Math.floor(
+          hourlyData.reduce((acc, curr) => acc + curr.value, 0) /
+            hourlyData.length,
+        ),
         unit: "tons/hr",
       },
       peak_hours: {
@@ -412,27 +444,27 @@ export class MiningSitesService {
   }
 
   async getBusyHours(siteId: string): Promise<MiningSitesBusyHoursResponseDto> {
-
     const toDate = new Date();
     toDate.setHours(23, 59, 59, 999);
     toDate.setHours(toDate.getHours() + 7);
 
     const fromDate = new Date();
-    fromDate.setTime(toDate.getTime() - (24 * 60 * 60 * 1000));
+    fromDate.setTime(toDate.getTime() - 24 * 60 * 60 * 1000);
 
-    let volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-      filter: {
-        site_id: siteId,
-        alert_type: "truck_activity",
-        direction: "out",
-        from_date: fromDate,
-        to_date: toDate,
-      },
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
+    let volumeTruckOut =
+      await this.alertsRepository.findAllWithFilterAndPagination({
+        filter: {
+          site_id: siteId,
+          alert_type: "truck_activity",
+          direction: "out",
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
     volumeTruckOut = volumeTruckOut.reverse();
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
@@ -441,10 +473,10 @@ export class MiningSitesService {
     const truckActivities = new Map<number, number>();
     const extractedTons = new Map<number, number>();
 
-    for( const alert of volumeTruckOut){
+    for (const alert of volumeTruckOut) {
       const timestamp = new Date(alert.timestamp.getTime());
       const hour = timestamp.getHours();
-      const labelHour = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? 'PM' : 'AM'}`;
+      const labelHour = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? "PM" : "AM"}`;
       if (!labelHours.includes(labelHour)) {
         labelHours.push(labelHour);
       }
@@ -556,14 +588,14 @@ export class MiningSitesService {
           name: "Kaolin",
           percentage: 80,
           price: "N/A",
-          unit: "ton"
+          unit: "ton",
         },
         {
-          name: "Bentonite", 
+          name: "Bentonite",
           percentage: 20,
           price: "N/A",
-          unit: "ton"
-        }
+          unit: "ton",
+        },
       ],
     };
   }
@@ -632,8 +664,15 @@ export class MiningSitesService {
     };
   }
 
-  async getAiSnapshot(query: FindAllAiSnapshotsDto, paginationOptions: IPaginationOptions) {
-    const aiSnapshots = await this.aiSnapshotsService.findAllWithFilterAndPagination(query, paginationOptions);
+  async getAiSnapshot(
+    query: FindAllAiSnapshotsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const aiSnapshots =
+      await this.aiSnapshotsService.findAllWithFilterAndPagination(
+        query,
+        paginationOptions,
+      );
     return aiSnapshots;
   }
 }

@@ -271,7 +271,10 @@ export class MiningSitesController {
   @Get("ai-snapshots/list/:id")
   @ApiParam({ name: "id", type: String, required: true })
   @ApiOkResponse({ type: InfinityPaginationResponse(AiSnapshots) })
-  async getAiSnapshot(@Param("id") id: string, @Query() query: FindAllAiSnapshotsDto) {
+  async getAiSnapshot(
+    @Param("id") id: string,
+    @Query() query: FindAllAiSnapshotsDto,
+  ) {
     let page = query?.page ?? 1;
     if (page < 1) {
       page = 1;
@@ -283,8 +286,8 @@ export class MiningSitesController {
     query.site_id = id;
     const data = await this.miningSitesService.getAiSnapshot(query, {
       page,
-      limit,    
-    }); 
+      limit,
+    });
     return infinityPaginationWithMetadata(data.entites, data.total, {
       page,
       limit,

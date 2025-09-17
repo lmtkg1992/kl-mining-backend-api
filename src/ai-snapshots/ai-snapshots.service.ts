@@ -20,11 +20,11 @@ import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/a
 @Injectable()
 export class AiSnapshotsService {
   constructor(
-      @Inject(forwardRef(() => AiCamerasService))
-      private readonly aiCamerasService: AiCamerasService,
+    @Inject(forwardRef(() => AiCamerasService))
+    private readonly aiCamerasService: AiCamerasService,
     // Dependencies here
-      private readonly aiSnapshotsRepository: AiSnapshotsRepository,
-      private readonly aiCameraRepository: AiCamerasRepository,
+    private readonly aiSnapshotsRepository: AiSnapshotsRepository,
+    private readonly aiCameraRepository: AiCamerasRepository,
   ) {}
 
   async create(createAiSnapshotsDto: CreateAiSnapshotsDto) {
@@ -38,7 +38,7 @@ export class AiSnapshotsService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            camera_id: 'notExists',
+            camera_id: "notExists",
           },
         });
       }
@@ -78,10 +78,11 @@ export class AiSnapshotsService {
       filter.camera_id = new Types.ObjectId(query.camera_id) as any;
     }
     if (query.site_id) {
-      const cameras = await this.aiCameraRepository.findAllWithFilterAndPagination({
-        filter: { site_id: query.site_id},
-        paginationOptions: { page: 1, limit: 10000 },
-      });
+      const cameras =
+        await this.aiCameraRepository.findAllWithFilterAndPagination({
+          filter: { site_id: query.site_id },
+          paginationOptions: { page: 1, limit: 10000 },
+        });
       const cameraIds = cameras.map((camera) => camera.id);
       filter.camera_id = { $in: cameraIds };
     }
@@ -107,35 +108,34 @@ export class AiSnapshotsService {
 
   async update(
     id: AiSnapshots["id"],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateAiSnapshotsDto: UpdateAiSnapshotsDto,
   ) {
     // Do not remove comment below.
     // <updating-property />
-      let camera_id: AiCameras  | null | undefined = undefined;
+    let camera_id: AiCameras | null | undefined = undefined;
 
-      if (updateAiSnapshotsDto.camera_id) {
-        const camera_idObject = await this.aiCamerasService.findById(
-          updateAiSnapshotsDto.camera_id,
-        );
-        if (!camera_idObject) {
-          throw new UnprocessableEntityException({
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              camera_id: 'notExists',
-            },
-          });
-        }
-        camera_id = camera_idObject;
-      }else if (updateAiSnapshotsDto.camera_id === null) {
-        camera_id = null;
+    if (updateAiSnapshotsDto.camera_id) {
+      const camera_idObject = await this.aiCamerasService.findById(
+        updateAiSnapshotsDto.camera_id,
+      );
+      if (!camera_idObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            camera_id: "notExists",
+          },
+        });
       }
-      
+      camera_id = camera_idObject;
+    } else if (updateAiSnapshotsDto.camera_id === null) {
+      camera_id = null;
+    }
 
     return this.aiSnapshotsRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-      camera_id
+      camera_id,
     });
   }
 

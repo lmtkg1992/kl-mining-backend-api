@@ -54,8 +54,11 @@ import { TrucksModule } from "./trucks/trucks.module";
 
 import { AlertsModule } from "./alerts/alerts.module";
 
+import { ReportsModule } from "./reports/reports.module";
+
 @Module({
   imports: [
+    ReportsModule,
     AlertsModule,
     TrucksModule,
     ActivitiesModule,

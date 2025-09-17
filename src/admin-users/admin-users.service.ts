@@ -415,13 +415,14 @@ export class AdminUsersService {
     nextDate.setDate(nextDate.getDate() + 1);
     const previousDate = new Date(dateFilter);
     previousDate.setDate(previousDate.getDate() - 1);
-    const listSites = await this.miningSitesRepository.findAllWithFilterAndPagination({
-      filter: {},
-      paginationOptions: {
-        page: 1,
-        limit: 10000,
-      },
-    });
+    const listSites =
+      await this.miningSitesRepository.findAllWithFilterAndPagination({
+        filter: {},
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
     const listSitesIds = listSites.map((site) => site.id);
     const totalBreachAlerts = await this.alertsRepository.countWithFilter({
       alert_type: "breach_event",
@@ -434,40 +435,55 @@ export class AdminUsersService {
       to_date: currentDate,
     });
     let changeBreachAlerts = 0;
-    if(yesterdayBreachAlerts > 0){
-      changeBreachAlerts = (totalBreachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts * 100;
+    if (yesterdayBreachAlerts > 0) {
+      changeBreachAlerts =
+        ((totalBreachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) *
+        100;
     }
     const totalTruckActivities = await this.alertsRepository.countWithFilter({
       alert_type: "truck_activity",
       from_date: currentDate,
       to_date: nextDate,
     });
-    const yesterdayTruckActivities = await this.alertsRepository.countWithFilter({
-      alert_type: "truck_activity",
-      from_date: previousDate,
-      to_date: currentDate,
-    });
+    const yesterdayTruckActivities =
+      await this.alertsRepository.countWithFilter({
+        alert_type: "truck_activity",
+        from_date: previousDate,
+        to_date: currentDate,
+      });
     let changeTruckActivities = 0;
-    if(yesterdayTruckActivities > 0){
-      changeTruckActivities = (totalTruckActivities - yesterdayTruckActivities) / yesterdayTruckActivities * 100;
+    if (yesterdayTruckActivities > 0) {
+      changeTruckActivities =
+        ((totalTruckActivities - yesterdayTruckActivities) /
+          yesterdayTruckActivities) *
+        100;
     }
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
     const quotaMiningSitePerDay = MiningSitesService.QUOTA_MINING_SITE_PER_DAY;
-    const volumeTruckOut = await this.alertsRepository.findAllWithFilterAndPagination({
-      filter: {
-        site_id: { $in: listSitesIds },
-        alert_type: "truck_activity",
-        direction: "out",
-        from_date: currentDate,
-        to_date: nextDate,
-      },
-      paginationOptions: {  
-        page: 1,
-        limit: 10000,
-      },
-    });
-    const totalVolumeTruckOut = Math.floor(volumeTruckOut.reduce((acc, curr) => acc + volumePerCar * (curr.fill_level ? curr.fill_level/100 : 0), 0));
-    const percentageQuota = Math.floor((totalVolumeTruckOut / quotaMiningSitePerDay) * 100) ;
+    const volumeTruckOut =
+      await this.alertsRepository.findAllWithFilterAndPagination({
+        filter: {
+          site_id: { $in: listSitesIds },
+          alert_type: "truck_activity",
+          direction: "out",
+          from_date: currentDate,
+          to_date: nextDate,
+        },
+        paginationOptions: {
+          page: 1,
+          limit: 10000,
+        },
+      });
+    const totalVolumeTruckOut = Math.floor(
+      volumeTruckOut.reduce(
+        (acc, curr) =>
+          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
+        0,
+      ),
+    );
+    const percentageQuota = Math.floor(
+      (totalVolumeTruckOut / quotaMiningSitePerDay) * 100,
+    );
     return {
       last_updated: new Date().toISOString(),
       site_status: {

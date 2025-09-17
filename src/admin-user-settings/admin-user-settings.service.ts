@@ -18,7 +18,6 @@ export class AdminUserSettingsService {
   ) {}
 
   async create(createAdminUserSettingsDto: CreateAdminUserSettingsDto) {
-
     return this.adminUserSettingsRepository.create({
       admin_user_id: {
         id: createAdminUserSettingsDto.admin_user_id,

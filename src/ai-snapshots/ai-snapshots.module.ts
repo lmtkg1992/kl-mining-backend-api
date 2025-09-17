@@ -10,10 +10,9 @@ import { DocumentAiSnapshotsPersistenceModule } from "./infrastructure/persisten
 
 @Module({
   imports: [
-
     // do not remove this comment
     DocumentAiSnapshotsPersistenceModule,
-    forwardRef(() => AiCamerasModule)
+    forwardRef(() => AiCamerasModule),
   ],
   controllers: [AiSnapshotsController],
   providers: [AiSnapshotsService],

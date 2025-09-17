@@ -84,7 +84,7 @@ export class AiCamerasService {
 
   async update(
     id: AiCameras["id"],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateAiCamerasDto: UpdateAiCamerasDto,
   ) {
     // Do not remove comment below.
@@ -100,7 +100,7 @@ export class AiCamerasService {
       url_live_stream: updateAiCamerasDto.url_live_stream,
       latest_captured_image: updateAiCamerasDto.latest_captured_image ?? "",
       latest_captured_image_at:
-      updateAiCamerasDto.latest_captured_image_at ?? new Date(),  
+        updateAiCamerasDto.latest_captured_image_at ?? new Date(),
     });
   }
 

@@ -15,35 +15,35 @@ export class CreateAiSnapshotsDto {
   @Type(() => String)
   camera_id?: string | null;
 
-  @ApiProperty({ 
+  @ApiProperty({
     type: () => String,
-    enum: ["breach", "truck", "normal"] 
+    enum: ["breach", "truck", "normal"],
   })
   @IsEnum(["breach", "truck", "normal"])
   event_type: "breach" | "truck" | "normal";
 
-  @ApiProperty({ 
-    type: () => String 
+  @ApiProperty({
+    type: () => String,
   })
   @IsUrl()
   image_url: string;
 
-  @ApiPropertyOptional({ 
-    type: () => String 
+  @ApiPropertyOptional({
+    type: () => String,
   })
   @IsOptional()
   @IsString()
   truck_type?: string;
 
-  @ApiPropertyOptional({ 
-    type: () => Number 
+  @ApiPropertyOptional({
+    type: () => Number,
   })
   @IsOptional()
   @IsNumber()
   fill_level?: number;
 
-  @ApiProperty({ 
-    type: () => Number 
+  @ApiProperty({
+    type: () => Number,
   })
   @IsNumber()
   @Min(0)

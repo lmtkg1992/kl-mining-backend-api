@@ -45,8 +45,7 @@ export class AlertsDocumentRepository implements AlertsRepository {
     filter: any;
     paginationOptions: IPaginationOptions;
   }): Promise<Alerts[]> {
-
-    if(filter.from_date || filter.to_date){
+    if (filter.from_date || filter.to_date) {
       filter.timestamp = {};
     }
     if (filter.from_date) {
@@ -69,7 +68,7 @@ export class AlertsDocumentRepository implements AlertsRepository {
   }
 
   async countWithFilter(filter: any): Promise<number> {
-    if(filter.from_date || filter.to_date){
+    if (filter.from_date || filter.to_date) {
       filter.timestamp = {};
     }
     if (filter.from_date) {
