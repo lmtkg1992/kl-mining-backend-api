@@ -233,7 +233,7 @@ export class ProvincesController {
     }
     query.province_id = id;
 
-    const data = await this.provincesService.getAlerts(id, query, {
+    const data = await this.provincesService.getAlerts(query, {
       page,
       limit,
     });

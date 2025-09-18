@@ -9,7 +9,6 @@ import { IPaginationOptions } from "../utils/types/pagination-options";
 import { Provinces } from "./domain/provinces";
 import { FindAllProvincesDto } from "./dto/find-all-provinces.dto";
 import { FindAllAiCamerasDto } from "../ai-cameras/dto/find-all-ai-cameras.dto";
-import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
 import { ProvincesMaterialsResponseDto } from "./dto/provinces-materials-response.dto";
 import { ProvincesStatisticsResponseDto } from "./dto/provinces-statistics-response.dto";
@@ -20,6 +19,8 @@ import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { MiningSitesService } from "../mining-sites/mining-sites.service";
 import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
 import { ReportsService } from "../reports/reports.service";
+import { AlertsService } from "../alerts/alerts.service";
+import { AiCamerasService } from "../ai-cameras/ai-cameras.service";
 
 @Injectable()
 export class ProvincesService {
@@ -27,7 +28,8 @@ export class ProvincesService {
     // Dependencies here
     private readonly provincesRepository: ProvincesRepository,
     private readonly miningSitesRepository: MiningSitesRepository,
-    private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly aiCamerasService: AiCamerasService,
+    private readonly alertsService: AlertsService,
     private readonly alertsRepository: AlertsRepository,
     private readonly reportService: ReportsService,
   ) {}
@@ -223,28 +225,8 @@ export class ProvincesService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.province_id) {
-      const sites = await this.miningSitesRepository.findByProvinceId(
-        query.province_id,
-      );
-      if (sites.length) {
-        filter.site_id = { $in: sites.map((site) => site.id) };
-      }
-    }
-    if (query.status) {
-      filter.status = query.status;
-    }
-
-    const [entities, total] = await Promise.all([
-      this.aiCamerasRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.aiCamerasRepository.countWithFilter(filter),
-    ]);
-
-    return { entities, total };
+    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    return aiCameras;
   }
 
   async getMaterials(
@@ -271,30 +253,11 @@ export class ProvincesService {
   }
 
   async getAlerts(
-    provinceId: string,
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.province_id) {
-      const sites = await this.miningSitesRepository.findByProvinceId(
-        query.province_id,
-      );
-      if (sites.length) {
-        filter.site_id = { $in: sites.map((site) => site.id) };
-      }
-    }
-    if (query.alert_type) {
-      filter.alert_type = query.alert_type;
-    }
-    const [entities, total] = await Promise.all([
-      this.alertsRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.alertsRepository.countWithFilter(filter),
-    ]);
-    return { entities, total };
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    return alerts;
   }
 
   async getAlertSummary(provinceId: string): Promise<AlertSummaryDto> {

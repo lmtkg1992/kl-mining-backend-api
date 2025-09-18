@@ -9,12 +9,14 @@ import { IPaginationOptions } from "../utils/types/pagination-options";
 import { AiCameras } from "./domain/ai-cameras";
 import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 import { MiningSites } from "../mining-sites/domain/mining-sites";
+import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
 
 @Injectable()
 export class AiCamerasService {
   constructor(
     // Dependencies here
     private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly miningSitesRepository: MiningSitesRepository,
   ) {}
 
   async create(createAiCamerasDto: CreateAiCamerasDto) {
@@ -58,6 +60,14 @@ export class AiCamerasService {
     const filter: any = {};
     if (query.site_id) {
       filter.site_id = query.site_id;
+    }
+    if (query.province_id) {
+      const sites = await this.miningSitesRepository.findByProvinceId(
+        query.province_id,
+      );
+      if (sites.length) {
+        filter.site_id = { $in: sites.map((site) => site.id) };
+      }
     }
     if (query.status) {
       filter.status = query.status;

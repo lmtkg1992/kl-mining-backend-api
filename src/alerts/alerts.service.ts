@@ -15,6 +15,7 @@ import {
   Injectable,
   forwardRef,
   Inject,
+  HttpStatus,
 } from "@nestjs/common";
 import { CreateAlertsDto } from "./dto/create-alerts.dto";
 import { UpdateAlertsDto } from "./dto/update-alerts.dto";
@@ -23,7 +24,7 @@ import { IPaginationOptions } from "../utils/types/pagination-options";
 import { Alerts } from "./domain/alerts";
 import { FindAllAlertsDto } from "./dto/find-all-alerts.dto";
 import { UnprocessableEntityException } from "@nestjs/common";
-import { HttpStatus } from "@nestjs/common";
+import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
 
 @Injectable()
 export class AlertsService {
@@ -38,6 +39,7 @@ export class AlertsService {
     private readonly miningSitesService: MiningSitesService,
     // Dependencies here
     private readonly alertsRepository: AlertsRepository,
+    private readonly miningSitesRepository: MiningSitesRepository,
   ) {}
 
   async create(createAlertsDto: CreateAlertsDto) {
@@ -176,6 +178,15 @@ export class AlertsService {
 
     if (query.site_id) {
       filter.site_id = query.site_id;
+    }
+    
+    if (query.province_id) {
+      const sites = await this.miningSitesRepository.findByProvinceId(
+        query.province_id,
+      );
+      if (sites.length) {
+        filter.site_id = { $in: sites.map((site) => site.id) };
+      }
     }
     if (query.alert_type) {
       filter.alert_type = query.alert_type;

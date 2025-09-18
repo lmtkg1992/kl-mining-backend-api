@@ -40,8 +40,9 @@ import { ProvincesService } from "../provinces/provinces.service";
 import { MiningSitesService } from "../mining-sites/mining-sites.service";
 
 import { AdminUsersRepository } from "./infrastructure/persistence/admin-users.repository";
-import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai-cameras.repository";
+import { AiCamerasService } from "../ai-cameras/ai-cameras.service";
 import { AlertsRepository } from "../alerts/infrastructure/persistence/alerts.repository";
+import { AlertsService } from "../alerts/alerts.service";
 
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
 import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
@@ -63,7 +64,8 @@ export class AdminUsersService {
     private readonly permissionsService: PermissionsService,
     private readonly provincesService: ProvincesService,
     private readonly miningSitesService: MiningSitesService,
-    private readonly aiCamerasRepository: AiCamerasRepository,
+    private readonly aiCamerasService: AiCamerasService,
+    private readonly alertsService: AlertsService,
     private readonly alertsRepository: AlertsRepository,
     private readonly miningSitesRepository: MiningSitesRepository,
     private readonly reportsService: ReportsService,
@@ -600,41 +602,16 @@ export class AdminUsersService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.status) {
-      filter.status = query.status;
-    }
-
-    const [entities, total] = await Promise.all([
-      this.aiCamerasRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.aiCamerasRepository.countWithFilter(filter),
-    ]);
-
-    return { entities, total };
+    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    return aiCameras;
   }
 
   async getAlerts(
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.site_id) {
-      filter.site_id = query.site_id;
-    }
-    if (query.alert_type) {
-      filter.alert_type = query.alert_type;
-    }
-    const [entities, total] = await Promise.all([
-      this.alertsRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.alertsRepository.countWithFilter(filter),
-    ]);
-    return { entities, total };
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    return alerts;
   }
 
   async getAlertSummary(): Promise<AlertSummaryDto> {
