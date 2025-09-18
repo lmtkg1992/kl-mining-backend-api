@@ -4,6 +4,8 @@ import { MiningSites } from "../mining-sites/domain/mining-sites";
 import {
   // common
   Injectable,
+  forwardRef,
+  Inject,
 } from "@nestjs/common";
 import { CreateTrucksDto } from "./dto/create-trucks.dto";
 import { UpdateTrucksDto } from "./dto/update-trucks.dto";
@@ -17,8 +19,8 @@ import { HttpStatus } from "@nestjs/common";
 @Injectable()
 export class TrucksService {
   constructor(
+    @Inject(forwardRef(() => MiningSitesService))
     private readonly miningSitesService: MiningSitesService,
-
     // Dependencies here
     private readonly trucksRepository: TrucksRepository,
   ) {}
@@ -78,7 +80,7 @@ export class TrucksService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.trucksRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -86,7 +88,7 @@ export class TrucksService {
       this.trucksRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Trucks["id"]) {

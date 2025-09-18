@@ -67,7 +67,7 @@ export class FaqsService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.faqsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -75,7 +75,7 @@ export class FaqsService {
       this.faqsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Faqs["id"]) {

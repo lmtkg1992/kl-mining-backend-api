@@ -64,7 +64,7 @@ export class PermissionsService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.permissionsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -72,7 +72,7 @@ export class PermissionsService {
       this.permissionsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Permissions["id"]) {

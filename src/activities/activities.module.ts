@@ -15,8 +15,8 @@ import { DocumentActivitiesPersistenceModule } from "./infrastructure/persistenc
     // do not remove this comment
     DocumentActivitiesPersistenceModule,
     forwardRef(() => TrucksModule),
-    forwardRef(() => AiCamerasModule),
     forwardRef(() => MiningSitesModule),
+    forwardRef(() => AiCamerasModule),
   ],
   controllers: [ActivitiesController],
   providers: [ActivitiesService],

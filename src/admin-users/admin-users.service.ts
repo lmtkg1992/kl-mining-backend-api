@@ -150,7 +150,7 @@ export class AdminUsersService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.adminUsersRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -158,7 +158,7 @@ export class AdminUsersService {
       this.adminUsersRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: AdminUsers["id"]) {

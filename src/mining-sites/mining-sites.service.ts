@@ -14,7 +14,6 @@ import { AiCamerasRepository } from "../ai-cameras/infrastructure/persistence/ai
 import { MiningSitesMaterialsResponseDto } from "./dto/mining-sites-materials-response.dto";
 import { AdminUsers } from "../admin-users/domain/admin-users";
 import { MiningSitesBusyHoursResponseDto } from "./dto/mining-sites-busy-hours-response.dto";
-import { ActivitiesRepository } from "../activities/infrastructure/persistence/activities.repository";
 import { FindAllActivitiesDto } from "../activities/dto/find-all-activities.dto";
 import { AiCamerasSummaryDto } from "../ai-cameras/dto/ai-cameras-summary.dto";
 import { FindAllAlertsDto } from "../alerts/dto/find-all-alerts.dto";
@@ -24,6 +23,9 @@ import { FindAllAiSnapshotsDto } from "src/ai-snapshots/dto/find-all-ai-snapshot
 import { AiSnapshotsService } from "src/ai-snapshots/ai-snapshots.service";
 import { FindAllReportsDto } from "src/reports/dto/find-all-reports.dto";
 import { ReportsService } from "src/reports/reports.service";
+import { AlertsService } from "src/alerts/alerts.service";
+import { ActivitiesService } from "src/activities/activities.service";
+import { AiCamerasService } from "src/ai-cameras/ai-cameras.service";
 
 @Injectable()
 export class MiningSitesService {
@@ -33,8 +35,10 @@ export class MiningSitesService {
   constructor(
     // Dependencies here
     private readonly miningSitesRepository: MiningSitesRepository,
+    private readonly aiCamerasService: AiCamerasService,
     private readonly aiCamerasRepository: AiCamerasRepository,
-    private readonly activitiesRepository: ActivitiesRepository,
+    private readonly activitiesService: ActivitiesService,
+    private readonly alertsService: AlertsService,
     private readonly alertsRepository: AlertsRepository,
     private readonly aiSnapshotsService: AiSnapshotsService,
     private readonly reportsService: ReportsService,
@@ -86,7 +90,7 @@ export class MiningSitesService {
       filter["province"] = query.province_id;
     }
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.miningSitesRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -100,7 +104,7 @@ export class MiningSitesService {
     const toDate = new Date();
     toDate.setHours(23, 59, 59, 999);
 
-    for (const entity of entites) {
+    for (const entity of entities) {
       const totalBreachAlerts = await this.alertsRepository.countWithFilter({
         alert_type: "breach_event",
         site_id: entity.id,
@@ -144,7 +148,7 @@ export class MiningSitesService {
       entity.volume = totalVolumeTruckOut;
       entity.last_activity = new Date();
     }
-    return { entites: entites, total };
+    return { entities: entities, total };
   }
 
   async findById(id: MiningSites["id"]) {
@@ -539,23 +543,8 @@ export class MiningSitesService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.site_id) {
-      filter.site_id = query.site_id;
-    }
-    if (query.status) {
-      filter.status = query.status;
-    }
-
-    const [entities, total] = await Promise.all([
-      this.aiCamerasRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.aiCamerasRepository.countWithFilter(filter),
-    ]);
-
-    return { entities, total };
+    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    return aiCameras;
   }
 
   async getAiCamerasSummary(siteId: string): Promise<AiCamerasSummaryDto> {
@@ -607,42 +596,16 @@ export class MiningSitesService {
     query: FindAllActivitiesDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.site_id) {
-      filter.site_id = query.site_id;
-    }
-
-    const [entities, total] = await Promise.all([
-      this.activitiesRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.activitiesRepository.countWithFilter(filter),
-    ]);
-
-    return { entities, total };
+    const activities = await this.activitiesService.findAllWithFilterAndPagination(query, paginationOptions);
+    return activities;
   }
 
   async getAlerts(
-    siteId: string,
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter: any = {};
-    if (query.site_id) {
-      filter.site_id = query.site_id;
-    }
-    if (query.alert_type) {
-      filter.alert_type = query.alert_type;
-    }
-    const [entities, total] = await Promise.all([
-      this.alertsRepository.findAllWithFilterAndPagination({
-        filter,
-        paginationOptions,
-      }),
-      this.alertsRepository.countWithFilter(filter),
-    ]);
-    return { entities, total };
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    return alerts;
   }
 
   async getAlertSummary(siteId: string): Promise<AlertSummaryDto> {

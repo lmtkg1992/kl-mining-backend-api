@@ -73,7 +73,7 @@ export class PermissionsController {
       },
     );
 
-    return infinityPaginationWithMetadata(data.entites, data.total, {
+    return infinityPaginationWithMetadata(data.entities, data.total, {
       page,
       limit,
     });

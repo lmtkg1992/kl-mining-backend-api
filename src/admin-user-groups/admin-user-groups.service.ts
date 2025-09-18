@@ -47,7 +47,7 @@ export class AdminUserGroupsService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.adminUserGroupsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -55,7 +55,7 @@ export class AdminUserGroupsService {
       this.adminUserGroupsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: AdminUserGroups["id"]) {

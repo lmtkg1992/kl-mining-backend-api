@@ -53,7 +53,7 @@ export class NotificationsService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.notificationsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -61,7 +61,7 @@ export class NotificationsService {
       this.notificationsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Notifications["id"]) {

@@ -87,7 +87,7 @@ export class AiSnapshotsService {
       filter.camera_id = { $in: cameraIds };
     }
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.aiSnapshotsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -95,7 +95,7 @@ export class AiSnapshotsService {
       this.aiSnapshotsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: AiSnapshots["id"]) {

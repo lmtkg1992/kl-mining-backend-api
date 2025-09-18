@@ -75,7 +75,7 @@ export class ActivitiesController {
       },
     );
 
-    return infinityPaginationWithMetadata(data.entites, data.total, {
+    return infinityPaginationWithMetadata(data.entities, data.total, {
       page,
       limit,
     });

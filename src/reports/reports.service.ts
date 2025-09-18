@@ -139,7 +139,7 @@ export class ReportsService {
       filter["province_id"] = query.province_id;
     }
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.reportsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -147,7 +147,7 @@ export class ReportsService {
       this.reportsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Reports["id"]) {

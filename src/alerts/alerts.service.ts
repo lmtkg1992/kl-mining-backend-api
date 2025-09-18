@@ -36,7 +36,6 @@ export class AlertsService {
     private readonly trucksService: TrucksService,
     @Inject(forwardRef(() => MiningSitesService))
     private readonly miningSitesService: MiningSitesService,
-
     // Dependencies here
     private readonly alertsRepository: AlertsRepository,
   ) {}
@@ -173,9 +172,16 @@ export class AlertsService {
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const filter = {};
+    const filter: any = {};
 
-    const [entites, total] = await Promise.all([
+    if (query.site_id) {
+      filter.site_id = query.site_id;
+    }
+    if (query.alert_type) {
+      filter.alert_type = query.alert_type;
+    }
+
+    const [entities, total] = await Promise.all([
       this.alertsRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -183,7 +189,7 @@ export class AlertsService {
       this.alertsRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Alerts["id"]) {

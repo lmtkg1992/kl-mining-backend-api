@@ -91,7 +91,7 @@ export class MiningSitesController {
       },
     );
 
-    return infinityPaginationWithMetadata(data.entites, data.total, {
+    return infinityPaginationWithMetadata(data.entities, data.total, {
       page,
       limit,
     });
@@ -252,7 +252,7 @@ export class MiningSitesController {
     }
     query.site_id = id;
 
-    const data = await this.miningSitesService.getAlerts(id, query, {
+    const data = await this.miningSitesService.getAlerts(query, {
       page,
       limit,
     });
@@ -291,7 +291,7 @@ export class MiningSitesController {
       page,
       limit,
     });
-    return infinityPaginationWithMetadata(data.entites, data.total, {
+    return infinityPaginationWithMetadata(data.entities, data.total, {
       page,
       limit,
     });
@@ -317,7 +317,7 @@ export class MiningSitesController {
       page,
       limit,
     });
-    return infinityPaginationWithMetadata(data.entites, data.total, {
+    return infinityPaginationWithMetadata(data.entities, data.total, {
       page,
       limit,
     });

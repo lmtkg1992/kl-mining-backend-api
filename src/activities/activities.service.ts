@@ -134,7 +134,7 @@ export class ActivitiesService {
   ) {
     const filter = {};
 
-    const [entites, total] = await Promise.all([
+    const [entities, total] = await Promise.all([
       this.activitiesRepository.findAllWithFilterAndPagination({
         filter,
         paginationOptions,
@@ -142,7 +142,7 @@ export class ActivitiesService {
       this.activitiesRepository.countWithFilter(filter),
     ]);
 
-    return { entites, total };
+    return { entities, total };
   }
 
   findById(id: Activities["id"]) {

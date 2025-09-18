@@ -10,9 +10,9 @@ import { DocumentTrucksPersistenceModule } from "./infrastructure/persistence/do
 
 @Module({
   imports: [
+    forwardRef(() => MiningSitesModule),
     // do not remove this comment
     DocumentTrucksPersistenceModule,
-    forwardRef(() => MiningSitesModule),
   ],
   controllers: [TrucksController],
   providers: [TrucksService],
