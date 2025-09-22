@@ -27,17 +27,17 @@ export class ReportsSchemaClass extends EntityDocumentHelper {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'MiningSitesSchemaClass',
     autopopulate: true,
-    required: true,
+    required: false,
   })
-  site_id: MiningSitesSchemaClass;
+  site_id: MiningSitesSchemaClass | null;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ProvincesSchemaClass',
     autopopulate: true,
-    required: true,
+    required: false,
   })
-  province_id: ProvincesSchemaClass;
+  province_id: ProvincesSchemaClass | null;
 
   @Prop({
     type: Date,

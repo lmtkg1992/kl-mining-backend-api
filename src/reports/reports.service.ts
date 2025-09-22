@@ -52,31 +52,30 @@ export class ReportsService {
     }
     const generatedBy = generatedByObject;
 
-    const province_idObject = await this.provincesService.findById(
-      createReportsDto.province_id,
-    );
-    if (!province_idObject) {
-      throw new UnprocessableEntityException({
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        errors: {
-          province_id: "notExists",
-        },
-      });
-    }
-    const province_id = province_idObject;
+    let province_id: Provinces | null = null;
 
-    const site_idObject = await this.miningSitesService.findById(
-      createReportsDto.site_id,
-    );
-    if (!site_idObject) {
-      throw new UnprocessableEntityException({
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        errors: {
-          site_id: "notExists",
-        },
-      });
+    try {
+      const province_idObject = await this.provincesService.findById(
+        createReportsDto.province_id,
+      );
+      if (province_idObject) {
+        province_id = province_idObject;
+      }
+    } catch (error) {
+      province_id = null;
     }
-    const site_id = site_idObject;
+
+    let site_id: MiningSites | null = null;
+    try {
+      const site_idObject = await this.miningSitesService.findById(
+        createReportsDto.site_id,
+      );
+        if (site_idObject) {
+        site_id = site_idObject;
+      }
+    } catch (error) {
+      site_id = null;
+    }
 
     return this.reportsRepository.create({
       // Do not remove comment below.
@@ -98,7 +97,7 @@ export class ReportsService {
 
       snapshots: createReportsDto.snapshots,
 
-      generated_at: new Date(createReportsDto.generated_at),
+      generated_at: new Date(),
 
       end_date: new Date(createReportsDto.end_date),
 
@@ -106,9 +105,9 @@ export class ReportsService {
 
       generated_by: generatedBy,
 
-      province_id,
+      province_id: province_id ?? null,
 
-      site_id,
+      site_id: site_id ?? null,
 
       report_type: createReportsDto.report_type,
     });
@@ -182,38 +181,34 @@ export class ReportsService {
       generated_by = generated_byObject;
     }
 
-    let province_id: Provinces | undefined = undefined;
+    let province_id: Provinces | null = null;
 
     if (updateReportsDto.province_id) {
-      const province_idObject = await this.provincesService.findById(
-        updateReportsDto.province_id,
-      );
-      if (!province_idObject) {
-        throw new UnprocessableEntityException({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            province_id: "notExists",
-          },
-        });
+      try {
+        const province_idObject = await this.provincesService.findById(
+          updateReportsDto.province_id,
+        );
+        if (province_idObject) {
+          province_id = province_idObject;
+        }
+      } catch (error) {
+        province_id = null;
       }
-      province_id = province_idObject;
     }
 
-    let site_id: MiningSites | undefined = undefined;
+    let site_id: MiningSites | null = null;
 
     if (updateReportsDto.site_id) {
-      const site_idObject = await this.miningSitesService.findById(
-        updateReportsDto.site_id,
-      );
-      if (!site_idObject) {
-        throw new UnprocessableEntityException({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            site_id: "notExists",
-          },
-        });
+      try {
+        const site_idObject = await this.miningSitesService.findById(
+          updateReportsDto.site_id,
+        );
+        if (site_idObject) {
+          site_id = site_idObject;
+        }
+      } catch (error) {
+        site_id = null;
       }
-      site_id = site_idObject;
     }
 
     return this.reportsRepository.update(id, {

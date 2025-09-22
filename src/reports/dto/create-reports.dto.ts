@@ -16,17 +16,15 @@ export class CreateReportsDto {
   report_type: ReportType;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: () => String,
   })
-  @IsString()
   site_id: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     type: () => String,
   })
-  @IsString()
   province_id: string;
 
   @ApiProperty({
@@ -52,9 +50,8 @@ export class CreateReportsDto {
 
   @ApiProperty({
     type: String,
-    required: true,
+    required: false,
   })
-  @IsDateString()
   generated_at: string;
 
   @ApiProperty({

@@ -51,6 +51,8 @@ import { AdminUsersSummaryDto } from "./dto/admin-users-summary.dto";
 import { AdminChangePasswordDto } from "./dto/admin-change-password.dto";
 import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
 import { ReportsService } from "../reports/reports.service";
+import { Reports } from "src/reports/domain/reports";
+import { ReportSummaryDto } from "src/reports/dto/report-summary.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -315,6 +317,9 @@ export class AdminUsersController {
     return this.adminUsersService.getAlertSummary();
   }
 
+  @RequirePermissions("admin_users::reports::list")
+  @Get("reports/list")
+  @ApiOkResponse({ type: InfinityPaginationResponse(Reports) })
   getReports(@Query() query: FindAllReportsDto) {
     let page = query?.page ?? 1;
     if (page < 1) {
@@ -327,6 +332,9 @@ export class AdminUsersController {
     return this.adminUsersService.getReports(query, { page, limit });
   }
 
+  @RequirePermissions("admin_users::reports::summary")
+  @Get("reports-summary")
+  @ApiOkResponse({ type: ReportSummaryDto })
   getReportSummary(@Query() query: FindAllReportsDto) {
     return this.adminUsersService.getReportSummary(query);
   }

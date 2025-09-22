@@ -139,19 +139,14 @@ export class ReportsDocumentRepository implements ReportsRepository {
         status: "failed",
       });
     } else if (type === "admin") {
-      totalReports = await this.reportsModel.countDocuments({
-        generated_by: id,
-      });
+      totalReports = await this.reportsModel.countDocuments();
       pendingReports = await this.reportsModel.countDocuments({
-        generated_by: id,
         status: "pending",
       });
       completedTodayReports = await this.reportsModel.countDocuments({
-        generated_by: id,
         status: "completed",
       });
       failedReports = await this.reportsModel.countDocuments({
-        generated_by: id,
         status: "failed",
       });
     }

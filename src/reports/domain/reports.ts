@@ -31,15 +31,15 @@ export class Reports {
 
   @ApiProperty({
     type: () => MiningSites,
-    nullable: false,
+    nullable: true,
   })
-  site_id: MiningSites;
+  site_id: MiningSites | null;
 
   @ApiProperty({
     type: () => Provinces,
-    nullable: false,
+    nullable: true,
   })
-  province_id: Provinces;
+  province_id: Provinces | null;
 
   @ApiProperty({
     type: Date,
@@ -61,7 +61,7 @@ export class Reports {
 
   @ApiProperty({
     type: Date,
-    nullable: false,
+    nullable: true,
   })
   generated_at: Date;
 
