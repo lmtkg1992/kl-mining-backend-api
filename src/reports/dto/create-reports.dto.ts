@@ -69,6 +69,15 @@ export class CreateReportsDto {
   export_format: string;
 
   @ApiProperty({
+    type: String,
+    required: false,
+    description: 'Report name - auto-generated from site name if not provided',
+  })
+  @IsOptional()
+  @IsString()
+  report_name?: string | null;
+
+  @ApiProperty({
     type: Object,
     required: false,
   })
@@ -83,12 +92,13 @@ export class CreateReportsDto {
   file_metadata?: any | null;
 
   @ApiProperty({
-    type: String,
+    type: Object,
     required: false,
+    description: 'File URLs object - contains pdf and/or xlsx keys',
+    example: { pdf: "https://...", xlsx: "https://..." }
   })
   @IsOptional()
-  @IsString()
-  file_url?: string | null;
+  file_url?: { pdf?: string; xlsx?: string } | null;
 
   @ApiProperty({
     type: String,

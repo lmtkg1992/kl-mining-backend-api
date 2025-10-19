@@ -43,7 +43,7 @@ export class FileType {
           Key: value,
         });
 
-        return getSignedUrl(s3, command, { expiresIn: 3600 });
+        return getSignedUrl(s3, command, { expiresIn: 31536000 });
       }
 
       return value;

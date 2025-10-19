@@ -7,6 +7,7 @@ import authConfig from "./auth/config/auth.config";
 import appConfig from "./config/app.config";
 import mailConfig from "./mail/config/mail.config";
 import fileConfig from "./files/config/file.config";
+import queueConfig from "./config/queue.config";
 import path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { HeaderResolver, I18nModule } from "nestjs-i18n";
@@ -17,6 +18,7 @@ import { SessionModule } from "./session/session.module";
 import { MailerModule } from "./mailer/mailer.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { MongooseConfigService } from "./database/mongoose-config.service";
+import { BullModule } from '@nestjs/bull';
 
 const infrastructureDatabaseModule = MongooseModule.forRootAsync({
   useClass: MongooseConfigService,
@@ -76,10 +78,21 @@ import { ReportsModule } from "./reports/reports.module";
     AdminUsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, authConfig, appConfig, mailConfig, fileConfig],
+      load: [databaseConfig, authConfig, appConfig, mailConfig, fileConfig, queueConfig],
       envFilePath: [".env"],
     }),
     infrastructureDatabaseModule,
+    BullModule.forRootAsync({
+      useFactory: (configService: ConfigService<AllConfigType>) => ({
+        redis: {
+          host: configService.get('queue.redis.host', { infer: true }) || 'localhost',
+          port: configService.get('queue.redis.port', { infer: true }) || 6379,
+          password: configService.get('queue.redis.password', { infer: true }),
+          db: configService.get('queue.redis.db', { infer: true }) || 0,
+        },
+      }),
+      inject: [ConfigService],
+    }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow("app.fallbackLanguage", {

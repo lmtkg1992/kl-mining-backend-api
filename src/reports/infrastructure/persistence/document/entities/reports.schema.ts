@@ -79,6 +79,12 @@ export class ReportsSchemaClass extends EntityDocumentHelper {
   export_format: string;
 
   @Prop({
+    type: String,
+    required: false,
+  })
+  report_name?: string | null;
+
+  @Prop({
     type: Object,
     required: false,
   })

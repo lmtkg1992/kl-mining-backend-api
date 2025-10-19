@@ -12,6 +12,7 @@ export class ReportsMapper {
     domainEntity.report_type = raw.report_type;
     domainEntity.status = raw.status;
     domainEntity.export_format = raw.export_format;
+    domainEntity.report_name = raw.report_name;
     
     if (raw.site_id) {
       // Handle ObjectId string reference
@@ -35,7 +36,17 @@ export class ReportsMapper {
     
     domainEntity.content_metadata = raw.content_metadata;
     domainEntity.file_metadata = raw.file_metadata;
-    domainEntity.file_url = raw.file_url;
+    
+    // Handle file_url - convert from JSON string to object if needed
+    if (raw.file_url) {
+      try {
+        domainEntity.file_url = JSON.parse(raw.file_url);
+      } catch {
+        // If not JSON, treat as regular string and convert to object format
+        domainEntity.file_url = { pdf: raw.file_url };
+      }
+    }
+    
     domainEntity.comments = raw.comments;
     domainEntity.report_options = raw.report_options;
     domainEntity.snapshots = raw.snapshots;
@@ -56,6 +67,7 @@ export class ReportsMapper {
     persistenceSchema.report_type = domainEntity.report_type;
     persistenceSchema.status = domainEntity.status;
     persistenceSchema.export_format = domainEntity.export_format;
+    persistenceSchema.report_name = domainEntity.report_name;
     
     if (domainEntity.site_id) {
       // Handle domain entity reference
@@ -79,7 +91,12 @@ export class ReportsMapper {
     
     persistenceSchema.content_metadata = domainEntity.content_metadata;
     persistenceSchema.file_metadata = domainEntity.file_metadata;
-    persistenceSchema.file_url = domainEntity.file_url;
+    
+    // Handle file_url - always convert to JSON string for storage
+    if (domainEntity.file_url) {
+      persistenceSchema.file_url = JSON.stringify(domainEntity.file_url);
+    }
+    
     persistenceSchema.comments = domainEntity.comments;
     persistenceSchema.report_options = domainEntity.report_options;
     persistenceSchema.snapshots = domainEntity.snapshots;

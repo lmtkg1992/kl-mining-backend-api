@@ -1,0 +1,19 @@
+import { registerAs } from '@nestjs/config';
+
+export default registerAs('queue', () => ({
+  redis: {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
+    password: process.env.REDIS_PASSWORD ?? undefined,
+    db: parseInt(process.env.REDIS_DB ?? '0', 10),
+  },
+  defaultJobOptions: {
+    removeOnComplete: 10,
+    removeOnFail: 5,
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 2000,
+    },
+  },
+}));

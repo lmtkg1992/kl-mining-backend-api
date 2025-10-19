@@ -78,6 +78,13 @@ export class Reports {
   export_format: string;
 
   @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Report name - auto-generated from site name if not provided',
+  })
+  report_name?: string | null;
+
+  @ApiProperty({
     type: Object,
     nullable: true,
   })
@@ -90,10 +97,12 @@ export class Reports {
   file_metadata?: any | null;
 
   @ApiProperty({
-    type: String,
+    type: Object,
     nullable: true,
+    description: 'File URLs object - always contains pdf and/or xlsx keys',
+    example: { pdf: "https://...", xlsx: "https://..." }
   })
-  file_url?: string | null;
+  file_url?: { pdf?: string; xlsx?: string } | null;
 
   @ApiProperty({
     type: String,

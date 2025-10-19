@@ -7,6 +7,8 @@ import { Provinces } from "../provinces/domain/provinces";
 import { MiningSitesService } from "../mining-sites/mining-sites.service";
 import { MiningSites } from "../mining-sites/domain/mining-sites";
 
+import { FileStorageService } from "./services/file-storage.service";
+
 import {
   // common
   Injectable,
@@ -33,6 +35,7 @@ export class ReportsService {
     private readonly miningSitesService: MiningSitesService,
     // Dependencies here
     private readonly reportsRepository: ReportsRepository,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async create(createReportsDto: CreateReportsDto) {
@@ -77,6 +80,14 @@ export class ReportsService {
       site_id = null;
     }
 
+    // Generate report name if not provided
+    let report_name = createReportsDto.report_name;
+    if (!report_name && site_id) {
+      report_name = `${site_id.site_name} - ${createReportsDto.report_type.replace('_', ' ').toUpperCase()} Report`;
+    } else if (!report_name) {
+      report_name = `${createReportsDto.report_type.replace('_', ' ').toUpperCase()} Report`;
+    }
+
     return this.reportsRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
@@ -85,7 +96,7 @@ export class ReportsService {
 
       file_metadata: createReportsDto.file_metadata,
 
-      file_url: createReportsDto.file_url,
+      file_url: createReportsDto.file_url || null,
 
       comments: createReportsDto.comments,
 
@@ -94,6 +105,8 @@ export class ReportsService {
       status: createReportsDto.status,
 
       export_format: createReportsDto.export_format,
+
+      report_name: report_name,
 
       snapshots: createReportsDto.snapshots,
 
@@ -220,7 +233,7 @@ export class ReportsService {
 
       file_metadata: updateReportsDto.file_metadata,
 
-      file_url: updateReportsDto.file_url,
+      file_url: updateReportsDto.file_url || null,
 
       comments: updateReportsDto.comments,
 
@@ -252,5 +265,32 @@ export class ReportsService {
 
   getReportSummary(type: string, id?: string) {
     return this.reportsRepository.getReportSummary(type, id ?? "");
+  }
+
+  async getReportWithSignedUrls(id: string): Promise<Reports> {
+    const report = await this.findById(id);
+    
+    if (!report) {
+      throw new Error('Report not found');
+    }
+    
+    if (report.file_url) {
+      // Always convert to signed URLs for object format
+      report.file_url = await this.fileStorageService.getSignedUrls(report.file_url);
+    }
+    
+    return report;
+  }
+
+  async getAllReportsWithSignedUrls(reports: Reports[]): Promise<Reports[]> {
+    return Promise.all(
+      reports.map(async (report) => {
+        if (report.file_url) {
+          // Always convert to signed URLs for object format
+          report.file_url = await this.fileStorageService.getSignedUrls(report.file_url);
+        }
+        return report;
+      })
+    );
   }
 }
