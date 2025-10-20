@@ -36,5 +36,8 @@ export abstract class ReportsRepository {
 
   abstract remove(id: Reports["id"]): Promise<void>;
 
-  abstract getReportSummary(type: string, id?: string): Promise<ReportSummaryDto>;
+  abstract getReportSummary(
+    type: string,
+    id?: string,
+  ): Promise<ReportSummaryDto>;
 }

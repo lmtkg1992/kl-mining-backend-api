@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { ReportStatus, ReportType } from '../domain/reports';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
+import { ReportStatus, ReportType } from "../domain/reports";
 
 export enum ExportFormat {
-  PDF = 'pdf',
-  EXCEL = 'excel',
-  XLSX = 'xlsx',
-  BOTH = 'both', // Generate both PDF and Excel
+  PDF = "pdf",
+  EXCEL = "excel",
+  XLSX = "xlsx",
+  BOTH = "both", // Generate both PDF and Excel
 }
 
 export interface ReportGenerationJobData {
@@ -28,28 +28,28 @@ export interface ReportGenerationJobData {
 export class ReportQueueService {
   private readonly logger = new Logger(ReportQueueService.name);
 
-  constructor(
-    @InjectQueue('report-generation') private reportQueue: Queue,
-  ) {}
+  constructor(@InjectQueue("report-generation") private reportQueue: Queue) {}
 
   async addReportGenerationJob(data: ReportGenerationJobData): Promise<void> {
     try {
       // Determine job name based on export format
       const jobName = this.getJobName(data.exportFormat);
-      
+
       const job = await this.reportQueue.add(jobName, data, {
         attempts: 3,
         backoff: {
-          type: 'exponential',
+          type: "exponential",
           delay: 2000,
         },
         removeOnComplete: 10,
         removeOnFail: 5,
       });
 
-      this.logger.log(`Report generation job added: ${job.id} for report ${data.reportId} (${data.exportFormat})`);
+      this.logger.log(
+        `Report generation job added: ${job.id} for report ${data.reportId} (${data.exportFormat})`,
+      );
     } catch (error) {
-      this.logger.error('Error adding report generation job:', error);
+      this.logger.error("Error adding report generation job:", error);
       throw error;
     }
   }
@@ -57,12 +57,12 @@ export class ReportQueueService {
   private getJobName(exportFormat: ExportFormat): string {
     switch (exportFormat) {
       case ExportFormat.PDF:
-        return 'generate-pdf';
+        return "generate-pdf";
       case ExportFormat.EXCEL:
       case ExportFormat.XLSX:
-        return 'generate-excel';
+        return "generate-excel";
       case ExportFormat.BOTH:
-        return 'generate-both';
+        return "generate-both";
       default:
         throw new Error(`Unsupported export format: ${exportFormat}`);
     }
@@ -86,7 +86,7 @@ export class ReportQueueService {
         failedReason: job.failedReason,
       };
     } catch (error) {
-      this.logger.error('Error getting job status:', error);
+      this.logger.error("Error getting job status:", error);
       throw error;
     }
   }
@@ -107,26 +107,31 @@ export class ReportQueueService {
         completed: completed.length,
         failed: failed.length,
         delayed: delayed.length,
-        total: waiting.length + active.length + completed.length + failed.length + delayed.length,
+        total:
+          waiting.length +
+          active.length +
+          completed.length +
+          failed.length +
+          delayed.length,
       };
     } catch (error) {
-      this.logger.error('Error getting queue stats:', error);
+      this.logger.error("Error getting queue stats:", error);
       throw error;
     }
   }
 
   async pauseQueue(): Promise<void> {
     await this.reportQueue.pause();
-    this.logger.log('Report generation queue paused');
+    this.logger.log("Report generation queue paused");
   }
 
   async resumeQueue(): Promise<void> {
     await this.reportQueue.resume();
-    this.logger.log('Report generation queue resumed');
+    this.logger.log("Report generation queue resumed");
   }
 
   async clearQueue(): Promise<void> {
     await this.reportQueue.empty();
-    this.logger.log('Report generation queue cleared');
+    this.logger.log("Report generation queue cleared");
   }
 }

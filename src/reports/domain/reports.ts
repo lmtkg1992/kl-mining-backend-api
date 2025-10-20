@@ -80,7 +80,7 @@ export class Reports {
   @ApiProperty({
     type: String,
     nullable: true,
-    description: 'Report name - auto-generated from site name if not provided',
+    description: "Report name - auto-generated from site name if not provided",
   })
   report_name?: string | null;
 
@@ -99,8 +99,8 @@ export class Reports {
   @ApiProperty({
     type: Object,
     nullable: true,
-    description: 'File URLs object - always contains pdf and/or xlsx keys',
-    example: { pdf: "https://...", xlsx: "https://..." }
+    description: "File URLs object - always contains pdf and/or xlsx keys",
+    example: { pdf: "https://...", xlsx: "https://..." },
   })
   file_url?: { pdf?: string; xlsx?: string } | null;
 

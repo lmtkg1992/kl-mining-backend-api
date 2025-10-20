@@ -1,15 +1,21 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ReportType } from '../domain/reports';
-import { DataPreparationService, DataPreparationOptions, PreparedReportData } from './data-preparation.service';
-import { TemplateServiceFactory } from './template-services';
+import { Injectable, Logger } from "@nestjs/common";
+import { ReportType } from "../domain/reports";
+import {
+  DataPreparationService,
+  DataPreparationOptions,
+  PreparedReportData,
+} from "./data-preparation.service";
+import { TemplateServiceFactory } from "./template-services";
 
 // Dynamic import for puppeteer to handle optional dependency
 let puppeteer: any;
 try {
-  puppeteer = require('puppeteer');
+  puppeteer = require("puppeteer");
 } catch (error) {
   // Puppeteer not installed, will use fallback method
-  console.warn('Puppeteer not installed. PDF generation will use fallback method.');
+  console.warn(
+    "Puppeteer not installed. PDF generation will use fallback method.",
+  );
 }
 
 export interface PdfGenerationOptions {
@@ -38,7 +44,7 @@ export class PdfGenerationService {
 
     try {
       // Step 1: Prepare data for the report
-      this.logger.log('Preparing data for report generation...');
+      this.logger.log("Preparing data for report generation...");
       const preparedData = await this.dataPreparationService.prepareReportData({
         reportType: options.reportType,
         startDate: options.startDate,
@@ -51,54 +57,63 @@ export class PdfGenerationService {
       });
 
       // Step 2: Generate HTML content using appropriate template
-      this.logger.log('Generating HTML content using template...');
-      const templateService = this.templateServiceFactory.getTemplateService(options.reportType);
+      this.logger.log("Generating HTML content using template...");
+      const templateService = this.templateServiceFactory.getTemplateService(
+        options.reportType,
+      );
       const htmlContent = templateService.generateHtml(preparedData);
 
       // Step 3: Generate PDF using Puppeteer
-      this.logger.log('Generating PDF using Puppeteer...');
+      this.logger.log("Generating PDF using Puppeteer...");
       return await this.generatePdfFromHtml(htmlContent, options.reportType);
     } catch (error) {
-      this.logger.error('Error generating PDF:', error);
+      this.logger.error("Error generating PDF:", error);
       throw error;
     }
   }
 
-  async generatePdfFromHtml(htmlContent: string, reportType: ReportType): Promise<Buffer> {
+  async generatePdfFromHtml(
+    htmlContent: string,
+    reportType: ReportType,
+  ): Promise<Buffer> {
     if (!puppeteer) {
       // Fallback: return HTML content as text if puppeteer is not available
-      this.logger.warn('Puppeteer not available, returning HTML content as fallback');
-      return Buffer.from(htmlContent, 'utf-8');
+      this.logger.warn(
+        "Puppeteer not available, returning HTML content as fallback",
+      );
+      return Buffer.from(htmlContent, "utf-8");
     }
 
     let browser: any = null;
-    
+
     try {
       browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
       const page = await browser.newPage();
-      
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      
+
+      await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
       // Generate PDF with optimized settings
       const pdfBuffer = await page.pdf({
-        format: 'A4',
+        format: "A4",
         printBackground: true,
         margin: {
-          top: '20mm',
-          right: '20mm',
-          bottom: '20mm',
-          left: '20mm',
+          top: "20mm",
+          right: "20mm",
+          bottom: "20mm",
+          left: "20mm",
         },
         displayHeaderFooter: true,
         headerTemplate: this.getHeaderTemplate(reportType),
         footerTemplate: this.getFooterTemplate(),
       });
 
-      this.logger.log(`PDF generated successfully for report type: ${reportType}`);
+      this.logger.log(
+        `PDF generated successfully for report type: ${reportType}`,
+      );
       return pdfBuffer;
     } finally {
       if (browser) {
@@ -126,15 +141,15 @@ export class PdfGenerationService {
   private getReportTitle(reportType: ReportType): string {
     switch (reportType) {
       case ReportType.CAMERA_PERFORMANCE:
-        return 'Camera Performance Report';
+        return "Camera Performance Report";
       case ReportType.BREACH_SUMMARY:
-        return 'Breach Summary Report';
+        return "Breach Summary Report";
       case ReportType.TRANSPORT_ACTIVITY:
-        return 'Transport Activity Report';
+        return "Transport Activity Report";
       case ReportType.VOLUME_TRACKING:
-        return 'Volume Tracking Report';
+        return "Volume Tracking Report";
       default:
-        return 'Mining Report';
+        return "Mining Report";
     }
   }
 }

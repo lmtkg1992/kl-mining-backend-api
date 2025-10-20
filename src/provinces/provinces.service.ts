@@ -225,7 +225,11 @@ export class ProvincesService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    const aiCameras =
+      await this.aiCamerasService.findAllWithFilterAndPagination(
+        query,
+        paginationOptions,
+      );
     return aiCameras;
   }
 
@@ -256,7 +260,10 @@ export class ProvincesService {
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
     return alerts;
   }
 
@@ -290,8 +297,14 @@ export class ProvincesService {
     };
   }
 
-  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
-    return this.reportService.findAllWithFilterAndPagination(query, paginationOptions);
+  async getReports(
+    query: FindAllReportsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    return this.reportService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
   }
 
   async getReportSummary(provinceId: string) {

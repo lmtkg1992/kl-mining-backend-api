@@ -297,7 +297,6 @@ export class MiningSitesController {
     });
   }
 
-
   @RequirePermissions("mining_sites::reports")
   @Get("reports/list/:id")
   @ApiParam({ name: "id", type: String, required: true })
@@ -312,7 +311,7 @@ export class MiningSitesController {
       limit = 50;
     }
     query.site_id = id;
-    
+
     const data = await this.miningSitesService.getReports(query, {
       page,
       limit,

@@ -1,9 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ReportType } from '../domain/reports';
-import { DataPreparationService, DataPreparationOptions, PreparedReportData } from './data-preparation.service';
-import { PdfGenerationService, PdfGenerationOptions } from './pdf-generation.service';
-import { ExcelGenerationService, ExcelGenerationOptions } from './excel-generation.service';
-import { ExportFormat } from './report-queue.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { ReportType } from "../domain/reports";
+import {
+  DataPreparationService,
+  DataPreparationOptions,
+  PreparedReportData,
+} from "./data-preparation.service";
+import {
+  PdfGenerationService,
+  PdfGenerationOptions,
+} from "./pdf-generation.service";
+import {
+  ExcelGenerationService,
+  ExcelGenerationOptions,
+} from "./excel-generation.service";
+import { ExportFormat } from "./report-queue.service";
 
 export interface ExportOptions {
   reportType: ReportType;
@@ -36,11 +46,13 @@ export class ExportService {
   ) {}
 
   async exportReport(options: ExportOptions): Promise<ExportResult> {
-    this.logger.log(`Starting export: ${options.reportType} as ${options.exportFormat}`);
+    this.logger.log(
+      `Starting export: ${options.reportType} as ${options.exportFormat}`,
+    );
 
     try {
       // Step 1: Prepare data for the report
-      this.logger.log('Preparing data for report generation...');
+      this.logger.log("Preparing data for report generation...");
       const preparedData = await this.dataPreparationService.prepareReportData({
         reportType: options.reportType,
         startDate: options.startDate,
@@ -60,21 +72,23 @@ export class ExportService {
       switch (options.exportFormat) {
         case ExportFormat.PDF:
           buffer = await this.generatePdf(preparedData, options);
-          filename = this.generateFilename(preparedData, 'pdf');
-          mimeType = 'application/pdf';
+          filename = this.generateFilename(preparedData, "pdf");
+          mimeType = "application/pdf";
           break;
         case ExportFormat.EXCEL:
         case ExportFormat.XLSX:
           buffer = await this.generateExcel(preparedData, options);
-          filename = this.generateFilename(preparedData, 'xlsx');
-          mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          filename = this.generateFilename(preparedData, "xlsx");
+          mimeType =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
           break;
         case ExportFormat.BOTH:
           // For 'both' format, we'll generate Excel as the primary format
           // The actual both generation is handled in the queue processor
           buffer = await this.generateExcel(preparedData, options);
-          filename = this.generateFilename(preparedData, 'xlsx');
-          mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          filename = this.generateFilename(preparedData, "xlsx");
+          mimeType =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
           break;
         default:
           throw new Error(`Unsupported export format: ${options.exportFormat}`);
@@ -90,14 +104,17 @@ export class ExportService {
       this.logger.log(`Export completed: ${filename} (${result.size} bytes)`);
       return result;
     } catch (error) {
-      this.logger.error('Error during export:', error);
+      this.logger.error("Error during export:", error);
       throw error;
     }
   }
 
-  private async generatePdf(data: PreparedReportData, options: ExportOptions): Promise<Buffer> {
-    this.logger.log('Generating PDF...');
-    
+  private async generatePdf(
+    data: PreparedReportData,
+    options: ExportOptions,
+  ): Promise<Buffer> {
+    this.logger.log("Generating PDF...");
+
     const pdfOptions: PdfGenerationOptions = {
       reportType: data.reportType,
       startDate: options.startDate,
@@ -112,22 +129,31 @@ export class ExportService {
     return await this.pdfGenerationService.generateReportPdf(pdfOptions);
   }
 
-  private async generateExcel(data: PreparedReportData, options: ExportOptions): Promise<Buffer> {
-    this.logger.log('Generating Excel...');
-    
+  private async generateExcel(
+    data: PreparedReportData,
+    options: ExportOptions,
+  ): Promise<Buffer> {
+    this.logger.log("Generating Excel...");
+
     return await this.excelGenerationService.generateReportExcel(data);
   }
 
-  private generateFilename(data: PreparedReportData, extension: string): string {
-    const reportType = data.reportType.replace(/_/g, '-');
-    const dateRange = `${this.formatDateForFilename(data.reportInfo.period.split(' to ')[0])}_to_${this.formatDateForFilename(data.reportInfo.period.split(' to ')[1])}`;
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
-    
+  private generateFilename(
+    data: PreparedReportData,
+    extension: string,
+  ): string {
+    const reportType = data.reportType.replace(/_/g, "-");
+    const dateRange = `${this.formatDateForFilename(data.reportInfo.period.split(" to ")[0])}_to_${this.formatDateForFilename(data.reportInfo.period.split(" to ")[1])}`;
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")
+      .split("T")[0];
+
     return `${reportType}-report-${dateRange}-${timestamp}.${extension}`;
   }
 
   private formatDateForFilename(dateString: string): string {
-    return new Date(dateString).toISOString().split('T')[0].replace(/-/g, '');
+    return new Date(dateString).toISOString().split("T")[0].replace(/-/g, "");
   }
 
   // Utility method to get supported formats
@@ -141,20 +167,25 @@ export class ExportService {
   }
 
   // Utility method to get format info
-  getFormatInfo(format: ExportFormat): { mimeType: string; extension: string; description: string } {
+  getFormatInfo(format: ExportFormat): {
+    mimeType: string;
+    extension: string;
+    description: string;
+  } {
     switch (format) {
       case ExportFormat.PDF:
         return {
-          mimeType: 'application/pdf',
-          extension: 'pdf',
-          description: 'Portable Document Format'
+          mimeType: "application/pdf",
+          extension: "pdf",
+          description: "Portable Document Format",
         };
       case ExportFormat.EXCEL:
       case ExportFormat.XLSX:
         return {
-          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          extension: 'xlsx',
-          description: 'Microsoft Excel Spreadsheet'
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          extension: "xlsx",
+          description: "Microsoft Excel Spreadsheet",
         };
       default:
         throw new Error(`Unknown format: ${format}`);

@@ -179,7 +179,7 @@ export class AlertsService {
     if (query.site_id) {
       filter.site_id = query.site_id;
     }
-    
+
     if (query.province_id) {
       const sites = await this.miningSitesRepository.findByProvinceId(
         query.province_id,

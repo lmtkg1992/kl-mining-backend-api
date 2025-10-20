@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { now, HydratedDocument } from "mongoose";
 import { EntityDocumentHelper } from "../../../../../utils/document-entity-helper";
-import { AdminUsersSchemaClass } from '../../../../../admin-users/infrastructure/persistence/document/entities/admin-users.schema';
-import { ProvincesSchemaClass } from '../../../../../provinces/infrastructure/persistence/document/entities/provinces.schema';
-import { MiningSitesSchemaClass } from '../../../../../mining-sites/infrastructure/persistence/document/entities/mining-sites.schema';
-import { ReportStatus, ReportType } from '../../../../domain/reports';
+import { AdminUsersSchemaClass } from "../../../../../admin-users/infrastructure/persistence/document/entities/admin-users.schema";
+import { ProvincesSchemaClass } from "../../../../../provinces/infrastructure/persistence/document/entities/provinces.schema";
+import { MiningSitesSchemaClass } from "../../../../../mining-sites/infrastructure/persistence/document/entities/mining-sites.schema";
+import { ReportStatus, ReportType } from "../../../../domain/reports";
 
 export type ReportsSchemaDocument = HydratedDocument<ReportsSchemaClass>;
 
@@ -25,7 +25,7 @@ export class ReportsSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'MiningSitesSchemaClass',
+    ref: "MiningSitesSchemaClass",
     autopopulate: true,
     required: false,
   })
@@ -33,7 +33,7 @@ export class ReportsSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'ProvincesSchemaClass',
+    ref: "ProvincesSchemaClass",
     autopopulate: true,
     required: false,
   })
@@ -53,7 +53,7 @@ export class ReportsSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'AdminUsersSchemaClass',
+    ref: "AdminUsersSchemaClass",
     autopopulate: true,
     required: true,
   })

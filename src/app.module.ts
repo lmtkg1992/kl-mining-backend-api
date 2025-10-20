@@ -18,7 +18,7 @@ import { SessionModule } from "./session/session.module";
 import { MailerModule } from "./mailer/mailer.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { MongooseConfigService } from "./database/mongoose-config.service";
-import { BullModule } from '@nestjs/bull';
+import { BullModule } from "@nestjs/bull";
 
 const infrastructureDatabaseModule = MongooseModule.forRootAsync({
   useClass: MongooseConfigService,
@@ -58,8 +58,11 @@ import { AlertsModule } from "./alerts/alerts.module";
 
 import { ReportsModule } from "./reports/reports.module";
 
+import { PersonnelsModule } from "./personnels/personnels.module";
+
 @Module({
   imports: [
+    PersonnelsModule,
     ReportsModule,
     AlertsModule,
     TrucksModule,
@@ -78,17 +81,26 @@ import { ReportsModule } from "./reports/reports.module";
     AdminUsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, authConfig, appConfig, mailConfig, fileConfig, queueConfig],
+      load: [
+        databaseConfig,
+        authConfig,
+        appConfig,
+        mailConfig,
+        fileConfig,
+        queueConfig,
+      ],
       envFilePath: [".env"],
     }),
     infrastructureDatabaseModule,
     BullModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         redis: {
-          host: configService.get('queue.redis.host', { infer: true }) || 'localhost',
-          port: configService.get('queue.redis.port', { infer: true }) || 6379,
-          password: configService.get('queue.redis.password', { infer: true }),
-          db: configService.get('queue.redis.db', { infer: true }) || 0,
+          host:
+            configService.get("queue.redis.host", { infer: true }) ||
+            "localhost",
+          port: configService.get("queue.redis.port", { infer: true }) || 6379,
+          password: configService.get("queue.redis.password", { infer: true }),
+          db: configService.get("queue.redis.db", { infer: true }) || 0,
         },
       }),
       inject: [ConfigService],

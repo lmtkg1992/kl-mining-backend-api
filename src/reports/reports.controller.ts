@@ -11,7 +11,7 @@ import {
   Res,
   HttpStatus,
 } from "@nestjs/common";
-import { Response } from 'express';
+import { Response } from "express";
 import { ReportsService } from "./reports.service";
 import { CreateReportsDto } from "./dto/create-reports.dto";
 import { UpdateReportsDto } from "./dto/update-reports.dto";
@@ -89,7 +89,8 @@ export class ReportsController {
     );
 
     // Generate signed URLs for all reports
-    const reportsWithSignedUrls = await this.reportsService.getAllReportsWithSignedUrls(data.entities);
+    const reportsWithSignedUrls =
+      await this.reportsService.getAllReportsWithSignedUrls(data.entities);
 
     return infinityPaginationWithMetadata(reportsWithSignedUrls, data.total, {
       page,
@@ -136,21 +137,20 @@ export class ReportsController {
     return this.reportsService.remove(id);
   }
 
-
   @Post("export")
   @RequirePermissions("reports::create")
   @ApiCreatedResponse({
     description: "Report export job started (supports PDF, Excel, XLSX)",
   })
   async exportReport(@Body() generateReportDto: GenerateReportDto) {
-    console.log('generateReportDto', generateReportDto);
-    
+    console.log("generateReportDto", generateReportDto);
+
     try {
       // Step 1: Create the report record first
       const report = await this.reportsService.create({
         ...generateReportDto,
-        site_id: generateReportDto.site_id ?? '',
-        province_id: generateReportDto.province_id ?? '',
+        site_id: generateReportDto.site_id ?? "",
+        province_id: generateReportDto.province_id ?? "",
         status: ReportStatus.PENDING,
         export_format: generateReportDto.export_format,
         report_name: generateReportDto.report_name,
@@ -181,51 +181,62 @@ export class ReportsController {
         dataPreparation: "enabled",
       };
     } catch (error) {
-      console.error('Error starting report generation:', error);
+      console.error("Error starting report generation:", error);
       throw error;
     }
   }
 
   @Post("export-direct")
   @RequirePermissions("reports::create")
-  @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-  async exportReportDirect(@Body() generateReportDto: GenerateReportDto, @Res() res: Response) {
-    console.log('Direct export request:', generateReportDto);
-    
+  @ApiProduces(
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  )
+  async exportReportDirect(
+    @Body() generateReportDto: GenerateReportDto,
+    @Res() res: Response,
+  ) {
+    console.log("Direct export request:", generateReportDto);
+
     try {
       // Validate export format
-      if (!this.exportService.isValidExportFormat(generateReportDto.export_format)) {
+      if (
+        !this.exportService.isValidExportFormat(generateReportDto.export_format)
+      ) {
         return res.status(HttpStatus.BAD_REQUEST).json({
-          error: 'Invalid export format',
+          error: "Invalid export format",
           supportedFormats: this.exportService.getSupportedFormats(),
         });
       }
 
-          // Generate report directly
-          const exportResult = await this.exportService.exportReport({
-            reportType: generateReportDto.report_type,
-            exportFormat: generateReportDto.export_format,
-            startDate: generateReportDto.start_date,
-            endDate: generateReportDto.end_date,
-            siteId: generateReportDto.site_id,
-            provinceId: generateReportDto.province_id,
-            generatedBy: generateReportDto.generated_by,
-            reportName: generateReportDto.report_name,
-            reportOptions: generateReportDto.report_options,
-            contentMetadata: generateReportDto.content_metadata,
-          });
+      // Generate report directly
+      const exportResult = await this.exportService.exportReport({
+        reportType: generateReportDto.report_type,
+        exportFormat: generateReportDto.export_format,
+        startDate: generateReportDto.start_date,
+        endDate: generateReportDto.end_date,
+        siteId: generateReportDto.site_id,
+        provinceId: generateReportDto.province_id,
+        generatedBy: generateReportDto.generated_by,
+        reportName: generateReportDto.report_name,
+        reportOptions: generateReportDto.report_options,
+        contentMetadata: generateReportDto.content_metadata,
+      });
 
       // Set response headers
-      res.setHeader('Content-Type', exportResult.mimeType);
-      res.setHeader('Content-Disposition', `attachment; filename="${exportResult.filename}"`);
-      res.setHeader('Content-Length', exportResult.size.toString());
+      res.setHeader("Content-Type", exportResult.mimeType);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${exportResult.filename}"`,
+      );
+      res.setHeader("Content-Length", exportResult.size.toString());
 
       // Send file
       res.send(exportResult.buffer);
     } catch (error) {
-      console.error('Error during direct export:', error);
+      console.error("Error during direct export:", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        error: 'Failed to generate report',
+        error: "Failed to generate report",
         message: error.message,
       });
     }
@@ -238,7 +249,7 @@ export class ReportsController {
   })
   getSupportedFormats() {
     const formats = this.exportService.getSupportedFormats();
-    const formatInfo = formats.map(format => ({
+    const formatInfo = formats.map((format) => ({
       format,
       ...this.exportService.getFormatInfo(format),
     }));

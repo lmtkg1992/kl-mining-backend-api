@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { ReportType } from '../domain/reports';
-import { PreparedReportData } from './data-preparation.service';
+import { Injectable } from "@nestjs/common";
+import { ReportType } from "../domain/reports";
+import { PreparedReportData } from "./data-preparation.service";
 
 export interface TemplateService {
   generateHtml(data: PreparedReportData): string;
@@ -109,7 +109,9 @@ export class CameraPerformanceTemplateService implements TemplateService {
                 </tr>
               </thead>
               <tbody>
-                ${reportData.performanceMetrics.map(metric => `
+                ${reportData.performanceMetrics
+                  .map(
+                    (metric) => `
                   <tr>
                     <td>${metric.cameraName}</td>
                     <td>${metric.location}</td>
@@ -117,7 +119,9 @@ export class CameraPerformanceTemplateService implements TemplateService {
                     <td>${metric.uptime}%</td>
                     <td>${metric.detectionAccuracy}%</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -246,7 +250,9 @@ export class BreachSummaryTemplateService implements TemplateService {
                 </tr>
               </thead>
               <tbody>
-                ${reportData.breachDetails.map(breach => `
+                ${reportData.breachDetails
+                  .map(
+                    (breach) => `
                   <tr>
                     <td>${new Date(breach.date).toLocaleDateString()}</td>
                     <td>${breach.time}</td>
@@ -257,7 +263,9 @@ export class BreachSummaryTemplateService implements TemplateService {
                     <td class="status-${breach.status}">${breach.status.charAt(0).toUpperCase() + breach.status.slice(1)}</td>
                     <td>${breach.description}</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -405,20 +413,24 @@ export class TransportActivityTemplateService implements TemplateService {
                 </tr>
               </thead>
               <tbody>
-                ${reportData.activityDetails.map(activity => `
+                ${reportData.activityDetails
+                  .map(
+                    (activity) => `
                   <tr>
                     <td>${new Date(activity.date).toLocaleDateString()}</td>
                     <td>${activity.truckId}</td>
                     <td>${activity.driver}</td>
                     <td>${activity.loadWeight.toFixed(1)}</td>
                     <td><span class="direction-${activity.direction}">${activity.direction.toUpperCase()}</span></td>
-                    <td><span class="overloaded-${activity.overloaded}">${activity.overloaded ? 'YES' : 'NO'}</span></td>
+                    <td><span class="overloaded-${activity.overloaded}">${activity.overloaded ? "YES" : "NO"}</span></td>
                     <td>${activity.site}</td>
                     <td class="status-${activity.status}">${activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}</td>
-                    <td>${activity.entryTime ? new Date(activity.entryTime).toLocaleTimeString() : 'N/A'}</td>
-                    <td>${activity.exitTime ? new Date(activity.exitTime).toLocaleTimeString() : 'N/A'}</td>
+                    <td>${activity.entryTime ? new Date(activity.entryTime).toLocaleTimeString() : "N/A"}</td>
+                    <td>${activity.exitTime ? new Date(activity.exitTime).toLocaleTimeString() : "N/A"}</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -552,18 +564,22 @@ export class VolumeTrackingTemplateService implements TemplateService {
                 </tr>
               </thead>
               <tbody>
-                ${reportData.volumeDetails.map(volume => `
+                ${reportData.volumeDetails
+                  .map(
+                    (volume) => `
                   <tr>
                     <td>${new Date(volume.date).toLocaleDateString()}</td>
                     <td>${volume.site}</td>
                     <td>${volume.volume.toFixed(1)}</td>
                     <td>${volume.fillLevel.toFixed(1)}%</td>
-                    <td><span class="overloaded-${volume.overloaded}">${volume.overloaded ? 'YES' : 'NO'}</span></td>
+                    <td><span class="overloaded-${volume.overloaded}">${volume.overloaded ? "YES" : "NO"}</span></td>
                     <td>${volume.truckId}</td>
-                    <td>${volume.entryTime ? new Date(volume.entryTime).toLocaleTimeString() : 'N/A'}</td>
-                    <td>${volume.exitTime ? new Date(volume.exitTime).toLocaleTimeString() : 'N/A'}</td>
+                    <td>${volume.entryTime ? new Date(volume.entryTime).toLocaleTimeString() : "N/A"}</td>
+                    <td>${volume.exitTime ? new Date(volume.exitTime).toLocaleTimeString() : "N/A"}</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -583,7 +599,9 @@ export class VolumeTrackingTemplateService implements TemplateService {
                 </tr>
               </thead>
               <tbody>
-                ${summary.siteSummary.map(site => `
+                ${summary.siteSummary
+                  .map(
+                    (site) => `
                   <tr>
                     <td>${site.site}</td>
                     <td>${site.province}</td>
@@ -593,7 +611,9 @@ export class VolumeTrackingTemplateService implements TemplateService {
                     <td>${site.averageFillLevel.toFixed(1)}%</td>
                     <td>${site.overloadedTrips}</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -632,4 +652,3 @@ export class TemplateServiceFactory {
     }
   }
 }
-

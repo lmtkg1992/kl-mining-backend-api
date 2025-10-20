@@ -73,7 +73,7 @@ export class ReportsService {
       const site_idObject = await this.miningSitesService.findById(
         createReportsDto.site_id,
       );
-        if (site_idObject) {
+      if (site_idObject) {
         site_id = site_idObject;
       }
     } catch (error) {
@@ -83,9 +83,9 @@ export class ReportsService {
     // Generate report name if not provided
     let report_name = createReportsDto.report_name;
     if (!report_name && site_id) {
-      report_name = `${site_id.site_name} - ${createReportsDto.report_type.replace('_', ' ').toUpperCase()} Report`;
+      report_name = `${site_id.site_name} - ${createReportsDto.report_type.replace("_", " ").toUpperCase()} Report`;
     } else if (!report_name) {
-      report_name = `${createReportsDto.report_type.replace('_', ' ').toUpperCase()} Report`;
+      report_name = `${createReportsDto.report_type.replace("_", " ").toUpperCase()} Report`;
     }
 
     return this.reportsRepository.create({
@@ -269,16 +269,18 @@ export class ReportsService {
 
   async getReportWithSignedUrls(id: string): Promise<Reports> {
     const report = await this.findById(id);
-    
+
     if (!report) {
-      throw new Error('Report not found');
+      throw new Error("Report not found");
     }
-    
+
     if (report.file_url) {
       // Always convert to signed URLs for object format
-      report.file_url = await this.fileStorageService.getSignedUrls(report.file_url);
+      report.file_url = await this.fileStorageService.getSignedUrls(
+        report.file_url,
+      );
     }
-    
+
     return report;
   }
 
@@ -287,10 +289,12 @@ export class ReportsService {
       reports.map(async (report) => {
         if (report.file_url) {
           // Always convert to signed URLs for object format
-          report.file_url = await this.fileStorageService.getSignedUrls(report.file_url);
+          report.file_url = await this.fileStorageService.getSignedUrls(
+            report.file_url,
+          );
         }
         return report;
-      })
+      }),
     );
   }
 }

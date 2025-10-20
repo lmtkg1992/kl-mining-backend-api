@@ -11,8 +11,8 @@ import {
   Module,
   forwardRef,
 } from "@nestjs/common";
-import { BullModule } from '@nestjs/bull';
-import { ConfigModule } from '@nestjs/config';
+import { BullModule } from "@nestjs/bull";
+import { ConfigModule } from "@nestjs/config";
 import { ReportsService } from "./reports.service";
 import { ReportsController } from "./reports.controller";
 import { DocumentReportsPersistenceModule } from "./infrastructure/persistence/document/document-persistence.module";
@@ -23,12 +23,12 @@ import { FileStorageService } from "./services/file-storage.service";
 import { ReportQueueService } from "./services/report-queue.service";
 import { ReportQueueProcessor } from "./processors/report-queue.processor";
 import { DataPreparationService } from "./services/data-preparation.service";
-import { 
+import {
   CameraPerformanceTemplateService,
   BreachSummaryTemplateService,
   TransportActivityTemplateService,
   VolumeTrackingTemplateService,
-  TemplateServiceFactory
+  TemplateServiceFactory,
 } from "./services/template-services";
 
 @Module({
@@ -37,7 +37,7 @@ import {
     DocumentReportsPersistenceModule,
     ConfigModule,
     BullModule.registerQueue({
-      name: 'report-generation',
+      name: "report-generation",
     }),
     forwardRef(() => AdminUsersModule),
     forwardRef(() => ProvincesModule),
@@ -65,7 +65,7 @@ import {
     TemplateServiceFactory,
   ],
   exports: [
-    ReportsService, 
+    ReportsService,
     DocumentReportsPersistenceModule,
     ReportQueueService,
     PdfGenerationService,

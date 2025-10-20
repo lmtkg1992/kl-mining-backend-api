@@ -543,7 +543,11 @@ export class MiningSitesService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    const aiCameras =
+      await this.aiCamerasService.findAllWithFilterAndPagination(
+        query,
+        paginationOptions,
+      );
     return aiCameras;
   }
 
@@ -596,7 +600,11 @@ export class MiningSitesService {
     query: FindAllActivitiesDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const activities = await this.activitiesService.findAllWithFilterAndPagination(query, paginationOptions);
+    const activities =
+      await this.activitiesService.findAllWithFilterAndPagination(
+        query,
+        paginationOptions,
+      );
     return activities;
   }
 
@@ -604,7 +612,10 @@ export class MiningSitesService {
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
     return alerts;
   }
 
@@ -642,11 +653,17 @@ export class MiningSitesService {
     return aiSnapshots;
   }
 
-  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
-    const reports = await this.reportsService.findAllWithFilterAndPagination(query, paginationOptions);
+  async getReports(
+    query: FindAllReportsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    const reports = await this.reportsService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
     return reports;
   }
-  
+
   async getReportSummary(siteId: string) {
     return this.reportsService.getReportSummary("site", siteId);
   }

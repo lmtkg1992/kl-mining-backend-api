@@ -1,11 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  IsEnum,
-  IsDateString
-} from 'class-validator';
-import { ReportStatus, ReportType } from '../domain/reports';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsOptional, IsString, IsEnum, IsDateString } from "class-validator";
+import { ReportStatus, ReportType } from "../domain/reports";
 
 export class CreateReportsDto {
   @ApiProperty({
@@ -71,7 +66,7 @@ export class CreateReportsDto {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'Report name - auto-generated from site name if not provided',
+    description: "Report name - auto-generated from site name if not provided",
   })
   @IsOptional()
   @IsString()
@@ -94,8 +89,8 @@ export class CreateReportsDto {
   @ApiProperty({
     type: Object,
     required: false,
-    description: 'File URLs object - contains pdf and/or xlsx keys',
-    example: { pdf: "https://...", xlsx: "https://..." }
+    description: "File URLs object - contains pdf and/or xlsx keys",
+    example: { pdf: "https://...", xlsx: "https://..." },
   })
   @IsOptional()
   file_url?: { pdf?: string; xlsx?: string } | null;

@@ -602,7 +602,11 @@ export class AdminUsersService {
     query: FindAllAiCamerasDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const aiCameras = await this.aiCamerasService.findAllWithFilterAndPagination(query, paginationOptions);
+    const aiCameras =
+      await this.aiCamerasService.findAllWithFilterAndPagination(
+        query,
+        paginationOptions,
+      );
     return aiCameras;
   }
 
@@ -610,7 +614,10 @@ export class AdminUsersService {
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,
   ) {
-    const alerts = await this.alertsService.findAllWithFilterAndPagination(query, paginationOptions);
+    const alerts = await this.alertsService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
     return alerts;
   }
 
@@ -636,8 +643,14 @@ export class AdminUsersService {
     };
   }
 
-  async getReports(query: FindAllReportsDto, paginationOptions: IPaginationOptions) {
-    return this.reportsService.findAllWithFilterAndPagination(query, paginationOptions);
+  async getReports(
+    query: FindAllReportsDto,
+    paginationOptions: IPaginationOptions,
+  ) {
+    return this.reportsService.findAllWithFilterAndPagination(
+      query,
+      paginationOptions,
+    );
   }
 
   async getReportSummary(query: FindAllReportsDto) {
