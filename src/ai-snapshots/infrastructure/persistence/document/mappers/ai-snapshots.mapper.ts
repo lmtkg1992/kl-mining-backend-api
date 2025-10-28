@@ -13,11 +13,18 @@ export class AiSnapshotsMapper {
     }
 
     domainEntity.id = raw._id.toString();
+    domainEntity.event_id = raw.event_id;
     domainEntity.event_type = raw.event_type;
     domainEntity.image_url = raw.image_url;
     domainEntity.truck_type = raw.truck_type;
     domainEntity.fill_level = raw.fill_level;
     domainEntity.confidence_score = raw.confidence_score;
+    domainEntity.plate_number = raw.plate_number;
+    domainEntity.camera_code = raw.camera_code;
+    domainEntity.timestamp = raw.timestamp;
+    domainEntity.direction = raw.direction;
+    domainEntity.volume = raw.volume;
+    domainEntity.status = raw.status;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
 
@@ -39,11 +46,18 @@ export class AiSnapshotsMapper {
     if (domainEntity.id) {
       persistenceSchema._id = domainEntity.id;
     }
+    persistenceSchema.event_id = domainEntity.event_id;
     persistenceSchema.event_type = domainEntity.event_type;
     persistenceSchema.image_url = domainEntity.image_url;
     persistenceSchema.truck_type = domainEntity.truck_type;
     persistenceSchema.fill_level = domainEntity.fill_level;
     persistenceSchema.confidence_score = domainEntity.confidence_score;
+    persistenceSchema.plate_number = domainEntity.plate_number;
+    persistenceSchema.camera_code = domainEntity.camera_code;
+    persistenceSchema.timestamp = domainEntity.timestamp;
+    persistenceSchema.direction = domainEntity.direction;
+    persistenceSchema.volume = domainEntity.volume;
+    persistenceSchema.status = domainEntity.status;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 

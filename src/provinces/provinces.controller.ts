@@ -43,6 +43,7 @@ import { AlertSummaryDto } from "../alerts/dto/alert-summary.dto";
 import { FindAllReportsDto } from "src/reports/dto/find-all-reports.dto";
 import { Reports } from "src/reports/domain/reports";
 import { ReportSummaryDto } from "src/reports/dto/report-summary.dto";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 
 @ApiTags("Provinces")
 @ApiBearerAuth()
@@ -173,6 +174,13 @@ export class ProvincesController {
       page,
       limit,
     });
+  }
+  @RequirePermissions("provinces::ai_cameras::summary")
+  @Get("ai-cameras/summary/:id")
+  @ApiParam({ name: "id", type: String, required: true })
+  @ApiOkResponse({ type: AiCamerasSummaryDto })
+  async getAiCamerasSummary(@Param("id") id: string) {
+    return this.provincesService.getAiCamerasSummary(id);
   }
 
   @RequirePermissions("provinces::mining_sites::list")

@@ -21,6 +21,7 @@ import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
 import { ReportsService } from "../reports/reports.service";
 import { AlertsService } from "../alerts/alerts.service";
 import { AiCamerasService } from "../ai-cameras/ai-cameras.service";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 
 @Injectable()
 export class ProvincesService {
@@ -231,6 +232,17 @@ export class ProvincesService {
         paginationOptions,
       );
     return aiCameras;
+  }
+  
+  async getAiCamerasSummary(provinceId: string): Promise<AiCamerasSummaryDto> {
+    let siteIds: string[] = [];
+    if (provinceId) {
+      const sites = await this.miningSitesRepository.findByProvinceId(provinceId);
+      if (sites.length > 0) {
+        siteIds = sites.map((site) => site.id);
+      }
+    }
+    return this.aiCamerasService.getAiCamerasSummary("province", siteIds);
   }
 
   async getMaterials(

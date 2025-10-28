@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  HttpStatus,
 } from "@nestjs/common";
 import { AiSnapshotsService } from "./ai-snapshots.service";
 import { CreateAiSnapshotsDto } from "./dto/create-ai-snapshots.dto";
@@ -28,10 +30,11 @@ import {
 import { FindAllAiSnapshotsDto } from "./dto/find-all-ai-snapshots.dto";
 import { RequirePermissions } from "../common/decorators/require-permissions.decorator";
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
+import { IngestAiSnapshotDto } from "./dto/ingest-ai-snapshot.dto";
+import { ReceiptResponseDto } from "./dto/receipt-response.dto";
+import { FixedTokenGuard } from "./guards/fixed-token.guard";
 
 @ApiTags("Aisnapshots")
-@ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"))
 @Controller({
   path: "ai-snapshots",
   version: "1",
@@ -39,16 +42,55 @@ import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-wit
 export class AiSnapshotsController {
   constructor(private readonly aiSnapshotsService: AiSnapshotsService) {}
 
+  // AI Provider endpoints - use FixedTokenGuard
   @Post()
+  @UseGuards(FixedTokenGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({
-    type: AiSnapshots,
+    description: "AI snapshot ingested successfully",
+    schema: {
+      type: "object",
+      properties: {
+        event_id: { type: "string" },
+        status: { type: "string", enum: ["processing", "processed"] },
+      },
+    },
   })
-  create(@Body() createAiSnapshotsDto: CreateAiSnapshotsDto) {
-    return this.aiSnapshotsService.create(createAiSnapshotsDto);
+  async handleIngestOrCreate(@Body() body: IngestAiSnapshotDto | CreateAiSnapshotsDto) {
+    // Check if this is an AI provider ingestion request
+    if (
+      "event_id" in body &&
+      "direction" in body &&
+      !("camera_id" in body)
+    ) {
+      return this.aiSnapshotsService.ingestSnapshot(body as IngestAiSnapshotDto);
+    }
+    // Otherwise, use the standard create flow
+    return this.aiSnapshotsService.create(body as CreateAiSnapshotsDto);
   }
 
+  @Get("receipt/:event_id")
+  @UseGuards(FixedTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiParam({
+    name: "event_id",
+    type: String,
+    required: true,
+    description: "AI System-provided unique ID",
+  })
+  @ApiOkResponse({
+    type: ReceiptResponseDto,
+  })
+  async getReceiptStatus(@Param("event_id") eventId: string) {
+    return this.aiSnapshotsService.getReceiptStatus(eventId);
+  }
+
+  // Admin endpoints - use JWT authentication
   @RequirePermissions("ai_snapshots::list")
   @Get("list")
+  @UseGuards(AuthGuard("jwt"))
+  @ApiBearerAuth()
   @ApiOkResponse({
     type: InfinityPaginationResponse(AiSnapshots),
   })
@@ -80,6 +122,8 @@ export class AiSnapshotsController {
 
   @RequirePermissions("ai_snapshots::detail")
   @Get("detail/:id")
+  @UseGuards(AuthGuard("jwt"))
+  @ApiBearerAuth()
   @ApiParam({
     name: "id",
     type: String,
@@ -94,6 +138,8 @@ export class AiSnapshotsController {
 
   @RequirePermissions("ai_snapshots::update")
   @Patch("update/:id")
+  @UseGuards(AuthGuard("jwt"))
+  @ApiBearerAuth()
   @ApiParam({
     name: "id",
     type: String,
@@ -111,6 +157,8 @@ export class AiSnapshotsController {
 
   @RequirePermissions("ai_snapshots::delete")
   @Delete("delete/:id")
+  @UseGuards(AuthGuard("jwt"))
+  @ApiBearerAuth()
   @ApiParam({
     name: "id",
     type: String,
@@ -119,4 +167,5 @@ export class AiSnapshotsController {
   remove(@Param("id") id: string) {
     return this.aiSnapshotsService.remove(id);
   }
+
 }

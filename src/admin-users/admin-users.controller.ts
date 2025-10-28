@@ -53,6 +53,7 @@ import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
 import { ReportsService } from "../reports/reports.service";
 import { Reports } from "src/reports/domain/reports";
 import { ReportSummaryDto } from "src/reports/dto/report-summary.dto";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 
 @ApiTags("Adminusers")
 // @ApiBearerAuth()
@@ -257,6 +258,13 @@ export class AdminUsersController {
       page,
       limit,
     });
+  }
+
+  @RequirePermissions("admin_users::ai_cameras::summary")
+  @Get("ai-cameras/summary")
+  @ApiOkResponse({ type: AiCamerasSummaryDto })
+  async getAiCamerasSummary(): Promise<AiCamerasSummaryDto> {
+    return this.adminUsersService.getAiCamerasSummary();
   }
 
   @RequirePermissions("admin_users::mining_sites::list")

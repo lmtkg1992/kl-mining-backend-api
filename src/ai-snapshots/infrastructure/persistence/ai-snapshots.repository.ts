@@ -28,6 +28,8 @@ export abstract class AiSnapshotsRepository {
 
   abstract findByIds(ids: AiSnapshots["id"][]): Promise<AiSnapshots[]>;
 
+  abstract findByEventId(eventId: string): Promise<NullableType<AiSnapshots>>;
+
   abstract update(
     id: AiSnapshots["id"],
     payload: DeepPartial<AiSnapshots>,

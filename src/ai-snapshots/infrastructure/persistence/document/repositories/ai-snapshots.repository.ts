@@ -70,6 +70,13 @@ export class AiSnapshotsDocumentRepository implements AiSnapshotsRepository {
     );
   }
 
+  async findByEventId(eventId: string): Promise<NullableType<AiSnapshots>> {
+    const entityObject = await this.aiSnapshotsModel.findOne({
+      event_id: eventId,
+    });
+    return entityObject ? AiSnapshotsMapper.toDomain(entityObject) : null;
+  }
+
   async update(
     id: AiSnapshots["id"],
     payload: Partial<AiSnapshots>,

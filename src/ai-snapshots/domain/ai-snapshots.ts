@@ -1,5 +1,5 @@
 import { AiCameras } from "../../ai-cameras/domain/ai-cameras";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class AiSnapshots {
   @ApiProperty({
@@ -13,26 +13,45 @@ export class AiSnapshots {
   })
   id: string;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: "AI System-provided unique ID (predict_id); used for idempotency",
+  })
+  event_id?: string;
+
   @ApiProperty({
-    enum: ["breach", "truck", "normal"],
+    enum: [
+      "breach",
+      "truck",
+      "normal",
+      "vehicle_entered",
+      "vehicle_exited_loaded_legal",
+      "vehicle_exited_loaded_illegal",
+      "vehicle_exited_empty",
+    ],
     description: "Detected event classification",
   })
-  event_type: "breach" | "truck" | "normal";
+  event_type:
+    | "breach"
+    | "truck"
+    | "normal"
+    | "vehicle_entered"
+    | "vehicle_exited_loaded_legal"
+    | "vehicle_exited_loaded_illegal"
+    | "vehicle_exited_empty";
 
   @ApiProperty({ type: String, description: "Cloud storage path" })
   image_url: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    required: false,
     description: "Truck classification (if event_type = 'truck')",
   })
   truck_type?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
-    required: false,
-    description: "AI-estimated fill percentage (if event_type = 'truck')",
+    description: "AI-estimated fill percentage (0-100)",
   })
   fill_level?: number;
 
@@ -41,6 +60,42 @@ export class AiSnapshots {
     description: "AI detection confidence between 0 and 1",
   })
   confidence_score: number;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: "Vehicle plate number",
+  })
+  plate_number?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: "Source camera identifier",
+  })
+  camera_code?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: "ISO-8601 timestamp (prefer UTC Z)",
+  })
+  timestamp?: string;
+
+  @ApiPropertyOptional({
+    enum: ["in", "out"],
+    description: "Direction: 'in' for enter, 'out' for exit",
+  })
+  direction?: "in" | "out";
+
+  @ApiPropertyOptional({
+    type: Number,
+    description: "Volume estimation",
+  })
+  volume?: number;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: "Processing status",
+  })
+  status?: "processing" | "processed";
 
   @ApiProperty()
   createdAt: Date;

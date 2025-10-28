@@ -10,6 +10,7 @@ import { AiCameras } from "./domain/ai-cameras";
 import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 import { MiningSites } from "../mining-sites/domain/mining-sites";
 import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
+import { AiCamerasSummaryDto } from "./dto/ai-cameras-summary.dto";
 
 @Injectable()
 export class AiCamerasService {
@@ -116,5 +117,9 @@ export class AiCamerasService {
 
   remove(id: AiCameras["id"]) {
     return this.aiCamerasRepository.remove(id);
+  }
+
+  async getAiCamerasSummary(type: string, id?: string[]): Promise<AiCamerasSummaryDto> {
+    return this.aiCamerasRepository.getAiCamerasSummary(type, id);
   }
 }

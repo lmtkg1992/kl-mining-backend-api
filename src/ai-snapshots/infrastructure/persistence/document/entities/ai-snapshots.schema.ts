@@ -24,8 +24,36 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
   })
   camera_id?: AiCamerasSchemaClass | null;
 
-  @Prop({ required: true, type: String, enum: ["breach", "truck", "normal"] })
-  event_type: "breach" | "truck" | "normal";
+  @Prop({
+    required: false,
+    type: String,
+    unique: false,
+    sparse: true,
+    description: "AI System-provided unique ID for idempotency",
+  })
+  event_id?: string;
+
+  @Prop({
+    required: true,
+    type: String,
+    enum: [
+      "breach",
+      "truck",
+      "normal",
+      "vehicle_entered",
+      "vehicle_exited_loaded_legal",
+      "vehicle_exited_loaded_illegal",
+      "vehicle_exited_empty",
+    ],
+  })
+  event_type:
+    | "breach"
+    | "truck"
+    | "normal"
+    | "vehicle_entered"
+    | "vehicle_exited_loaded_legal"
+    | "vehicle_exited_loaded_illegal"
+    | "vehicle_exited_empty";
 
   @Prop({ required: true, type: String })
   image_url: string;
@@ -33,11 +61,34 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
   @Prop({ required: false, type: String })
   truck_type?: string;
 
-  @Prop({ required: false, type: Number })
+  @Prop({ required: false, type: Number, min: 0, max: 100 })
   fill_level?: number;
 
   @Prop({ required: true, type: Number, min: 0, max: 1 })
   confidence_score: number;
+
+  @Prop({ required: false, type: String })
+  plate_number?: string;
+
+  @Prop({ required: false, type: String })
+  camera_code?: string;
+
+  @Prop({ required: false, type: String })
+  timestamp?: string;
+
+  @Prop({ required: false, type: String, enum: ["in", "out"] })
+  direction?: "in" | "out";
+
+  @Prop({ required: false, type: Number })
+  volume?: number;
+
+  @Prop({
+    required: false,
+    type: String,
+    enum: ["processing", "processed"],
+    default: "processing",
+  })
+  status?: "processing" | "processed";
 
   @Prop({ default: now })
   createdAt: Date;

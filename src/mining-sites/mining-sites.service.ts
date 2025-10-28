@@ -552,27 +552,7 @@ export class MiningSitesService {
   }
 
   async getAiCamerasSummary(siteId: string): Promise<AiCamerasSummaryDto> {
-    const totalCameras = await this.aiCamerasRepository.countWithFilter({
-      site_id: siteId,
-    });
-    const operationalCameras = await this.aiCamerasRepository.countWithFilter({
-      site_id: siteId,
-      status: "online",
-    });
-    const maintenanceCameras = await this.aiCamerasRepository.countWithFilter({
-      site_id: siteId,
-      status: "maintenance",
-    });
-    const offlineCameras = await this.aiCamerasRepository.countWithFilter({
-      site_id: siteId,
-      status: "offline",
-    });
-    return {
-      total_cameras: totalCameras,
-      operational: operationalCameras,
-      maintenance: maintenanceCameras,
-      offline: offlineCameras,
-    };
+    return this.aiCamerasService.getAiCamerasSummary("site", [siteId]);
   }
 
   async getMaterials(siteId: string): Promise<MiningSitesMaterialsResponseDto> {

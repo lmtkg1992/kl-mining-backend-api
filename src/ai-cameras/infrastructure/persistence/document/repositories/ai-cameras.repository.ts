@@ -7,6 +7,8 @@ import { AiCamerasRepository } from "../../ai-cameras.repository";
 import { AiCameras } from "../../../../domain/ai-cameras";
 import { AiCamerasMapper } from "../mappers/ai-cameras.mapper";
 import { IPaginationOptions } from "../../../../../utils/types/pagination-options";
+import { FindAllAiCamerasDto } from "src/ai-cameras/dto/find-all-ai-cameras.dto";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 
 @Injectable()
 export class AiCamerasDocumentRepository implements AiCamerasRepository {
@@ -118,5 +120,63 @@ export class AiCamerasDocumentRepository implements AiCamerasRepository {
 
   async remove(id: AiCameras["id"]): Promise<void> {
     await this.aiCamerasModel.deleteOne({ _id: id });
+  }
+
+  async getAiCamerasSummary(type: string, id?: string[]): Promise<AiCamerasSummaryDto> {
+    let totalCameras = 0;
+    let operationalCameras = 0;
+    let maintenanceCameras = 0;
+    let offlineCameras = 0;
+    if (type === "site") {
+      totalCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+      });
+      operationalCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "online",
+      });
+      maintenanceCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "maintenance",
+      });
+      offlineCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "offline",
+      });
+    } else if (type === "province") {
+      totalCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+      });
+      operationalCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "online",
+      });
+      maintenanceCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "maintenance",
+      });
+      offlineCameras = await this.aiCamerasModel.countDocuments({
+        site_id: { $in: id },
+        status: "offline",
+      });
+    } else if (type === "admin") {
+      totalCameras = await this.aiCamerasModel.countDocuments();
+      operationalCameras = await this.aiCamerasModel.countDocuments({
+        status: "online",
+      });
+      maintenanceCameras = await this.aiCamerasModel.countDocuments({
+        status: "maintenance",
+      });
+      offlineCameras = await this.aiCamerasModel.countDocuments({
+        status: "offline",
+      });
+    }
+
+    return {
+      total_cameras: totalCameras,
+      operational: operationalCameras,
+      maintenance: maintenanceCameras,
+      offline: offlineCameras,
+    };
   }
 }

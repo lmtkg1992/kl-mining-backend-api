@@ -52,6 +52,7 @@ import { MiningSitesRepository } from "../mining-sites/infrastructure/persistenc
 
 import { FindAllReportsDto } from "../reports/dto/find-all-reports.dto";
 import { ReportsService } from "../reports/reports.service";
+import { AiCamerasSummaryDto } from "src/ai-cameras/dto/ai-cameras-summary.dto";
 
 @Injectable()
 export class AdminUsersService {
@@ -610,6 +611,10 @@ export class AdminUsersService {
     return aiCameras;
   }
 
+  async getAiCamerasSummary(): Promise<AiCamerasSummaryDto> {
+    return this.aiCamerasService.getAiCamerasSummary("admin", []);
+  }
+  
   async getAlerts(
     query: FindAllAlertsDto,
     paginationOptions: IPaginationOptions,

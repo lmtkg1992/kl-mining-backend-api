@@ -8,6 +8,7 @@ import appConfig from "./config/app.config";
 import mailConfig from "./mail/config/mail.config";
 import fileConfig from "./files/config/file.config";
 import queueConfig from "./config/queue.config";
+import aiSnapshotsConfig from "./ai-snapshots/config/ai-snapshots.config";
 import path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { HeaderResolver, I18nModule } from "nestjs-i18n";
@@ -88,6 +89,7 @@ import { PersonnelsModule } from "./personnels/personnels.module";
         mailConfig,
         fileConfig,
         queueConfig,
+        aiSnapshotsConfig,
       ],
       envFilePath: [".env"],
     }),
