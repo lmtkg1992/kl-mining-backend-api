@@ -31,11 +31,12 @@ export class CreateAiSnapshotsDto {
   @IsEnum(["breach", "truck", "normal"])
   event_type: "breach" | "truck" | "normal";
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: () => String,
   })
+  @IsOptional()
   @IsUrl()
-  image_url: string;
+  image_url?: string;
 
   @ApiPropertyOptional({
     type: () => String,

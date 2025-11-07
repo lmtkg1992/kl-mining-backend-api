@@ -59,8 +59,8 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
     | "cannot_match_truck_in_db_legal"
     | "cannot_match_truck_in_db_illegal";
 
-  @Prop({ required: true, type: String })
-  image_url: string;
+  @Prop({ required: false, type: String })
+  image_url?: string;
 
   @Prop({ required: false, type: String })
   truck_type?: string;

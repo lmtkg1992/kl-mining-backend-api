@@ -44,8 +44,8 @@ export class AiSnapshots {
     | "cannot_match_truck_in_db_legal"
     | "cannot_match_truck_in_db_illegal";
 
-  @ApiProperty({ type: String, description: "Cloud storage path" })
-  image_url: string;
+  @ApiPropertyOptional({ type: String, description: "Cloud storage path" })
+  image_url?: string;
 
   @ApiPropertyOptional({
     type: String,

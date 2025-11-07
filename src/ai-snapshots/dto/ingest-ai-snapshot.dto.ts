@@ -46,12 +46,13 @@ export class IngestAiSnapshotDto {
     | "cannot_match_truck_in_db_legal"
     | "cannot_match_truck_in_db_illegal";
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: "Evidence image at detection moment",
   })
+  @IsOptional()
   @IsUrl({ require_protocol: true, protocols: ["https"] })
-  image_url: string;
+  image_url?: string;
 
   @ApiProperty({
     type: String,
