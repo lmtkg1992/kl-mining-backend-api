@@ -8,6 +8,7 @@ import {
   Min,
   Max,
   Matches,
+  IsArray,
 } from "class-validator";
 
 export class IngestAiSnapshotDto {
@@ -24,6 +25,8 @@ export class IngestAiSnapshotDto {
       "vehicle_exited_loaded_legal",
       "vehicle_exited_loaded_illegal",
       "vehicle_exited_empty",
+      "cannot_match_truck_in_db_legal",
+      "cannot_match_truck_in_db_illegal",
     ],
     description: "Event type",
   })
@@ -32,12 +35,16 @@ export class IngestAiSnapshotDto {
     "vehicle_exited_loaded_legal",
     "vehicle_exited_loaded_illegal",
     "vehicle_exited_empty",
+    "cannot_match_truck_in_db_legal",
+    "cannot_match_truck_in_db_illegal",
   ])
   event_type:
     | "vehicle_entered"
     | "vehicle_exited_loaded_legal"
     | "vehicle_exited_loaded_illegal"
-    | "vehicle_exited_empty";
+    | "vehicle_exited_empty"
+    | "cannot_match_truck_in_db_legal"
+    | "cannot_match_truck_in_db_illegal";
 
   @ApiProperty({
     type: String,
@@ -105,6 +112,16 @@ export class IngestAiSnapshotDto {
   @Min(0)
   @Max(100)
   confidence_score?: number;
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: "List of base64 encoded images",
+    example: ["data:image/jpeg;base64,/9j/4AAQSkZJRg..."],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  list_image?: string[];
 }
 
 

@@ -6,6 +6,7 @@ import {
   ConflictException,
   NotFoundException,
   HttpCode,
+  Logger,
 } from "@nestjs/common";
 import { CreateAiSnapshotsDto } from "./dto/create-ai-snapshots.dto";
 import { UpdateAiSnapshotsDto } from "./dto/update-ai-snapshots.dto";
@@ -21,16 +22,52 @@ import { Types } from "mongoose";
 import { AiCamerasRepository } from "src/ai-cameras/infrastructure/persistence/ai-cameras.repository";
 import { IngestAiSnapshotDto } from "./dto/ingest-ai-snapshot.dto";
 import { ReceiptResponseDto } from "./dto/receipt-response.dto";
+import { ConfigService } from "@nestjs/config";
+import { AllConfigType } from "../config/config.type";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
 
 @Injectable()
 export class AiSnapshotsService {
+  private readonly logger = new Logger(AiSnapshotsService.name);
+  private readonly s3Client: S3Client | null = null;
+  private readonly bucketName: string;
+  private readonly useS3: boolean;
+
   constructor(
     @Inject(forwardRef(() => AiCamerasService))
     private readonly aiCamerasService: AiCamerasService,
     // Dependencies here
     private readonly aiSnapshotsRepository: AiSnapshotsRepository,
     private readonly aiCameraRepository: AiCamerasRepository,
-  ) {}
+    private readonly configService: ConfigService<AllConfigType>,
+  ) {
+    const fileConfig = this.configService.get("file", { infer: true });
+    this.useS3 =
+      fileConfig?.driver === "s3" || fileConfig?.driver === "s3-presigned";
+
+    if (this.useS3 && fileConfig?.accessKeyId && fileConfig?.secretAccessKey) {
+      this.s3Client = new S3Client({
+        region: this.configService.get("file.awsS3Region", { infer: true }),
+        credentials: {
+          accessKeyId: this.configService.getOrThrow("file.accessKeyId", {
+            infer: true,
+          }),
+          secretAccessKey: this.configService.getOrThrow("file.secretAccessKey", {
+            infer: true,
+          }),
+        },
+      });
+      this.bucketName = this.configService.getOrThrow("file.awsDefaultS3Bucket", {
+        infer: true,
+      });
+    } else {
+      this.bucketName = this.configService.get("file.awsDefaultS3Bucket", {
+        infer: true,
+      }) || "klmining-snapshots";
+      this.logger.warn("S3 not configured, will use local storage fallback");
+    }
+  }
 
   async create(createAiSnapshotsDto: CreateAiSnapshotsDto) {
     let camera_id: AiCameras | null | undefined = undefined;
@@ -186,6 +223,23 @@ export class AiSnapshotsService {
       fillLevel = ingestDto.fill_level / 100;
     }
 
+    // Upload list_image to S3 if provided
+    let listImageUrls: string[] | undefined = undefined;
+    if (ingestDto.list_image && ingestDto.list_image.length > 0) {
+      try {
+        listImageUrls = await this.uploadBase64ImagesToS3(ingestDto.list_image);
+        this.logger.log(
+          `Uploaded ${listImageUrls.length} images to S3 for event_id: ${ingestDto.event_id}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Error uploading images for event_id ${ingestDto.event_id}:`,
+          error,
+        );
+        throw error;
+      }
+    }
+
     // Create new snapshot
     const snapshot = await this.aiSnapshotsRepository.create({
       event_id: ingestDto.event_id,
@@ -199,6 +253,7 @@ export class AiSnapshotsService {
       volume: ingestDto.volume,
       confidence_score: confidenceScore,
       status: "processed",
+      list_image_urls: listImageUrls,
     });
 
     return {
@@ -225,10 +280,94 @@ export class AiSnapshotsService {
       confidence_score: snapshot.confidence_score
         ? snapshot.confidence_score * 100
         : undefined,
+      list_image_urls: snapshot.list_image_urls || undefined,
     };
   }
 
   async findByEventId(eventId: string) {
     return this.aiSnapshotsRepository.findByEventId(eventId);
+  }
+
+  /**
+   * Upload base64 image to S3 and return the URL
+   */
+  private async uploadBase64ImageToS3(
+    base64Image: string,
+    index: number,
+  ): Promise<string> {
+    try {
+      // Parse base64 string
+      const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+      const imageBuffer = Buffer.from(base64Data, "base64");
+
+      // Determine file extension from base64 header or default to jpg
+      const mimeMatch = base64Image.match(/data:image\/(\w+);base64,/);
+      const extension = mimeMatch ? mimeMatch[1] : "jpg";
+      const contentType = `image/${extension}`;
+
+      // Generate unique key
+      const key = `ai-snapshots/${randomStringGenerator()}_${index}.${extension}`;
+
+      if (this.useS3 && this.s3Client) {
+        // Upload to S3 (bucket must have public read policy configured)
+        const command = new PutObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+          Body: imageBuffer,
+          ContentType: contentType,
+          // Note: ACL removed - bucket must have public read policy instead
+        });
+
+        await this.s3Client.send(command);
+
+        // Generate permanent public URL (no expiration)
+        // Bucket must be configured for public read access via bucket policy
+        const region = this.configService.get("file.awsS3Region", { infer: true }) || "us-east-1";
+        // Handle us-east-1 special case (no region in URL)
+        const publicUrl = region === "us-east-1"
+          ? `https://${this.bucketName}.s3.amazonaws.com/${key}`
+          : `https://${this.bucketName}.s3.${region}.amazonaws.com/${key}`;
+
+        this.logger.log(`Image uploaded successfully to S3: ${publicUrl}`);
+        return publicUrl;
+      } else {
+        // Fallback to local storage
+        const fs = require("fs");
+        const path = require("path");
+
+        const snapshotsDir = path.join(process.cwd(), "files", "ai-snapshots");
+        if (!fs.existsSync(snapshotsDir)) {
+          fs.mkdirSync(snapshotsDir, { recursive: true });
+        }
+
+        const fileName = `${randomStringGenerator()}_${index}.${extension}`;
+        const filePath = path.join(snapshotsDir, fileName);
+        fs.writeFileSync(filePath, imageBuffer);
+
+        const fileUrl = `/files/ai-snapshots/${fileName}`;
+        this.logger.log(`Image saved locally: ${filePath}`);
+        return fileUrl;
+      }
+    } catch (error) {
+      this.logger.error(`Error uploading image ${index} to S3:`, error);
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          list_image: `Failed to upload image at index ${index}`,
+        },
+      });
+    }
+  }
+
+  /**
+   * Upload multiple base64 images to S3 and return array of URLs
+   */
+  private async uploadBase64ImagesToS3(
+    base64Images: string[],
+  ): Promise<string[]> {
+    const uploadPromises = base64Images.map((image, index) =>
+      this.uploadBase64ImageToS3(image, index),
+    );
+    return Promise.all(uploadPromises);
   }
 }

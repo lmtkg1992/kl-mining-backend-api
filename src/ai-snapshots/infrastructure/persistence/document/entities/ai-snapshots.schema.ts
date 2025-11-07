@@ -44,6 +44,8 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
       "vehicle_exited_loaded_legal",
       "vehicle_exited_loaded_illegal",
       "vehicle_exited_empty",
+      "cannot_match_truck_in_db_legal",
+      "cannot_match_truck_in_db_illegal",
     ],
   })
   event_type:
@@ -53,7 +55,9 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
     | "vehicle_entered"
     | "vehicle_exited_loaded_legal"
     | "vehicle_exited_loaded_illegal"
-    | "vehicle_exited_empty";
+    | "vehicle_exited_empty"
+    | "cannot_match_truck_in_db_legal"
+    | "cannot_match_truck_in_db_illegal";
 
   @Prop({ required: true, type: String })
   image_url: string;
@@ -89,6 +93,13 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
     default: "processing",
   })
   status?: "processing" | "processed";
+
+  @Prop({
+    required: false,
+    type: [String],
+    description: "List of image URLs uploaded to S3",
+  })
+  list_image_urls?: string[];
 
   @Prop({ default: now })
   createdAt: Date;

@@ -25,6 +25,7 @@ export class AiSnapshotsMapper {
     domainEntity.direction = raw.direction;
     domainEntity.volume = raw.volume;
     domainEntity.status = raw.status;
+    domainEntity.list_image_urls = raw.list_image_urls;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
 
@@ -58,6 +59,7 @@ export class AiSnapshotsMapper {
     persistenceSchema.direction = domainEntity.direction;
     persistenceSchema.volume = domainEntity.volume;
     persistenceSchema.status = domainEntity.status;
+    persistenceSchema.list_image_urls = domainEntity.list_image_urls;
     persistenceSchema.createdAt = domainEntity.createdAt;
     persistenceSchema.updatedAt = domainEntity.updatedAt;
 

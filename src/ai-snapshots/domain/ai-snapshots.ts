@@ -28,6 +28,8 @@ export class AiSnapshots {
       "vehicle_exited_loaded_legal",
       "vehicle_exited_loaded_illegal",
       "vehicle_exited_empty",
+      "cannot_match_truck_in_db_legal",
+      "cannot_match_truck_in_db_illegal",
     ],
     description: "Detected event classification",
   })
@@ -38,7 +40,9 @@ export class AiSnapshots {
     | "vehicle_entered"
     | "vehicle_exited_loaded_legal"
     | "vehicle_exited_loaded_illegal"
-    | "vehicle_exited_empty";
+    | "vehicle_exited_empty"
+    | "cannot_match_truck_in_db_legal"
+    | "cannot_match_truck_in_db_illegal";
 
   @ApiProperty({ type: String, description: "Cloud storage path" })
   image_url: string;
@@ -96,6 +100,12 @@ export class AiSnapshots {
     description: "Processing status",
   })
   status?: "processing" | "processed";
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: "List of image URLs uploaded to S3",
+  })
+  list_image_urls?: string[];
 
   @ApiProperty()
   createdAt: Date;

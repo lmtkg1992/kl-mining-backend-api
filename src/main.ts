@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory, Reflector } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { useContainer } from "class-validator";
+import { json, urlencoded } from "express";
 import { AppModule } from "./app.module";
 import validationOptions from "./utils/validation-options";
 import { AllConfigType } from "./config/config.type";
@@ -15,7 +16,15 @@ import { ResolvePromisesInterceptor } from "./utils/serializer.interceptor";
 import { WrapResponseDataInterceptor } from "./utils/interceptors/wrap-response-data.interceptor";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, { 
+    cors: true,
+    bodyParser: false, // Disable default body parser to configure custom limits
+  });
+  
+  // Increase body size limit for base64 image uploads (50MB)
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 

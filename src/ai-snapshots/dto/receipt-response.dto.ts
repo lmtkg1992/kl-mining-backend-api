@@ -48,5 +48,11 @@ export class ReceiptResponseDto {
     description: "Confidence score",
   })
   confidence_score?: number;
+
+  @ApiPropertyOptional({
+    type: [String],
+    description: "List of image URLs uploaded to S3",
+  })
+  list_image_urls?: string[];
 }
 
