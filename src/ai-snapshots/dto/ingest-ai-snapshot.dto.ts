@@ -27,6 +27,7 @@ export class IngestAiSnapshotDto {
       "vehicle_exited_empty",
       "cannot_match_truck_in_db_legal",
       "cannot_match_truck_in_db_illegal",
+      "normal",
     ],
     description: "Event type",
   })
@@ -37,6 +38,7 @@ export class IngestAiSnapshotDto {
     "vehicle_exited_empty",
     "cannot_match_truck_in_db_legal",
     "cannot_match_truck_in_db_illegal",
+    "normal",
   ])
   event_type:
     | "vehicle_entered"
@@ -44,7 +46,8 @@ export class IngestAiSnapshotDto {
     | "vehicle_exited_loaded_illegal"
     | "vehicle_exited_empty"
     | "cannot_match_truck_in_db_legal"
-    | "cannot_match_truck_in_db_illegal";
+    | "cannot_match_truck_in_db_illegal"
+    | "normal";
 
   @ApiPropertyOptional({
     type: String,
@@ -80,11 +83,11 @@ export class IngestAiSnapshotDto {
   timestamp: string;
 
   @ApiProperty({
-    enum: ["in", "out"],
-    description: "Mandatory for all vehicle in/out events",
+    enum: ["in", "out", "n/a"],
+    description: "Direction for vehicle events: 'in' for enter, 'out' for exit, 'n/a' for non-vehicle events",
   })
-  @IsEnum(["in", "out"])
-  direction: "in" | "out";
+  @IsEnum(["in", "out", "n/a"])
+  direction: "in" | "out" | "n/a";
 
   @ApiPropertyOptional({
     type: Number,

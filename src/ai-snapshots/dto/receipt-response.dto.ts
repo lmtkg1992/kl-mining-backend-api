@@ -26,10 +26,10 @@ export class ReceiptResponseDto {
   event_type: string;
 
   @ApiProperty({
-    enum: ["in", "out"],
-    description: "Direction",
+    enum: ["in", "out", "n/a"],
+    description: "Direction: 'in' for enter, 'out' for exit, 'n/a' for non-vehicle events",
   })
-  direction: "in" | "out";
+  direction: "in" | "out" | "n/a";
 
   @ApiProperty({
     type: String,

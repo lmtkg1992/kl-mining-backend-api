@@ -85,12 +85,12 @@ export class CreateAiSnapshotsDto {
   timestamp?: string;
 
   @ApiPropertyOptional({
-    enum: ["in", "out"],
-    description: "Direction",
+    enum: ["in", "out", "n/a"],
+    description: "Direction: 'in' for enter, 'out' for exit, 'n/a' for non-vehicle events",
   })
   @IsOptional()
-  @IsEnum(["in", "out"])
-  direction?: "in" | "out";
+  @IsEnum(["in", "out", "n/a"])
+  direction?: "in" | "out" | "n/a";
 
   @ApiPropertyOptional({
     type: () => Number,

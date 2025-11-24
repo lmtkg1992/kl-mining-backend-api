@@ -80,8 +80,8 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
   @Prop({ required: false, type: String })
   timestamp?: string;
 
-  @Prop({ required: false, type: String, enum: ["in", "out"] })
-  direction?: "in" | "out";
+  @Prop({ required: false, type: String, enum: ["in", "out", "n/a"] })
+  direction?: "in" | "out" | "n/a";
 
   @Prop({ required: false, type: Number })
   volume?: number;

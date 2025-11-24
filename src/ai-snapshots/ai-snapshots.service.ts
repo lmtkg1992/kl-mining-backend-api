@@ -256,6 +256,45 @@ export class AiSnapshotsService {
       list_image_urls: listImageUrls,
     });
 
+    // If event type is "normal", update camera's latest_captured_image and latest_captured_image_at
+    if (ingestDto.event_type === "normal") {
+      try {
+        // Find camera by camera_code
+        const cameras = await this.aiCameraRepository.findAllWithFilterAndPagination({
+          filter: { code: ingestDto.camera_code },
+          paginationOptions: { page: 1, limit: 1 },
+        });
+
+        if (cameras.length > 0) {
+          const camera = cameras[0];
+          // Determine which image to use: prefer image_url, fallback to first list_image_url
+          const imageToUse = ingestDto.image_url || (listImageUrls && listImageUrls.length > 0 ? listImageUrls[0] : "");
+          // Parse timestamp to Date
+          const capturedAt = new Date(ingestDto.timestamp);
+
+          // Update camera
+          await this.aiCameraRepository.update(camera.id, {
+            latest_captured_image: imageToUse,
+            latest_captured_image_at: capturedAt,
+          });
+
+          this.logger.log(
+            `Updated camera ${ingestDto.camera_code} latest_captured_image for normal event ${ingestDto.event_id}`,
+          );
+        } else {
+          this.logger.warn(
+            `Camera with code ${ingestDto.camera_code} not found for normal event ${ingestDto.event_id}`,
+          );
+        }
+      } catch (error) {
+        // Log error but don't fail the snapshot ingestion
+        this.logger.error(
+          `Error updating camera latest_captured_image for event_id ${ingestDto.event_id}:`,
+          error,
+        );
+      }
+    }
+
     return {
       event_id: snapshot.event_id,
       status: snapshot.status || "processing",

@@ -84,10 +84,10 @@ export class AiSnapshots {
   timestamp?: string;
 
   @ApiPropertyOptional({
-    enum: ["in", "out"],
-    description: "Direction: 'in' for enter, 'out' for exit",
+    enum: ["in", "out", "n/a"],
+    description: "Direction: 'in' for enter, 'out' for exit, 'n/a' for non-vehicle events",
   })
-  direction?: "in" | "out";
+  direction?: "in" | "out" | "n/a";
 
   @ApiPropertyOptional({
     type: Number,
