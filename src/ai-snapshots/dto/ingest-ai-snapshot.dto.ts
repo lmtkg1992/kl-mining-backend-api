@@ -27,6 +27,10 @@ export class IngestAiSnapshotDto {
       "vehicle_exited_empty",
       "cannot_match_truck_in_db_legal",
       "cannot_match_truck_in_db_illegal",
+      "enter_cannot_match_truck_in_db_legal",
+      "enter_cannot_match_truck_in_db_illegal",
+      "exit_cannot_match_truck_in_db_legal",
+      "exit_cannot_match_truck_in_db_illegal",
       "normal",
     ],
     description: "Event type",
@@ -38,6 +42,10 @@ export class IngestAiSnapshotDto {
     "vehicle_exited_empty",
     "cannot_match_truck_in_db_legal",
     "cannot_match_truck_in_db_illegal",
+    "enter_cannot_match_truck_in_db_legal",
+    "enter_cannot_match_truck_in_db_illegal",
+    "exit_cannot_match_truck_in_db_legal",
+    "exit_cannot_match_truck_in_db_illegal",
     "normal",
   ])
   event_type:
@@ -47,6 +55,10 @@ export class IngestAiSnapshotDto {
     | "vehicle_exited_empty"
     | "cannot_match_truck_in_db_legal"
     | "cannot_match_truck_in_db_illegal"
+    | "enter_cannot_match_truck_in_db_legal"
+    | "enter_cannot_match_truck_in_db_illegal"
+    | "exit_cannot_match_truck_in_db_legal"
+    | "exit_cannot_match_truck_in_db_illegal"
     | "normal";
 
   @ApiPropertyOptional({

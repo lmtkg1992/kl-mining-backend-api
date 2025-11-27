@@ -30,6 +30,10 @@ export class AiSnapshots {
       "vehicle_exited_empty",
       "cannot_match_truck_in_db_legal",
       "cannot_match_truck_in_db_illegal",
+      "enter_cannot_match_truck_in_db_legal",
+      "enter_cannot_match_truck_in_db_illegal",
+      "exit_cannot_match_truck_in_db_legal",
+      "exit_cannot_match_truck_in_db_illegal",
     ],
     description: "Detected event classification",
   })
@@ -42,7 +46,11 @@ export class AiSnapshots {
     | "vehicle_exited_loaded_illegal"
     | "vehicle_exited_empty"
     | "cannot_match_truck_in_db_legal"
-    | "cannot_match_truck_in_db_illegal";
+    | "cannot_match_truck_in_db_illegal"
+    | "enter_cannot_match_truck_in_db_legal"
+    | "enter_cannot_match_truck_in_db_illegal"
+    | "exit_cannot_match_truck_in_db_legal"
+    | "exit_cannot_match_truck_in_db_illegal";
 
   @ApiPropertyOptional({ type: String, description: "Cloud storage path" })
   image_url?: string;
