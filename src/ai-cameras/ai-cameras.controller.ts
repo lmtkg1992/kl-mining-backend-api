@@ -18,6 +18,7 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiQuery,
 } from "@nestjs/swagger";
 import { AiCameras } from "./domain/ai-cameras";
 import { AuthGuard } from "@nestjs/passport";
@@ -28,6 +29,9 @@ import {
 import { infinityPaginationWithMetadata } from "../utils/infinity-pagination-with-metadata";
 import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
+import { GetCameraRecordingsDto } from "./dto/get-camera-recordings.dto";
+import { GetRecordingStreamDto } from "./dto/get-recording-stream.dto";
+import { GetSynologyCameraIdDto } from "./dto/get-synology-camera-id.dto";
 
 @ApiTags("Aicameras")
 @ApiBearerAuth()
@@ -110,4 +114,70 @@ export class AiCamerasController {
   remove(@Param("id") id: string) {
     return this.aiCamerasService.remove(id);
   }
+
+  @RequirePermissions("ai_cameras::detail")
+  @Get("recordings")
+  @ApiOkResponse({
+    description: "Get camera recordings from Synology by date/time range",
+    schema: {
+      type: "object",
+      properties: {
+        items: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              cameraId: { type: "number" },
+              startTime: { type: "number" },
+              endTime: { type: "number" },
+              locked: { type: "boolean" },
+              codec: { type: "string" },
+              size: { type: "number" },
+            },
+          },
+        },
+        total: { type: "number" },
+      },
+    },
+  })
+  async getRecordings(@Query() query: GetCameraRecordingsDto) {
+    return this.aiCamerasService.getCameraRecordings(query);
+  }
+
+  @RequirePermissions("ai_cameras::detail")
+  @Get("recordings/stream")
+  @ApiOkResponse({
+    description: "Get recording stream URL from Synology (returns URL for direct access)",
+    schema: {
+      type: "object",
+      properties: {
+        url: { type: "string" },
+        headers: {
+          type: "object",
+          additionalProperties: { type: "string" },
+        },
+      },
+    },
+  })
+  async getRecordingStream(@Query() query: GetRecordingStreamDto) {
+    return this.aiCamerasService.getRecordingStream(query);
+  }
+
+  @RequirePermissions("ai_cameras::detail")
+  @Get("synology-id")
+  @ApiOkResponse({
+    description: "Get Synology camera ID from camera code",
+    schema: {
+      type: "object",
+      properties: {
+        camera_code: { type: "string" },
+        synology_camera_id: { type: "number", nullable: true },
+      },
+    },
+  })
+  async getSynologyCameraId(@Query() query: GetSynologyCameraIdDto) {
+    return this.aiCamerasService.getSynologyCameraId(query.camera_code);
+  }
+
 }

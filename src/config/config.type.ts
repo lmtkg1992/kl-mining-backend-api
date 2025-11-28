@@ -5,6 +5,7 @@ import { FileConfig } from "../files/config/file-config.type";
 import { MailConfig } from "../mail/config/mail-config.type";
 import { QueueConfig } from "./queue-config.type";
 import { AiSnapshotsConfig } from "../ai-snapshots/config/ai-snapshots-config.type";
+import { SynologyConfig } from "./synology-config.type";
 
 export type AllConfigType = {
   app: AppConfig;
@@ -14,4 +15,5 @@ export type AllConfigType = {
   mail: MailConfig;
   queue: QueueConfig;
   aiSnapshots: AiSnapshotsConfig;
+  synology: SynologyConfig;
 };

@@ -11,6 +11,9 @@ import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 import { MiningSites } from "../mining-sites/domain/mining-sites";
 import { MiningSitesRepository } from "../mining-sites/infrastructure/persistence/mining-sites.repository";
 import { AiCamerasSummaryDto } from "./dto/ai-cameras-summary.dto";
+import { SynologyService, RecordingItem, RecordingStreamResponse } from "./services/synology.service";
+import { GetCameraRecordingsDto } from "./dto/get-camera-recordings.dto";
+import { GetRecordingStreamDto } from "./dto/get-recording-stream.dto";
 
 @Injectable()
 export class AiCamerasService {
@@ -18,6 +21,7 @@ export class AiCamerasService {
     // Dependencies here
     private readonly aiCamerasRepository: AiCamerasRepository,
     private readonly miningSitesRepository: MiningSitesRepository,
+    private readonly synologyService: SynologyService,
   ) {}
 
   async create(createAiCamerasDto: CreateAiCamerasDto) {
@@ -122,4 +126,71 @@ export class AiCamerasService {
   async getAiCamerasSummary(type: string, id?: string[]): Promise<AiCamerasSummaryDto> {
     return this.aiCamerasRepository.getAiCamerasSummary(type, id);
   }
+
+  async getCameraRecordings(dto: GetCameraRecordingsDto): Promise<{ items: RecordingItem[]; total: number }> {
+    // Get Synology camera ID from camera_code if provided, otherwise use camera_id
+    let synologyCameraId: number | null = null;
+
+    if (dto.camera_code) {
+      synologyCameraId = this.synologyService.getSynologyCameraId(dto.camera_code);
+      if (!synologyCameraId) {
+        throw new Error(`Could not map camera code '${dto.camera_code}' to Synology camera ID`);
+      }
+    } else if (dto.camera_id) {
+      synologyCameraId = dto.camera_id;
+    } else {
+      throw new Error("Either camera_code or camera_id must be provided");
+    }
+
+    // Parse time strings to timestamps
+    let fromTime = 0;
+    let toTime = 0;
+
+    if (dto.from_time) {
+      fromTime = isNaN(Number(dto.from_time))
+        ? new Date(dto.from_time).getTime()
+        : Number(dto.from_time);
+    }
+
+    if (dto.to_time) {
+      toTime = isNaN(Number(dto.to_time))
+        ? new Date(dto.to_time).getTime()
+        : Number(dto.to_time);
+    }
+
+    // If no time range specified, default to last 24 hours
+    if (!fromTime && !toTime) {
+      toTime = Date.now();
+      fromTime = toTime - 24 * 60 * 60 * 1000; // 24 hours ago
+    } else if (!toTime) {
+      toTime = Date.now();
+    } else if (!fromTime) {
+      fromTime = toTime - 24 * 60 * 60 * 1000; // 24 hours before toTime
+    }
+
+    return this.synologyService.getRecordings(
+      synologyCameraId,
+      fromTime,
+      toTime,
+      dto.limit || 100,
+      dto.offset || 0,
+    );
+  }
+
+  async getRecordingStream(dto: GetRecordingStreamDto): Promise<RecordingStreamResponse> {
+    return this.synologyService.getRecordingStreamUrl(
+      dto.recording_id,
+      dto.ds_id || 0,
+      dto.mount_id || 0,
+    );
+  }
+
+  async getSynologyCameraId(cameraCode: string): Promise<{ camera_code: string; synology_camera_id: number | null }> {
+    const synologyId = this.synologyService.getSynologyCameraId(cameraCode);
+    return {
+      camera_code: cameraCode,
+      synology_camera_id: synologyId,
+    };
+  }
+
 }

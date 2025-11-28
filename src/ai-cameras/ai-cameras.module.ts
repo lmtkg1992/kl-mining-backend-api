@@ -7,6 +7,7 @@ import { AiCamerasService } from "./ai-cameras.service";
 import { AiCamerasController } from "./ai-cameras.controller";
 import { DocumentAiCamerasPersistenceModule } from "./infrastructure/persistence/document/document-persistence.module";
 import { MiningSitesModule } from "../mining-sites/mining-sites.module";
+import { SynologyService } from "./services/synology.service";
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { MiningSitesModule } from "../mining-sites/mining-sites.module";
     forwardRef(() => MiningSitesModule),
   ],
   controllers: [AiCamerasController],
-  providers: [AiCamerasService],
+  providers: [AiCamerasService, SynologyService],
   exports: [AiCamerasService, DocumentAiCamerasPersistenceModule],
 })
 export class AiCamerasModule {}
