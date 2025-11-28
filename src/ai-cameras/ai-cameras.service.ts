@@ -128,6 +128,20 @@ export class AiCamerasService {
   }
 
   async getCameraRecordings(dto: GetCameraRecordingsDto): Promise<{ items: RecordingItem[]; total: number }> {
+    // Get Synology camera ID from camera_code if provided, otherwise use camera_id
+    let synologyCameraId: number | null = null;
+
+    if (dto.camera_code) {
+      synologyCameraId = this.synologyService.getSynologyCameraId(dto.camera_code);
+      if (!synologyCameraId) {
+        throw new Error(`Could not map camera code '${dto.camera_code}' to Synology camera ID`);
+      }
+    } else if (dto.camera_id) {
+      synologyCameraId = dto.camera_id;
+    } else {
+      throw new Error("Either camera_code or camera_id must be provided");
+    }
+
     // Parse time strings to timestamps
     let fromTime = 0;
     let toTime = 0;
@@ -155,7 +169,7 @@ export class AiCamerasService {
     }
 
     return this.synologyService.getRecordings(
-      dto.camera_id,
+      synologyCameraId,
       fromTime,
       toTime,
       dto.limit || 100,
@@ -169,6 +183,14 @@ export class AiCamerasService {
       dto.ds_id || 0,
       dto.mount_id || 0,
     );
+  }
+
+  async getSynologyCameraId(cameraCode: string): Promise<{ camera_code: string; synology_camera_id: number | null }> {
+    const synologyId = this.synologyService.getSynologyCameraId(cameraCode);
+    return {
+      camera_code: cameraCode,
+      synology_camera_id: synologyId,
+    };
   }
 
 }

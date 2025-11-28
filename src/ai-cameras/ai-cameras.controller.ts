@@ -31,6 +31,7 @@ import { FindAllAiCamerasDto } from "./dto/find-all-ai-cameras.dto";
 import { RequirePermissions } from "src/common/decorators/require-permissions.decorator";
 import { GetCameraRecordingsDto } from "./dto/get-camera-recordings.dto";
 import { GetRecordingStreamDto } from "./dto/get-recording-stream.dto";
+import { GetSynologyCameraIdDto } from "./dto/get-synology-camera-id.dto";
 
 @ApiTags("Aicameras")
 @ApiBearerAuth()
@@ -161,6 +162,22 @@ export class AiCamerasController {
   })
   async getRecordingStream(@Query() query: GetRecordingStreamDto) {
     return this.aiCamerasService.getRecordingStream(query);
+  }
+
+  @RequirePermissions("ai_cameras::detail")
+  @Get("synology-id")
+  @ApiOkResponse({
+    description: "Get Synology camera ID from camera code",
+    schema: {
+      type: "object",
+      properties: {
+        camera_code: { type: "string" },
+        synology_camera_id: { type: "number", nullable: true },
+      },
+    },
+  })
+  async getSynologyCameraId(@Query() query: GetSynologyCameraIdDto) {
+    return this.aiCamerasService.getSynologyCameraId(query.camera_code);
   }
 
 }

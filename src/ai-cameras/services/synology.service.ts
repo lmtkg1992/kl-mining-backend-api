@@ -38,6 +38,29 @@ export class SynologyService {
     streamingServerUrl?: string;
   };
 
+  // Mapping table: Camera Code -> Synology Camera ID
+  // Based on actual Synology camera mapping
+  private readonly CAMERA_CODE_TO_SYNOLOGY_ID: Record<string, number> = {
+    'TTT-CAM01': 7,
+    'TTT-CAM02': 10,
+    'TTT-CAM03': 8,
+    'TTT-CAM04': 13,
+    'TTT-CAM05': 12,
+    'TTT-CAM06': 15,
+    'TTT-CAM07': 14,
+    'TTT-CAM08': 17,
+    'TTT-CAM09': 18,
+    'TTT-CAM10': 16,
+    'TTT-CAM11': 19,
+    'TTT-CAM12': 20,
+    'TTT-CAM13': 21,
+    'TTT-CAM14': 22,
+    'TTT-CAM15': 23,
+    'TTT-CAM16': 24,
+    'TTT-CAM17': 25,
+    'TTT-CAM19': 26,
+  };
+
   constructor(private readonly configService: ConfigService<AllConfigType>) {
     const synoConfig = this.configService.get("synology", { infer: true });
     this.config = {
@@ -262,7 +285,7 @@ export class SynologyService {
       dsId,
       mountId,
       alertRecording: "false",
-      videoCodec: "1", // MJPEG
+      videoCodec: "3", // H.264 (better browser support than MJPEG)
     };
 
     if (this.session?.sid) {
@@ -298,5 +321,44 @@ export class SynologyService {
     };
   }
 
+  /**
+   * Get Synology camera ID from camera code
+   */
+  getSynologyCameraId(cameraCode: string): number | null {
+    if (!cameraCode) {
+      return null;
+    }
+
+    // Try exact match first (e.g., "TTT-CAM01")
+    if (this.CAMERA_CODE_TO_SYNOLOGY_ID[cameraCode]) {
+      return this.CAMERA_CODE_TO_SYNOLOGY_ID[cameraCode];
+    }
+
+    // Try uppercase match
+    const upperCode = cameraCode.toUpperCase();
+    if (this.CAMERA_CODE_TO_SYNOLOGY_ID[upperCode]) {
+      return this.CAMERA_CODE_TO_SYNOLOGY_ID[upperCode];
+    }
+
+    // Fallback: try to extract number and map (less reliable)
+    const match = cameraCode.match(/(\d+)/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      // Try to find by number in code name
+      const codeKey = `TTT-CAM${String(num).padStart(2, '0')}`;
+      if (this.CAMERA_CODE_TO_SYNOLOGY_ID[codeKey]) {
+        return this.CAMERA_CODE_TO_SYNOLOGY_ID[codeKey];
+      }
+    }
+
+    // If code is just a number, assume it's already Synology ID
+    const numCode = parseInt(cameraCode, 10);
+    if (!isNaN(numCode)) {
+      return numCode;
+    }
+
+    this.logger.warn(`Could not map camera code to Synology ID: ${cameraCode}`);
+    return null;
+  }
 }
 
