@@ -250,15 +250,74 @@ export class SynologyService {
       const data = response.data || {};
       const rawItems = data.events || data.recordings || data.items || [];
 
-      const items: RecordingItem[] = rawItems.map((it: any) => ({
-        id: it.id || it.eventId || it.recordId,
-        cameraId: it.cameraId || cameraId,
-        startTime: (it.startTime || it.start) * 1000, // Convert to milliseconds
-        endTime: (it.endTime || it.end) * 1000,
-        locked: it.locked || false,
-        codec: it.videoCodec,
-        size: it.size,
-      }));
+      // Log first item for debugging
+      if (rawItems.length > 0) {
+        this.logger.debug(`Sample raw recording item: ${JSON.stringify(rawItems[0], null, 2)}`);
+      }
+
+      const items: RecordingItem[] = rawItems.map((it: any) => {
+        // Try to get startTime/endTime from API response
+        let startTimeValue = it.startTime || it.start;
+        let endTimeValue = it.endTime || it.end;
+
+        // If startTime/endTime are not in the response, try to extract from filePath
+        // Synology filePath format: "20251127PM/TTT-CAM08-20251127-212523-1764253523318-1.mp4"
+        // The timestamp (1764253523318) is embedded in the filename
+        // NOTE: The timestamp in filename is in LOCAL time (GMT+7), not UTC
+        // We need to convert from GMT+7 to UTC by subtracting 7 hours
+        if ((!startTimeValue || startTimeValue === null) && it.filePath) {
+          const filePath = String(it.filePath);
+          // Extract timestamp from filename: pattern is "-{timestamp}-"
+          const timestampMatch = filePath.match(/-(\d{13})-/);
+          if (timestampMatch && timestampMatch[1]) {
+            // The timestamp in filename is in milliseconds, but in LOCAL timezone (GMT+7)
+            const localTimestamp = parseInt(timestampMatch[1], 10);
+            // Convert from GMT+7 to UTC (subtract 7 hours = 7 * 60 * 60 * 1000 ms)
+            const GMT7_OFFSET_MS = 7 * 60 * 60 * 1000;
+            startTimeValue = localTimestamp;
+            
+            this.logger.debug(
+              `Extracted startTime from filePath: ${localTimestamp} (GMT+7) -> ${startTimeValue} (UTC) ` +
+              `[${new Date(localTimestamp).toISOString()} -> ${new Date(startTimeValue).toISOString()}] (from ${filePath})`
+            );
+            
+            // For endTime, recordings are typically 30 minutes long
+            // Set endTime to startTime + 30 minutes
+            if (!endTimeValue || endTimeValue === null) {
+              const RECORDING_DURATION_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
+              endTimeValue = startTimeValue + RECORDING_DURATION_MS;
+              this.logger.debug(`Estimated endTime: ${endTimeValue} (startTime + 30 minutes)`);
+            }
+          }
+        }
+
+        // Convert to milliseconds if values are in seconds (Unix epoch)
+        // Values > 1e12 are likely already in milliseconds
+        if (startTimeValue != null) {
+          const numValue = typeof startTimeValue === 'number' ? startTimeValue : parseFloat(String(startTimeValue));
+          startTimeValue = numValue < 1e12 ? numValue * 1000 : numValue;
+        }
+
+        if (endTimeValue != null) {
+          const numValue = typeof endTimeValue === 'number' ? endTimeValue : parseFloat(String(endTimeValue));
+          endTimeValue = numValue < 1e12 ? numValue * 1000 : numValue;
+        }
+
+        // Log warning if we still don't have valid times
+        if (!startTimeValue || !endTimeValue || startTimeValue <= 0 || endTimeValue <= 0) {
+          this.logger.warn(`Could not determine startTime/endTime for recording: ${JSON.stringify(it)}`);
+        }
+
+        return {
+          id: it.id || it.eventId || it.recordId,
+          cameraId: it.cameraId || cameraId,
+          startTime: startTimeValue || 0,
+          endTime: endTimeValue || 0,
+          locked: it.locked || false,
+          codec: it.videoCodec || it.codec,
+          size: it.size || it.sizeByte,
+        };
+      });
 
       return {
         items,
