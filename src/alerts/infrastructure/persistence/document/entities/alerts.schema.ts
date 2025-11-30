@@ -74,6 +74,12 @@ export class AlertsSchemaClass extends EntityDocumentHelper {
   confidence?: number | null;
 
   @Prop({
+    type: Number,
+    required: false,
+  })
+  volume?: number | null;
+
+  @Prop({
     type: String,
     enum: ["new", "under_review", "acknowledged", "resolved"],
     required: true,

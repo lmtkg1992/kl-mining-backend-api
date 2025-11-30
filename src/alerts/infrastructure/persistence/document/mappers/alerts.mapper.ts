@@ -27,6 +27,8 @@ export class AlertsMapper {
 
     domainEntity.confidence = raw.confidence;
 
+    domainEntity.volume = raw.volume !== undefined ? raw.volume : null;
+
     domainEntity.status = raw.status;
 
     domainEntity.severity = raw.severity;
@@ -85,6 +87,8 @@ export class AlertsMapper {
     persistenceSchema.fill_level = domainEntity.fill_level;
 
     persistenceSchema.confidence = domainEntity.confidence;
+
+    persistenceSchema.volume = domainEntity.volume;
 
     persistenceSchema.status = domainEntity.status;
 

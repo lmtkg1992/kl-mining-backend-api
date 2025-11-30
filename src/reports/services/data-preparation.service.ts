@@ -419,37 +419,36 @@ export class DataPreparationService {
       paginationOptions: { page: 1, limit: 1000 },
     });
 
-    // Volume calculation constants (from MiningSitesService)
-    const VOLUME_PER_CAR = 7; // tons per car capacity
-
     // Transform volume alerts into volume tracking details
-    const volumeDetails = alerts.entities.map((alert) => {
-      const site = sites.find((s) => s.id === alert.site_id?.id);
-      const province = provinces.find(
-        (p) => p.id === alert.site_id?.province?.id,
-      );
+    const volumeDetails = alerts.entities
+      .filter((alert) => alert.direction === "out") // Only truck out events
+      .map((alert) => {
+        const site = sites.find((s) => s.id === alert.site_id?.id);
+        const province = provinces.find(
+          (p) => p.id === alert.site_id?.province?.id,
+        );
 
-      // Calculate actual volume based on fill_level
-      const fillLevel = alert.fill_level || 0;
-      const actualVolume = VOLUME_PER_CAR * (fillLevel / 100);
+        // Get volume directly from alert, fallback to 0 if not available
+        const volume = alert.volume !== undefined && alert.volume !== null ? alert.volume : 0;
+        const fillLevel = alert.fill_level || 0;
 
-      return {
-        id: alert.id,
-        date: alert.timestamp,
-        site: site?.site_name || "Unknown Site",
-        province: province?.province_name || "Unknown Province",
-        volume: actualVolume,
-        fillLevel: fillLevel,
-        truckId: alert.truck_id?.plate_number || "Unknown Truck",
-        entryTime: alert.timestamp || alert.createdAt,
-        exitTime: new Date(
-          new Date(alert.timestamp).getTime() + 2 * 60 * 60 * 1000,
-        ).toISOString(),
-        truckType: alert.truck_type || "dump_truck",
-        overloaded: alert.overloaded || false,
-        evidenceUrl: alert.evidence_url || [],
-      };
-    });
+        return {
+          id: alert.id,
+          date: alert.timestamp,
+          site: site?.site_name || "Unknown Site",
+          province: province?.province_name || "Unknown Province",
+          volume: volume,
+          fillLevel: fillLevel,
+          truckId: alert.truck_id?.plate_number || "Unknown Truck",
+          entryTime: alert.timestamp || alert.createdAt,
+          exitTime: new Date(
+            new Date(alert.timestamp).getTime() + 2 * 60 * 60 * 1000,
+          ).toISOString(),
+          truckType: alert.truck_type || "dump_truck",
+          overloaded: alert.overloaded || false,
+          evidenceUrl: alert.evidence_url || [],
+        };
+      });
 
     // Group by site for summary
     const siteSummary = volumeDetails.reduce((acc, record) => {
@@ -463,14 +462,17 @@ export class DataPreparationService {
           averageVolume: 0,
           averageFillLevel: 0,
           overloadedTrips: 0,
+          fillLevels: [], // Track all fill levels for average calculation
         };
       }
       acc[key].totalVolume += record.volume;
       acc[key].trips += 1;
       acc[key].averageVolume = acc[key].totalVolume / acc[key].trips;
+      acc[key].fillLevels.push(record.fillLevel);
+      // Calculate average fill level from all fill levels
       acc[key].averageFillLevel =
-        (acc[key].averageFillLevel * (acc[key].trips - 1) + record.fillLevel) /
-        acc[key].trips;
+        acc[key].fillLevels.reduce((sum: number, fl: number) => sum + fl, 0) /
+        acc[key].fillLevels.length;
       if (record.overloaded) {
         acc[key].overloadedTrips += 1;
       }
@@ -498,7 +500,11 @@ export class DataPreparationService {
             ) / 100
           : 0,
       overloadedTrips: volumeDetails.filter((v) => v.overloaded).length,
-      siteSummary: Object.values(siteSummary),
+      siteSummary: Object.values(siteSummary).map((summary: any) => {
+        // Remove temporary fillLevels array from output
+        const { fillLevels, ...rest } = summary;
+        return rest;
+      }),
     };
 
     return {

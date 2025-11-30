@@ -82,6 +82,14 @@ export class CreateAlertsDto {
   @IsNumber()
   confidence?: number | null;
 
+  @ApiPropertyOptional({
+    type: () => Number,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsNumber()
+  volume?: number | null;
+
   @ApiProperty({
     required: true,
     type: () => String,

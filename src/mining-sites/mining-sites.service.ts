@@ -186,12 +186,16 @@ export class MiningSitesService {
           limit: 10000,
         },
       });
+    // Calculate total volume from alerts (use volume field directly, fallback to calculated if not available)
     const totalVolumeTruckOut = Math.floor(
-      volumeTruckOut.reduce(
-        (acc, curr) =>
-          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
-        0,
-      ),
+      volumeTruckOut.reduce((acc, curr) => {
+        // Use volume from alert if available, otherwise calculate from fill_level
+        if (curr.volume !== undefined && curr.volume !== null) {
+          return acc + curr.volume;
+        }
+        // Fallback to calculated volume
+        return acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0);
+      }, 0),
     );
     site.volume = totalVolumeTruckOut;
     site.last_activity = new Date();
@@ -283,8 +287,9 @@ export class MiningSitesService {
     });
     let changeBreachAlerts = 0;
     if (yesterdayBreachAlerts > 0) {
-      changeBreachAlerts =
-        ((breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) * 100;
+      changeBreachAlerts = Math.round(
+        ((breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) * 100 * 10
+      ) / 10; // Round to 1 decimal place
     }
 
     const truckActivities = await this.alertsRepository.countWithFilter({
@@ -303,10 +308,9 @@ export class MiningSitesService {
       });
     let changeTruckActivities = 0;
     if (yesterdayTruckActivities > 0) {
-      changeTruckActivities =
-        ((truckActivities - yesterdayTruckActivities) /
-          yesterdayTruckActivities) *
-        100;
+      changeTruckActivities = Math.round(
+        ((truckActivities - yesterdayTruckActivities) / yesterdayTruckActivities) * 100 * 10
+      ) / 10; // Round to 1 decimal place
     }
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
@@ -326,16 +330,26 @@ export class MiningSitesService {
           limit: 10000,
         },
       });
+    // Calculate total volume from alerts (use volume field directly, fallback to calculated if not available)
     const totalVolumeTruckOut = Math.floor(
-      volumeTruckOut.reduce(
-        (acc, curr) =>
-          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
-        0,
-      ),
+      volumeTruckOut.reduce((acc, curr) => {
+        // Use volume from alert if available, otherwise calculate from fill_level
+        if (curr.volume !== undefined && curr.volume !== null) {
+          return acc + curr.volume;
+        }
+        // Fallback to calculated volume
+        return acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0);
+      }, 0),
     );
-    const percentageQuota = Math.floor(
-      (totalVolumeTruckOut / quotaMiningSitePerDay) * 100,
-    );
+    
+    // Calculate percentage as average of fill_level
+    const fillLevels = volumeTruckOut
+      .map((curr) => curr.fill_level)
+      .filter((fl) => fl !== undefined && fl !== null);
+    const averageFillLevel = fillLevels.length > 0
+      ? fillLevels.reduce((sum, fl) => sum + fl, 0) / fillLevels.length
+      : 0;
+    const percentageQuota = Math.floor(averageFillLevel);
     return {
       site_id: siteId,
       last_updated: new Date().toISOString(),
@@ -408,8 +422,15 @@ export class MiningSitesService {
       if (!hourlyVolumes.has(hour)) {
         hourlyVolumes.set(hour, 0);
       }
-      const fillLevel = alert.fill_level || 0;
-      const volume = volumePerCar * (fillLevel / 100);
+      // Use volume from alert if available, otherwise calculate from fill_level
+      let volume = 0;
+      if (alert.volume !== undefined && alert.volume !== null) {
+        volume = alert.volume;
+      } else {
+        // Fallback to calculated volume
+        const fillLevel = alert.fill_level || 0;
+        volume = volumePerCar * (fillLevel / 100);
+      }
       hourlyVolumes.set(hour, Math.floor(hourlyVolumes.get(hour)! + volume));
     }
     const hourlyData = Array.from(hourlyVolumes.entries()).map(
@@ -476,52 +497,75 @@ export class MiningSitesService {
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
 
-    const labelHours: string[] = [];
     const truckActivities = new Map<number, number>();
     const extractedTons = new Map<number, number>();
 
+    // Process alerts and accumulate data by hour
     for (const alert of volumeTruckOut) {
       const timestamp = new Date(alert.timestamp.getTime());
       const hour = timestamp.getHours();
-      const labelHour = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? "PM" : "AM"}`;
-      if (!labelHours.includes(labelHour)) {
-        labelHours.push(labelHour);
-      }
+      
       if (!truckActivities.has(hour)) {
         truckActivities.set(hour, 0);
       }
       if (!extractedTons.has(hour)) {
         extractedTons.set(hour, 0);
       }
-      const fillLevel = alert.fill_level || 0;
-      const volume = volumePerCar * (fillLevel / 100);
+      // Use volume from alert if available, otherwise calculate from fill_level
+      let volume = 0;
+      if (alert.volume !== undefined && alert.volume !== null) {
+        volume = alert.volume;
+      } else {
+        // Fallback to calculated volume
+        const fillLevel = alert.fill_level || 0;
+        volume = volumePerCar * (fillLevel / 100);
+      }
       truckActivities.set(hour, Math.floor(truckActivities.get(hour)! + 1));
       extractedTons.set(hour, Math.floor(extractedTons.get(hour)! + volume));
     }
 
-    const truckEntries = Array.from(truckActivities.values());
-    const volumeExtractedTons = Array.from(extractedTons.values());
+    // Build aligned arrays: iterate through hours 0-23 in order
+    const labelHours: string[] = [];
+    const truckEntries: number[] = [];
+    const volumeExtractedTons: number[] = [];
+    
+    for (let hour = 0; hour < 24; hour++) {
+      if (truckActivities.has(hour) || extractedTons.has(hour)) {
+        const labelHour = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? "PM" : "AM"}`;
+        labelHours.push(labelHour);
+        truckEntries.push(truckActivities.get(hour) || 0);
+        volumeExtractedTons.push(extractedTons.get(hour) || 0);
+      }
+    }
 
-    // Find peak values and their indices
-    const maxTruckIndex = truckEntries.reduce(
-      (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
-      0,
-    );
-    const maxVolumeIndex = volumeExtractedTons.reduce(
-      (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
-      0,
-    );
+    // Find peak values and their indices (handle empty arrays)
+    let maxTruckIndex = -1;
+    let maxVolumeIndex = -1;
+    
+    if (truckEntries.length > 0) {
+      maxTruckIndex = truckEntries.reduce(
+        (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
+        0,
+      );
+    }
+    
+    if (volumeExtractedTons.length > 0) {
+      maxVolumeIndex = volumeExtractedTons.reduce(
+        (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
+        0,
+      );
+    }
 
     const peaks = {
       truck_activity: {
-        time: `${labelHours[maxTruckIndex]}`,
-        count: truckEntries[maxTruckIndex],
-        label: labelHours[maxTruckIndex],
+        time: maxTruckIndex >= 0 && labelHours[maxTruckIndex] ? `${labelHours[maxTruckIndex]}` : "N/A",
+        count: maxTruckIndex >= 0 ? truckEntries[maxTruckIndex] : 0,
+        label: maxTruckIndex >= 0 && labelHours[maxTruckIndex] ? labelHours[maxTruckIndex] : "N/A",
       },
       extraction: {
-        time: `${labelHours[maxVolumeIndex]}`,
-        tons: volumeExtractedTons[maxVolumeIndex],
-        label: labelHours[maxVolumeIndex],
+        time: maxVolumeIndex >= 0 && labelHours[maxVolumeIndex] ? `${labelHours[maxVolumeIndex]}` : "N/A",
+        tons: maxVolumeIndex >= 0 ? volumeExtractedTons[maxVolumeIndex] : 0,
+        label: maxVolumeIndex >= 0 && labelHours[maxVolumeIndex] ? labelHours[maxVolumeIndex] : "N/A",
       },
     };
 

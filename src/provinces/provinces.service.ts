@@ -144,8 +144,9 @@ export class ProvincesService {
     });
     let changeBreachAlerts = 0;
     if (yesterdayBreachAlerts > 0) {
-      changeBreachAlerts =
-        ((breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) * 100;
+      changeBreachAlerts = Math.round(
+        ((breachAlerts - yesterdayBreachAlerts) / yesterdayBreachAlerts) * 100 * 10
+      ) / 10; // Round to 1 decimal place
     }
 
     const truckActivities = await this.alertsRepository.countWithFilter({
@@ -164,10 +165,9 @@ export class ProvincesService {
       });
     let changeTruckActivities = 0;
     if (yesterdayTruckActivities > 0) {
-      changeTruckActivities =
-        ((truckActivities - yesterdayTruckActivities) /
-          yesterdayTruckActivities) *
-        100;
+      changeTruckActivities = Math.round(
+        ((truckActivities - yesterdayTruckActivities) / yesterdayTruckActivities) * 100 * 10
+      ) / 10; // Round to 1 decimal place
     }
 
     const volumePerCar = MiningSitesService.VOLUME_PER_CAR;
@@ -187,16 +187,26 @@ export class ProvincesService {
           limit: 10000,
         },
       });
+    // Calculate total volume from alerts (use volume field directly, fallback to calculated if not available)
     const totalVolumeTruckOut = Math.floor(
-      volumeTruckOut.reduce(
-        (acc, curr) =>
-          acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0),
-        0,
-      ),
+      volumeTruckOut.reduce((acc, curr) => {
+        // Use volume from alert if available, otherwise calculate from fill_level
+        if (curr.volume !== undefined && curr.volume !== null) {
+          return acc + curr.volume;
+        }
+        // Fallback to calculated volume
+        return acc + volumePerCar * (curr.fill_level ? curr.fill_level / 100 : 0);
+      }, 0),
     );
-    const percentageQuota = Math.floor(
-      (totalVolumeTruckOut / quotaMiningSitePerDay) * 100,
-    );
+    
+    // Calculate percentage as average of fill_level
+    const fillLevels = volumeTruckOut
+      .map((curr) => curr.fill_level)
+      .filter((fl) => fl !== undefined && fl !== null);
+    const averageFillLevel = fillLevels.length > 0
+      ? fillLevels.reduce((sum, fl) => sum + fl, 0) / fillLevels.length
+      : 0;
+    const percentageQuota = Math.floor(averageFillLevel);
 
     return {
       province_id: provinceId,

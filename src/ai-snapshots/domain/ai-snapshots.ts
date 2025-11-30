@@ -115,6 +115,13 @@ export class AiSnapshots {
   })
   list_image_urls?: string[];
 
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: "Whether this snapshot has been converted to an alert",
+    default: false,
+  })
+  alert_converted?: boolean;
+
   @ApiProperty()
   createdAt: Date;
 

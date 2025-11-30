@@ -133,6 +133,8 @@ export class AlertsService {
 
       confidence: createAlertsDto.confidence,
 
+      volume: createAlertsDto.volume,
+
       status: createAlertsDto.status,
 
       severity: createAlertsDto.severity,
@@ -309,6 +311,8 @@ export class AlertsService {
       fill_level: updateAlertsDto.fill_level,
 
       confidence: updateAlertsDto.confidence,
+
+      volume: updateAlertsDto.volume,
 
       status: updateAlertsDto.status,
 

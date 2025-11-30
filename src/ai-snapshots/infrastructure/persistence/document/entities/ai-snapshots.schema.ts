@@ -109,6 +109,14 @@ export class AiSnapshotsSchemaClass extends EntityDocumentHelper {
   })
   list_image_urls?: string[];
 
+  @Prop({
+    required: false,
+    type: Boolean,
+    default: false,
+    description: "Whether this snapshot has been converted to an alert",
+  })
+  alert_converted?: boolean;
+
   @Prop({ default: now })
   createdAt: Date;
 

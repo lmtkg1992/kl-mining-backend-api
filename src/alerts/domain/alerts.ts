@@ -61,6 +61,12 @@ export class Alerts {
   confidence?: number | null;
 
   @ApiProperty({
+    type: () => Number,
+    nullable: true,
+  })
+  volume?: number | null;
+
+  @ApiProperty({
     type: () => String,
     enum: ["new", "under_review", "acknowledged", "resolved"],
     nullable: false,

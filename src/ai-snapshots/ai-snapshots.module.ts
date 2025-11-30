@@ -1,4 +1,6 @@
 import { AiCamerasModule } from "../ai-cameras/ai-cameras.module";
+import { AlertsModule } from "../alerts/alerts.module";
+import { TrucksModule } from "../trucks/trucks.module";
 import {
   // do not remove this comment
   Module,
@@ -15,6 +17,8 @@ import { ConfigModule } from "@nestjs/config";
     // do not remove this comment
     DocumentAiSnapshotsPersistenceModule,
     forwardRef(() => AiCamerasModule),
+    forwardRef(() => AlertsModule),
+    forwardRef(() => TrucksModule),
     ConfigModule,
   ],
   controllers: [AiSnapshotsController],
