@@ -12,6 +12,7 @@
     "add:property:to-document": "hygen property add-to-document",
     "postadd:property:to-document": "npm run lint -- --fix",
     "seed:run:document": "ts-node -r tsconfig-paths/register ./src/database/seeds/document/run-seed.ts",
+    "process:snapshots:alerts": "ts-node -r tsconfig-paths/register ./src/ai-snapshots/commands/process-snapshots-to-alerts.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
